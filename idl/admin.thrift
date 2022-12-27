@@ -1,23 +1,32 @@
 namespace go admin
 
-struct Request {
-        1: string message
+typedef map<string, string> Data  // 类型定义
+
+struct DashboardRequest {
+  1: string dashboard
 }
 
-struct Response {
-        1: string message
+struct DashboardResponse {
+  1: Data dashboard
 }
 
-struct AddRequest {
-  1: i64 first
-  2: i64 second
+service Dashboard {
+    DashboardResponse dashboardHandle(1: DashboardRequest req)
 }
 
-struct AddResponse {
-  1: i64 sum
+struct ResourceIndexRequest {
+  1: string resource
+  2: Data search
+  3: i32 page
+  4: i32 pageSize
+  5: string sorter
+  6: string filter
 }
 
-service Hello {
-    Response echo(1: Request req)
-    AddResponse add(1: AddRequest req)
+struct ResourceIndexResponse {
+  1: Data resource
+}
+
+service ResourceIndex {
+    ResourceIndexResponse resourceIndexhandle(1: ResourceIndexRequest req)
 }

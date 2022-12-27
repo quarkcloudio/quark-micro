@@ -5,17 +5,17 @@ import (
 	admin "github.com/quarkcms/quark-hertz/kitex_gen/admin"
 )
 
-// HelloImpl implements the last service interface defined in the IDL.
-type HelloImpl struct{}
+// CombineServiceImpl implements the last service interface defined in the IDL.
+type CombineServiceImpl struct{}
 
-// Echo implements the HelloImpl interface.
-func (s *HelloImpl) Echo(ctx context.Context, req *admin.Request) (resp *admin.Response, err error) {
+// DashboardHandle implements the DashboardImpl interface.
+func (s *CombineServiceImpl) DashboardHandle(ctx context.Context, req *admin.DashboardRequest) (resp *admin.DashboardResponse, err error) {
 	// TODO: Your code here...
 	return
 }
 
-// Add implements the HelloImpl interface.
-func (s *HelloImpl) Add(ctx context.Context, req *admin.AddRequest) (resp *admin.AddResponse, err error) {
+// ResourceIndexhandle implements the ResourceIndexImpl interface.
+func (s *CombineServiceImpl) ResourceIndexhandle(ctx context.Context, req *admin.ResourceIndexRequest) (resp *admin.ResourceIndexResponse, err error) {
 	// TODO: Your code here...
 	return
 }

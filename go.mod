@@ -64,3 +64,5 @@ require (
 	gopkg.in/ini.v1 v1.56.0 // indirect
 	moul.io/http2curl v1.0.0 // indirect
 )
+
+replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
