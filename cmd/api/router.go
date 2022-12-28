@@ -9,7 +9,8 @@ import (
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
-	r.GET("/api/admin/:resource/index", handler.ResourceIndex)
 
-	// your code ...
+	// 后台路由组
+	rg := r.Group("/api/admin")
+	rg.GET("/:resource/index", handler.ResourceIndex)
 }

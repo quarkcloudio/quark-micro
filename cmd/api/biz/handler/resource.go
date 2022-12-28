@@ -8,21 +8,18 @@ import (
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
 	"github.com/quarkcms/quark-hertz/kitex_gen/admin"
 	"github.com/quarkcms/quark-hertz/kitex_gen/admin/resourceindex"
+	"github.com/quarkcms/quark-hertz/pkg/msg"
 )
 
 // 资源列表
 func ResourceIndex(ctx context.Context, c *app.RequestContext) {
 	resource := c.Param("resource")
 	if resource == "" {
-		c.JSON(200, utils.H{
-			"status":  "error",
-			"message": "参数错误！",
-		})
+		c.JSON(200, msg.Error("参数错误", ""))
 	}
 
 	requestClient, err := resourceindex.NewClient("resourceindex", client.WithHostPorts("0.0.0.0:8888"))
@@ -36,8 +33,5 @@ func ResourceIndex(ctx context.Context, c *app.RequestContext) {
 		log.Fatal(err)
 	}
 
-	c.JSON(200, utils.H{
-		"status": "success",
-		"data":   resp,
-	})
+	c.JSON(200, msg.Success("操作成功", "", resp))
 }
