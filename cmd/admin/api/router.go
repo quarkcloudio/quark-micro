@@ -4,7 +4,7 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	handler "github.com/quarkcms/quark-hertz/cmd/api/biz/handler"
+	handler "github.com/quarkcms/quark-hertz/cmd/admin/api/biz/handler"
 )
 
 // customizeRegister registers customize routers.
