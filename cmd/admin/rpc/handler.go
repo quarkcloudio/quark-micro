@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	admin "github.com/quarkcms/quark-hertz/cmd/admin/rpc/kitex_gen/admin"
 )
@@ -17,9 +18,14 @@ func (s *CombineServiceImpl) DashboardHandle(ctx context.Context, req *admin.Das
 
 // ResourceIndexhandle implements the ResourceIndexImpl interface.
 func (s *CombineServiceImpl) ResourceIndexhandle(ctx context.Context, req *admin.ResourceIndexRequest) (resp *admin.ResourceIndexResponse, err error) {
+	query := req.Request.Query
+	body := req.Request.Body
 	resource := req.Resource
 
+	fmt.Print(query)
+	fmt.Print(body)
+
 	return &admin.ResourceIndexResponse{
-		JsonString: resource,
+		RespBody: resource,
 	}, nil
 }

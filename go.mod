@@ -9,6 +9,7 @@ require (
 	github.com/alibabacloud-go/tea-utils v1.4.5
 	github.com/apache/thrift v0.17.0
 	github.com/cloudwego/kitex v0.4.4
+	github.com/go-basic/uuid v1.0.0
 	github.com/parnurzeal/gorequest v0.2.16
 )
 

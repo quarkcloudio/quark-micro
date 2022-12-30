@@ -20,6 +20,7 @@ func ResourceIndex(ctx context.Context, c *app.RequestContext) {
 	resource := c.Param("resource")
 	if resource == "" {
 		c.JSON(200, msg.Error("参数错误", ""))
+		return
 	}
 
 	requestClient, err := resourceindex.NewClient("resourceindex", client.WithHostPorts("0.0.0.0:8888"))
@@ -27,11 +28,23 @@ func ResourceIndex(ctx context.Context, c *app.RequestContext) {
 		log.Fatal(err)
 	}
 
-	req := &admin.ResourceIndexRequest{Resource: resource}
+	query := c.Request.QueryString()
+	body, err := c.Body()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req := &admin.ResourceIndexRequest{
+		Request: &admin.Request{
+			Query: query,
+			Body:  body,
+		},
+		Resource: resource,
+	}
 	resp, err := requestClient.ResourceIndexhandle(context.Background(), req, callopt.WithRPCTimeout(3*time.Second))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	c.JSON(200, msg.Success("操作成功", "", resp.JsonString))
+	c.JSON(200, msg.Success("操作成功", "", resp.RespBody))
 }

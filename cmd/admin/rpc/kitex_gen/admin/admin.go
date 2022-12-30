@@ -3,16 +3,239 @@
 package admin
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/apache/thrift/lib/go/thrift"
 	"strings"
 )
 
-type Data = map[string]string
+type Request struct {
+	Body  []byte `thrift:"Body,1" frugal:"1,default,binary" json:"Body"`
+	Query []byte `thrift:"Query,2" frugal:"2,default,binary" json:"Query"`
+}
+
+func NewRequest() *Request {
+	return &Request{}
+}
+
+func (p *Request) InitDefault() {
+	*p = Request{}
+}
+
+func (p *Request) GetBody() (v []byte) {
+	return p.Body
+}
+
+func (p *Request) GetQuery() (v []byte) {
+	return p.Query
+}
+func (p *Request) SetBody(val []byte) {
+	p.Body = val
+}
+func (p *Request) SetQuery(val []byte) {
+	p.Query = val
+}
+
+var fieldIDToName_Request = map[int16]string{
+	1: "Body",
+	2: "Query",
+}
+
+func (p *Request) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_Request[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *Request) ReadField1(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadBinary(); err != nil {
+		return err
+	} else {
+		p.Body = []byte(v)
+	}
+	return nil
+}
+
+func (p *Request) ReadField2(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadBinary(); err != nil {
+		return err
+	} else {
+		p.Query = []byte(v)
+	}
+	return nil
+}
+
+func (p *Request) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("Request"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *Request) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("Body", thrift.STRING, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteBinary([]byte(p.Body)); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *Request) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("Query", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteBinary([]byte(p.Query)); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *Request) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("Request(%+v)", *p)
+}
+
+func (p *Request) DeepEqual(ano *Request) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.Body) {
+		return false
+	}
+	if !p.Field2DeepEqual(ano.Query) {
+		return false
+	}
+	return true
+}
+
+func (p *Request) Field1DeepEqual(src []byte) bool {
+
+	if bytes.Compare(p.Body, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *Request) Field2DeepEqual(src []byte) bool {
+
+	if bytes.Compare(p.Query, src) != 0 {
+		return false
+	}
+	return true
+}
 
 type DashboardRequest struct {
-	Dashboard string `thrift:"dashboard,1" frugal:"1,default,string" json:"dashboard"`
+	Request   *Request `thrift:"request,1" frugal:"1,default,Request" json:"request"`
+	Dashboard string   `thrift:"dashboard,2" frugal:"2,default,string" json:"dashboard"`
 }
 
 func NewDashboardRequest() *DashboardRequest {
@@ -23,15 +246,32 @@ func (p *DashboardRequest) InitDefault() {
 	*p = DashboardRequest{}
 }
 
+var DashboardRequest_Request_DEFAULT *Request
+
+func (p *DashboardRequest) GetRequest() (v *Request) {
+	if !p.IsSetRequest() {
+		return DashboardRequest_Request_DEFAULT
+	}
+	return p.Request
+}
+
 func (p *DashboardRequest) GetDashboard() (v string) {
 	return p.Dashboard
+}
+func (p *DashboardRequest) SetRequest(val *Request) {
+	p.Request = val
 }
 func (p *DashboardRequest) SetDashboard(val string) {
 	p.Dashboard = val
 }
 
 var fieldIDToName_DashboardRequest = map[int16]string{
-	1: "dashboard",
+	1: "request",
+	2: "dashboard",
+}
+
+func (p *DashboardRequest) IsSetRequest() bool {
+	return p.Request != nil
 }
 
 func (p *DashboardRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -54,8 +294,18 @@ func (p *DashboardRequest) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.STRUCT {
 				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -94,6 +344,14 @@ ReadStructEndError:
 }
 
 func (p *DashboardRequest) ReadField1(iprot thrift.TProtocol) error {
+	p.Request = NewRequest()
+	if err := p.Request.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *DashboardRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -110,6 +368,10 @@ func (p *DashboardRequest) Write(oprot thrift.TProtocol) (err error) {
 	if p != nil {
 		if err = p.writeField1(oprot); err != nil {
 			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
 			goto WriteFieldError
 		}
 
@@ -132,10 +394,10 @@ WriteStructEndError:
 }
 
 func (p *DashboardRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("dashboard", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("request", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Dashboard); err != nil {
+	if err := p.Request.Write(oprot); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -146,6 +408,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *DashboardRequest) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("dashboard", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Dashboard); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
 func (p *DashboardRequest) String() string {
@@ -161,13 +440,23 @@ func (p *DashboardRequest) DeepEqual(ano *DashboardRequest) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Dashboard) {
+	if !p.Field1DeepEqual(ano.Request) {
+		return false
+	}
+	if !p.Field2DeepEqual(ano.Dashboard) {
 		return false
 	}
 	return true
 }
 
-func (p *DashboardRequest) Field1DeepEqual(src string) bool {
+func (p *DashboardRequest) Field1DeepEqual(src *Request) bool {
+
+	if !p.Request.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+func (p *DashboardRequest) Field2DeepEqual(src string) bool {
 
 	if strings.Compare(p.Dashboard, src) != 0 {
 		return false
@@ -176,7 +465,7 @@ func (p *DashboardRequest) Field1DeepEqual(src string) bool {
 }
 
 type DashboardResponse struct {
-	Dashboard Data `thrift:"dashboard,1" frugal:"1,default,map<string:string>" json:"dashboard"`
+	RespBody string `thrift:"respBody,1" frugal:"1,default,string" json:"respBody"`
 }
 
 func NewDashboardResponse() *DashboardResponse {
@@ -187,15 +476,15 @@ func (p *DashboardResponse) InitDefault() {
 	*p = DashboardResponse{}
 }
 
-func (p *DashboardResponse) GetDashboard() (v Data) {
-	return p.Dashboard
+func (p *DashboardResponse) GetRespBody() (v string) {
+	return p.RespBody
 }
-func (p *DashboardResponse) SetDashboard(val Data) {
-	p.Dashboard = val
+func (p *DashboardResponse) SetRespBody(val string) {
+	p.RespBody = val
 }
 
 var fieldIDToName_DashboardResponse = map[int16]string{
-	1: "dashboard",
+	1: "respBody",
 }
 
 func (p *DashboardResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -218,7 +507,7 @@ func (p *DashboardResponse) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.MAP {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -258,30 +547,10 @@ ReadStructEndError:
 }
 
 func (p *DashboardResponse) ReadField1(iprot thrift.TProtocol) error {
-	_, _, size, err := iprot.ReadMapBegin()
-	if err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
-	}
-	p.Dashboard = make(Data, size)
-	for i := 0; i < size; i++ {
-		var _key string
-		if v, err := iprot.ReadString(); err != nil {
-			return err
-		} else {
-			_key = v
-		}
-
-		var _val string
-		if v, err := iprot.ReadString(); err != nil {
-			return err
-		} else {
-			_val = v
-		}
-
-		p.Dashboard[_key] = _val
-	}
-	if err := iprot.ReadMapEnd(); err != nil {
-		return err
+	} else {
+		p.RespBody = v
 	}
 	return nil
 }
@@ -316,23 +585,10 @@ WriteStructEndError:
 }
 
 func (p *DashboardResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("dashboard", thrift.MAP, 1); err != nil {
+	if err = oprot.WriteFieldBegin("respBody", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRING, len(p.Dashboard)); err != nil {
-		return err
-	}
-	for k, v := range p.Dashboard {
-
-		if err := oprot.WriteString(k); err != nil {
-			return err
-		}
-
-		if err := oprot.WriteString(v); err != nil {
-			return err
-		}
-	}
-	if err := oprot.WriteMapEnd(); err != nil {
+	if err := oprot.WriteString(p.RespBody); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -358,33 +614,28 @@ func (p *DashboardResponse) DeepEqual(ano *DashboardResponse) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Dashboard) {
+	if !p.Field1DeepEqual(ano.RespBody) {
 		return false
 	}
 	return true
 }
 
-func (p *DashboardResponse) Field1DeepEqual(src Data) bool {
+func (p *DashboardResponse) Field1DeepEqual(src string) bool {
 
-	if len(p.Dashboard) != len(src) {
+	if strings.Compare(p.RespBody, src) != 0 {
 		return false
-	}
-	for k, v := range p.Dashboard {
-		_src := src[k]
-		if strings.Compare(v, _src) != 0 {
-			return false
-		}
 	}
 	return true
 }
 
 type ResourceIndexRequest struct {
-	Resource string `thrift:"resource,1" frugal:"1,default,string" json:"resource"`
-	Search   Data   `thrift:"search,2" frugal:"2,default,map<string:string>" json:"search"`
-	Page     int32  `thrift:"page,3" frugal:"3,default,i32" json:"page"`
-	PageSize int32  `thrift:"pageSize,4" frugal:"4,default,i32" json:"pageSize"`
-	Sorter   string `thrift:"sorter,5" frugal:"5,default,string" json:"sorter"`
-	Filter   string `thrift:"filter,6" frugal:"6,default,string" json:"filter"`
+	Request  *Request `thrift:"request,1" frugal:"1,default,Request" json:"request"`
+	Resource string   `thrift:"resource,2" frugal:"2,default,string" json:"resource"`
+	Search   string   `thrift:"search,3" frugal:"3,default,string" json:"search"`
+	Page     int32    `thrift:"page,4" frugal:"4,default,i32" json:"page"`
+	PageSize int32    `thrift:"pageSize,5" frugal:"5,default,i32" json:"pageSize"`
+	Sorter   string   `thrift:"sorter,6" frugal:"6,default,string" json:"sorter"`
+	Filter   string   `thrift:"filter,7" frugal:"7,default,string" json:"filter"`
 }
 
 func NewResourceIndexRequest() *ResourceIndexRequest {
@@ -395,11 +646,20 @@ func (p *ResourceIndexRequest) InitDefault() {
 	*p = ResourceIndexRequest{}
 }
 
+var ResourceIndexRequest_Request_DEFAULT *Request
+
+func (p *ResourceIndexRequest) GetRequest() (v *Request) {
+	if !p.IsSetRequest() {
+		return ResourceIndexRequest_Request_DEFAULT
+	}
+	return p.Request
+}
+
 func (p *ResourceIndexRequest) GetResource() (v string) {
 	return p.Resource
 }
 
-func (p *ResourceIndexRequest) GetSearch() (v Data) {
+func (p *ResourceIndexRequest) GetSearch() (v string) {
 	return p.Search
 }
 
@@ -418,10 +678,13 @@ func (p *ResourceIndexRequest) GetSorter() (v string) {
 func (p *ResourceIndexRequest) GetFilter() (v string) {
 	return p.Filter
 }
+func (p *ResourceIndexRequest) SetRequest(val *Request) {
+	p.Request = val
+}
 func (p *ResourceIndexRequest) SetResource(val string) {
 	p.Resource = val
 }
-func (p *ResourceIndexRequest) SetSearch(val Data) {
+func (p *ResourceIndexRequest) SetSearch(val string) {
 	p.Search = val
 }
 func (p *ResourceIndexRequest) SetPage(val int32) {
@@ -438,12 +701,17 @@ func (p *ResourceIndexRequest) SetFilter(val string) {
 }
 
 var fieldIDToName_ResourceIndexRequest = map[int16]string{
-	1: "resource",
-	2: "search",
-	3: "page",
-	4: "pageSize",
-	5: "sorter",
-	6: "filter",
+	1: "request",
+	2: "resource",
+	3: "search",
+	4: "page",
+	5: "pageSize",
+	6: "sorter",
+	7: "filter",
+}
+
+func (p *ResourceIndexRequest) IsSetRequest() bool {
+	return p.Request != nil
 }
 
 func (p *ResourceIndexRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -466,7 +734,7 @@ func (p *ResourceIndexRequest) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.STRUCT {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -476,7 +744,7 @@ func (p *ResourceIndexRequest) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.MAP {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -486,7 +754,7 @@ func (p *ResourceIndexRequest) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -506,7 +774,7 @@ func (p *ResourceIndexRequest) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 5:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField5(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -518,6 +786,16 @@ func (p *ResourceIndexRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 6:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField6(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 7:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField7(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -556,6 +834,14 @@ ReadStructEndError:
 }
 
 func (p *ResourceIndexRequest) ReadField1(iprot thrift.TProtocol) error {
+	p.Request = NewRequest()
+	if err := p.Request.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ResourceIndexRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -564,40 +850,11 @@ func (p *ResourceIndexRequest) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *ResourceIndexRequest) ReadField2(iprot thrift.TProtocol) error {
-	_, _, size, err := iprot.ReadMapBegin()
-	if err != nil {
-		return err
-	}
-	p.Search = make(Data, size)
-	for i := 0; i < size; i++ {
-		var _key string
-		if v, err := iprot.ReadString(); err != nil {
-			return err
-		} else {
-			_key = v
-		}
-
-		var _val string
-		if v, err := iprot.ReadString(); err != nil {
-			return err
-		} else {
-			_val = v
-		}
-
-		p.Search[_key] = _val
-	}
-	if err := iprot.ReadMapEnd(); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (p *ResourceIndexRequest) ReadField3(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI32(); err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Page = v
+		p.Search = v
 	}
 	return nil
 }
@@ -606,12 +863,21 @@ func (p *ResourceIndexRequest) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
-		p.PageSize = v
+		p.Page = v
 	}
 	return nil
 }
 
 func (p *ResourceIndexRequest) ReadField5(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.PageSize = v
+	}
+	return nil
+}
+
+func (p *ResourceIndexRequest) ReadField6(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -620,7 +886,7 @@ func (p *ResourceIndexRequest) ReadField5(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *ResourceIndexRequest) ReadField6(iprot thrift.TProtocol) error {
+func (p *ResourceIndexRequest) ReadField7(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -659,6 +925,10 @@ func (p *ResourceIndexRequest) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 6
 			goto WriteFieldError
 		}
+		if err = p.writeField7(oprot); err != nil {
+			fieldId = 7
+			goto WriteFieldError
+		}
 
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
@@ -679,10 +949,10 @@ WriteStructEndError:
 }
 
 func (p *ResourceIndexRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("resource", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("request", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Resource); err != nil {
+	if err := p.Request.Write(oprot); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -696,23 +966,10 @@ WriteFieldEndError:
 }
 
 func (p *ResourceIndexRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("search", thrift.MAP, 2); err != nil {
+	if err = oprot.WriteFieldBegin("resource", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRING, len(p.Search)); err != nil {
-		return err
-	}
-	for k, v := range p.Search {
-
-		if err := oprot.WriteString(k); err != nil {
-			return err
-		}
-
-		if err := oprot.WriteString(v); err != nil {
-			return err
-		}
-	}
-	if err := oprot.WriteMapEnd(); err != nil {
+	if err := oprot.WriteString(p.Resource); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -726,10 +983,10 @@ WriteFieldEndError:
 }
 
 func (p *ResourceIndexRequest) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("page", thrift.I32, 3); err != nil {
+	if err = oprot.WriteFieldBegin("search", thrift.STRING, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI32(p.Page); err != nil {
+	if err := oprot.WriteString(p.Search); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -743,10 +1000,10 @@ WriteFieldEndError:
 }
 
 func (p *ResourceIndexRequest) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("pageSize", thrift.I32, 4); err != nil {
+	if err = oprot.WriteFieldBegin("page", thrift.I32, 4); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI32(p.PageSize); err != nil {
+	if err := oprot.WriteI32(p.Page); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -760,10 +1017,10 @@ WriteFieldEndError:
 }
 
 func (p *ResourceIndexRequest) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("sorter", thrift.STRING, 5); err != nil {
+	if err = oprot.WriteFieldBegin("pageSize", thrift.I32, 5); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Sorter); err != nil {
+	if err := oprot.WriteI32(p.PageSize); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -777,10 +1034,10 @@ WriteFieldEndError:
 }
 
 func (p *ResourceIndexRequest) writeField6(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("filter", thrift.STRING, 6); err != nil {
+	if err = oprot.WriteFieldBegin("sorter", thrift.STRING, 6); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Filter); err != nil {
+	if err := oprot.WriteString(p.Sorter); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -791,6 +1048,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
+}
+
+func (p *ResourceIndexRequest) writeField7(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("filter", thrift.STRING, 7); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Filter); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
 }
 
 func (p *ResourceIndexRequest) String() string {
@@ -806,69 +1080,73 @@ func (p *ResourceIndexRequest) DeepEqual(ano *ResourceIndexRequest) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Resource) {
+	if !p.Field1DeepEqual(ano.Request) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.Search) {
+	if !p.Field2DeepEqual(ano.Resource) {
 		return false
 	}
-	if !p.Field3DeepEqual(ano.Page) {
+	if !p.Field3DeepEqual(ano.Search) {
 		return false
 	}
-	if !p.Field4DeepEqual(ano.PageSize) {
+	if !p.Field4DeepEqual(ano.Page) {
 		return false
 	}
-	if !p.Field5DeepEqual(ano.Sorter) {
+	if !p.Field5DeepEqual(ano.PageSize) {
 		return false
 	}
-	if !p.Field6DeepEqual(ano.Filter) {
+	if !p.Field6DeepEqual(ano.Sorter) {
+		return false
+	}
+	if !p.Field7DeepEqual(ano.Filter) {
 		return false
 	}
 	return true
 }
 
-func (p *ResourceIndexRequest) Field1DeepEqual(src string) bool {
+func (p *ResourceIndexRequest) Field1DeepEqual(src *Request) bool {
+
+	if !p.Request.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+func (p *ResourceIndexRequest) Field2DeepEqual(src string) bool {
 
 	if strings.Compare(p.Resource, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *ResourceIndexRequest) Field2DeepEqual(src Data) bool {
+func (p *ResourceIndexRequest) Field3DeepEqual(src string) bool {
 
-	if len(p.Search) != len(src) {
-		return false
-	}
-	for k, v := range p.Search {
-		_src := src[k]
-		if strings.Compare(v, _src) != 0 {
-			return false
-		}
-	}
-	return true
-}
-func (p *ResourceIndexRequest) Field3DeepEqual(src int32) bool {
-
-	if p.Page != src {
+	if strings.Compare(p.Search, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *ResourceIndexRequest) Field4DeepEqual(src int32) bool {
 
+	if p.Page != src {
+		return false
+	}
+	return true
+}
+func (p *ResourceIndexRequest) Field5DeepEqual(src int32) bool {
+
 	if p.PageSize != src {
 		return false
 	}
 	return true
 }
-func (p *ResourceIndexRequest) Field5DeepEqual(src string) bool {
+func (p *ResourceIndexRequest) Field6DeepEqual(src string) bool {
 
 	if strings.Compare(p.Sorter, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *ResourceIndexRequest) Field6DeepEqual(src string) bool {
+func (p *ResourceIndexRequest) Field7DeepEqual(src string) bool {
 
 	if strings.Compare(p.Filter, src) != 0 {
 		return false
@@ -877,7 +1155,7 @@ func (p *ResourceIndexRequest) Field6DeepEqual(src string) bool {
 }
 
 type ResourceIndexResponse struct {
-	JsonString string `thrift:"jsonString,1" frugal:"1,default,string" json:"jsonString"`
+	RespBody string `thrift:"respBody,1" frugal:"1,default,string" json:"respBody"`
 }
 
 func NewResourceIndexResponse() *ResourceIndexResponse {
@@ -888,15 +1166,15 @@ func (p *ResourceIndexResponse) InitDefault() {
 	*p = ResourceIndexResponse{}
 }
 
-func (p *ResourceIndexResponse) GetJsonString() (v string) {
-	return p.JsonString
+func (p *ResourceIndexResponse) GetRespBody() (v string) {
+	return p.RespBody
 }
-func (p *ResourceIndexResponse) SetJsonString(val string) {
-	p.JsonString = val
+func (p *ResourceIndexResponse) SetRespBody(val string) {
+	p.RespBody = val
 }
 
 var fieldIDToName_ResourceIndexResponse = map[int16]string{
-	1: "jsonString",
+	1: "respBody",
 }
 
 func (p *ResourceIndexResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -962,7 +1240,7 @@ func (p *ResourceIndexResponse) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.JsonString = v
+		p.RespBody = v
 	}
 	return nil
 }
@@ -997,10 +1275,10 @@ WriteStructEndError:
 }
 
 func (p *ResourceIndexResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("jsonString", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("respBody", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.JsonString); err != nil {
+	if err := oprot.WriteString(p.RespBody); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1026,7 +1304,7 @@ func (p *ResourceIndexResponse) DeepEqual(ano *ResourceIndexResponse) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.JsonString) {
+	if !p.Field1DeepEqual(ano.RespBody) {
 		return false
 	}
 	return true
@@ -1034,7 +1312,7 @@ func (p *ResourceIndexResponse) DeepEqual(ano *ResourceIndexResponse) bool {
 
 func (p *ResourceIndexResponse) Field1DeepEqual(src string) bool {
 
-	if strings.Compare(p.JsonString, src) != 0 {
+	if strings.Compare(p.RespBody, src) != 0 {
 		return false
 	}
 	return true
