@@ -6,7 +6,7 @@ import (
 	"context"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
-	admin "github.com/quarkcms/quark-hertz/kitex_gen/admin"
+	admin "github.com/quarkcms/quark-hertz/cmd/admin/rpc/kitex_gen/admin"
 )
 
 func serviceInfo() *kitex.ServiceInfo {

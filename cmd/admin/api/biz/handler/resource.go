@@ -10,8 +10,8 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
-	"github.com/quarkcms/quark-hertz/kitex_gen/admin"
-	"github.com/quarkcms/quark-hertz/kitex_gen/admin/resourceindex"
+	"github.com/quarkcms/quark-hertz/cmd/admin/rpc/kitex_gen/admin"
+	"github.com/quarkcms/quark-hertz/cmd/admin/rpc/kitex_gen/admin/resourceindex"
 	"github.com/quarkcms/quark-hertz/pkg/msg"
 )
 
@@ -33,5 +33,5 @@ func ResourceIndex(ctx context.Context, c *app.RequestContext) {
 		log.Fatal(err)
 	}
 
-	c.JSON(200, msg.Success("操作成功", "", resp))
+	c.JSON(200, msg.Success("操作成功", "", resp.JsonString))
 }

@@ -764,7 +764,7 @@ func (p *ResourceIndexResponse) FastRead(buf []byte) (int, error) {
 		}
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.MAP {
+			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField1(buf[offset:])
 				offset += l
 				if err != nil {
@@ -815,39 +815,13 @@ ReadStructEndError:
 func (p *ResourceIndexResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	_, _, size, l, err := bthrift.Binary.ReadMapBegin(buf[offset:])
-	offset += l
-	if err != nil {
-		return offset, err
-	}
-	p.Resource = make(Data, size)
-	for i := 0; i < size; i++ {
-		var _key string
-		if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
-			return offset, err
-		} else {
-			offset += l
-
-			_key = v
-
-		}
-
-		var _val string
-		if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
-			return offset, err
-		} else {
-			offset += l
-
-			_val = v
-
-		}
-
-		p.Resource[_key] = _val
-	}
-	if l, err := bthrift.Binary.ReadMapEnd(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
+
+		p.JsonString = v
+
 	}
 	return offset, nil
 }
@@ -881,36 +855,18 @@ func (p *ResourceIndexResponse) BLength() int {
 
 func (p *ResourceIndexResponse) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "resource", thrift.MAP, 1)
-	mapBeginOffset := offset
-	offset += bthrift.Binary.MapBeginLength(thrift.STRING, thrift.STRING, 0)
-	var length int
-	for k, v := range p.Resource {
-		length++
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "jsonString", thrift.STRING, 1)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.JsonString)
 
-		offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, k)
-
-		offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, v)
-
-	}
-	bthrift.Binary.WriteMapBegin(buf[mapBeginOffset:], thrift.STRING, thrift.STRING, length)
-	offset += bthrift.Binary.WriteMapEnd(buf[offset:])
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
 }
 
 func (p *ResourceIndexResponse) field1Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("resource", thrift.MAP, 1)
-	l += bthrift.Binary.MapBeginLength(thrift.STRING, thrift.STRING, len(p.Resource))
-	for k, v := range p.Resource {
+	l += bthrift.Binary.FieldBeginLength("jsonString", thrift.STRING, 1)
+	l += bthrift.Binary.StringLengthNocopy(p.JsonString)
 
-		l += bthrift.Binary.StringLengthNocopy(k)
-
-		l += bthrift.Binary.StringLengthNocopy(v)
-
-	}
-	l += bthrift.Binary.MapEndLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l
 }

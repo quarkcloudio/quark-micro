@@ -1,7 +1,7 @@
 package main
 
 import (
-	admin "github.com/quarkcms/quark-hertz/kitex_gen/admin/combineservice"
+	admin "github.com/quarkcms/quark-hertz/cmd/admin/rpc/kitex_gen/admin/combineservice"
 	"log"
 )
 

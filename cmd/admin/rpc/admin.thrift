@@ -10,6 +10,7 @@ struct DashboardResponse {
   1: Data dashboard
 }
 
+// 仪表盘
 service Dashboard {
     DashboardResponse dashboardHandle(1: DashboardRequest req)
 }
@@ -24,9 +25,10 @@ struct ResourceIndexRequest {
 }
 
 struct ResourceIndexResponse {
-  1: Data resource
+  1: string jsonString
 }
 
+// 列表
 service ResourceIndex {
     ResourceIndexResponse resourceIndexhandle(1: ResourceIndexRequest req)
 }

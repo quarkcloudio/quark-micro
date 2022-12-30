@@ -877,7 +877,7 @@ func (p *ResourceIndexRequest) Field6DeepEqual(src string) bool {
 }
 
 type ResourceIndexResponse struct {
-	Resource Data `thrift:"resource,1" frugal:"1,default,map<string:string>" json:"resource"`
+	JsonString string `thrift:"jsonString,1" frugal:"1,default,string" json:"jsonString"`
 }
 
 func NewResourceIndexResponse() *ResourceIndexResponse {
@@ -888,15 +888,15 @@ func (p *ResourceIndexResponse) InitDefault() {
 	*p = ResourceIndexResponse{}
 }
 
-func (p *ResourceIndexResponse) GetResource() (v Data) {
-	return p.Resource
+func (p *ResourceIndexResponse) GetJsonString() (v string) {
+	return p.JsonString
 }
-func (p *ResourceIndexResponse) SetResource(val Data) {
-	p.Resource = val
+func (p *ResourceIndexResponse) SetJsonString(val string) {
+	p.JsonString = val
 }
 
 var fieldIDToName_ResourceIndexResponse = map[int16]string{
-	1: "resource",
+	1: "jsonString",
 }
 
 func (p *ResourceIndexResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -919,7 +919,7 @@ func (p *ResourceIndexResponse) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.MAP {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -959,30 +959,10 @@ ReadStructEndError:
 }
 
 func (p *ResourceIndexResponse) ReadField1(iprot thrift.TProtocol) error {
-	_, _, size, err := iprot.ReadMapBegin()
-	if err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
-	}
-	p.Resource = make(Data, size)
-	for i := 0; i < size; i++ {
-		var _key string
-		if v, err := iprot.ReadString(); err != nil {
-			return err
-		} else {
-			_key = v
-		}
-
-		var _val string
-		if v, err := iprot.ReadString(); err != nil {
-			return err
-		} else {
-			_val = v
-		}
-
-		p.Resource[_key] = _val
-	}
-	if err := iprot.ReadMapEnd(); err != nil {
-		return err
+	} else {
+		p.JsonString = v
 	}
 	return nil
 }
@@ -1017,23 +997,10 @@ WriteStructEndError:
 }
 
 func (p *ResourceIndexResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("resource", thrift.MAP, 1); err != nil {
+	if err = oprot.WriteFieldBegin("jsonString", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRING, len(p.Resource)); err != nil {
-		return err
-	}
-	for k, v := range p.Resource {
-
-		if err := oprot.WriteString(k); err != nil {
-			return err
-		}
-
-		if err := oprot.WriteString(v); err != nil {
-			return err
-		}
-	}
-	if err := oprot.WriteMapEnd(); err != nil {
+	if err := oprot.WriteString(p.JsonString); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1059,22 +1026,16 @@ func (p *ResourceIndexResponse) DeepEqual(ano *ResourceIndexResponse) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Resource) {
+	if !p.Field1DeepEqual(ano.JsonString) {
 		return false
 	}
 	return true
 }
 
-func (p *ResourceIndexResponse) Field1DeepEqual(src Data) bool {
+func (p *ResourceIndexResponse) Field1DeepEqual(src string) bool {
 
-	if len(p.Resource) != len(src) {
+	if strings.Compare(p.JsonString, src) != 0 {
 		return false
-	}
-	for k, v := range p.Resource {
-		_src := src[k]
-		if strings.Compare(v, _src) != 0 {
-			return false
-		}
 	}
 	return true
 }

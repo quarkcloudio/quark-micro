@@ -4,7 +4,7 @@ package resourceindex
 
 import (
 	server "github.com/cloudwego/kitex/server"
-	admin "github.com/quarkcms/quark-hertz/kitex_gen/admin"
+	admin "github.com/quarkcms/quark-hertz/cmd/admin/rpc/kitex_gen/admin"
 )
 
 // NewInvoker creates a server.Invoker with the given handler and options.
