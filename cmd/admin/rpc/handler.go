@@ -2,30 +2,40 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 
 	admin "github.com/quarkcms/quark-hertz/cmd/admin/rpc/kitex_gen/admin"
+	"github.com/quarkcms/quark-hertz/cmd/admin/rpc/service"
+	"github.com/quarkcms/quark-hertz/pkg/resource"
 )
 
 // CombineServiceImpl implements the last service interface defined in the IDL.
 type CombineServiceImpl struct{}
 
-// DashboardHandle implements the DashboardImpl interface.
-func (s *CombineServiceImpl) DashboardHandle(ctx context.Context, req *admin.DashboardRequest) (resp *admin.DashboardResponse, err error) {
-	// TODO: Your code here...
-	return
-}
+// ResourceHandle implements the ResourceImpl interface.
+func (s *CombineServiceImpl) ResourceHandle(ctx context.Context, req *admin.ResourceRequest) (resp *admin.ResourceResponse, err error) {
+	request := &resource.Request{
+		Method:   req.Request.Method,
+		FullPath: req.Request.FullPath,
+		Host:     req.Request.Host,
+		Path:     req.Request.Path,
+		Query:    req.Request.Query,
+		Body:     req.Request.Body,
+	}
 
-// ResourceIndexhandle implements the ResourceIndexImpl interface.
-func (s *CombineServiceImpl) ResourceIndexhandle(ctx context.Context, req *admin.ResourceIndexRequest) (resp *admin.ResourceIndexResponse, err error) {
-	query := req.Request.Query
-	body := req.Request.Body
-	resource := req.Resource
+	builder := resource.New(&resource.Config{
+		Request:   request,
+		Providers: service.Providers,
+	})
 
-	fmt.Print(query)
-	fmt.Print(body)
+	data := builder.Run()
 
-	return &admin.ResourceIndexResponse{
-		RespBody: resource,
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return &admin.ResourceResponse{}, err
+	}
+
+	return &admin.ResourceResponse{
+		RespBody: jsonData,
 	}, nil
 }

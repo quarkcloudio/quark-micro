@@ -16,14 +16,8 @@ import (
 	"github.com/quarkcms/quark-hertz/pkg/msg"
 )
 
-// 资源列表
-func ResourceIndex(ctx context.Context, c *app.RequestContext) {
-	resourceName := c.Param("resource")
-	if resourceName == "" {
-		c.JSON(200, msg.Error("参数错误", ""))
-		return
-	}
-
+// 登录
+func Login(ctx context.Context, c *app.RequestContext) {
 	requestClient, err := resource.NewClient("resource", client.WithHostPorts("0.0.0.0:8888"))
 	if err != nil {
 		log.Fatal(err)
