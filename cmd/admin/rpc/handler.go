@@ -15,12 +15,12 @@ type CombineServiceImpl struct{}
 // ResourceHandle implements the ResourceImpl interface.
 func (s *CombineServiceImpl) ResourceHandle(ctx context.Context, req *admin.ResourceRequest) (resp *admin.ResourceResponse, err error) {
 	request := &resource.Request{
-		Method:   req.Request.Method,
-		FullPath: req.Request.FullPath,
-		Host:     req.Request.Host,
-		Path:     req.Request.Path,
-		Query:    req.Request.Query,
-		Body:     req.Request.Body,
+		MethodString:   req.Request.MethodString,
+		FullPathString: req.Request.FullPathString,
+		HostString:     req.Request.HostString,
+		PathString:     req.Request.PathString,
+		QueryString:    req.Request.QueryString,
+		BodyBuffer:     req.Request.BodyBuffer,
 	}
 
 	builder := resource.New(&resource.Config{

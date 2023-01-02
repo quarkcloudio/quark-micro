@@ -116,8 +116,22 @@ func (p *Request) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 6:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				l, err = p.FastReadField6(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 7:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField7(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -167,12 +181,12 @@ ReadStructEndError:
 func (p *Request) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadBinary(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 
-		p.Method = []byte(v)
+		p.MethodString = v
 
 	}
 	return offset, nil
@@ -186,7 +200,7 @@ func (p *Request) FastReadField2(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.FullPath = v
+		p.FullPathString = v
 
 	}
 	return offset, nil
@@ -195,12 +209,12 @@ func (p *Request) FastReadField2(buf []byte) (int, error) {
 func (p *Request) FastReadField3(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadBinary(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 
-		p.Host = []byte(v)
+		p.HostString = v
 
 	}
 	return offset, nil
@@ -209,12 +223,12 @@ func (p *Request) FastReadField3(buf []byte) (int, error) {
 func (p *Request) FastReadField4(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadBinary(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 
-		p.Path = []byte(v)
+		p.PathString = v
 
 	}
 	return offset, nil
@@ -223,12 +237,12 @@ func (p *Request) FastReadField4(buf []byte) (int, error) {
 func (p *Request) FastReadField5(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadBinary(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 
-		p.Query = []byte(v)
+		p.QueryString = v
 
 	}
 	return offset, nil
@@ -237,12 +251,67 @@ func (p *Request) FastReadField5(buf []byte) (int, error) {
 func (p *Request) FastReadField6(buf []byte) (int, error) {
 	offset := 0
 
+	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	p.Params = make([]map[string]string, 0, size)
+	for i := 0; i < size; i++ {
+		_, _, size, l, err := bthrift.Binary.ReadMapBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			return offset, err
+		}
+		_elem := make(map[string]string, size)
+		for i := 0; i < size; i++ {
+			var _key string
+			if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+				return offset, err
+			} else {
+				offset += l
+
+				_key = v
+
+			}
+
+			var _val string
+			if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+				return offset, err
+			} else {
+				offset += l
+
+				_val = v
+
+			}
+
+			_elem[_key] = _val
+		}
+		if l, err := bthrift.Binary.ReadMapEnd(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+		}
+
+		p.Params = append(p.Params, _elem)
+	}
+	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	return offset, nil
+}
+
+func (p *Request) FastReadField7(buf []byte) (int, error) {
+	offset := 0
+
 	if v, l, err := bthrift.Binary.ReadBinary(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 
-		p.Body = []byte(v)
+		p.BodyBuffer = []byte(v)
 
 	}
 	return offset, nil
@@ -263,6 +332,7 @@ func (p *Request) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter)
 		offset += p.fastWriteField4(buf[offset:], binaryWriter)
 		offset += p.fastWriteField5(buf[offset:], binaryWriter)
 		offset += p.fastWriteField6(buf[offset:], binaryWriter)
+		offset += p.fastWriteField7(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -279,6 +349,7 @@ func (p *Request) BLength() int {
 		l += p.field4Length()
 		l += p.field5Length()
 		l += p.field6Length()
+		l += p.field7Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -287,8 +358,8 @@ func (p *Request) BLength() int {
 
 func (p *Request) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "method", thrift.STRING, 1)
-	offset += bthrift.Binary.WriteBinaryNocopy(buf[offset:], binaryWriter, []byte(p.Method))
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "methodString", thrift.STRING, 1)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.MethodString)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -296,8 +367,8 @@ func (p *Request) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter)
 
 func (p *Request) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "fullPath", thrift.STRING, 2)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FullPath)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "fullPathString", thrift.STRING, 2)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FullPathString)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -305,8 +376,8 @@ func (p *Request) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter)
 
 func (p *Request) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "host", thrift.STRING, 3)
-	offset += bthrift.Binary.WriteBinaryNocopy(buf[offset:], binaryWriter, []byte(p.Host))
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "hostString", thrift.STRING, 3)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.HostString)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -314,8 +385,8 @@ func (p *Request) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter)
 
 func (p *Request) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "path", thrift.STRING, 4)
-	offset += bthrift.Binary.WriteBinaryNocopy(buf[offset:], binaryWriter, []byte(p.Path))
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "pathString", thrift.STRING, 4)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.PathString)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -323,8 +394,8 @@ func (p *Request) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter)
 
 func (p *Request) fastWriteField5(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "query", thrift.STRING, 5)
-	offset += bthrift.Binary.WriteBinaryNocopy(buf[offset:], binaryWriter, []byte(p.Query))
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "queryString", thrift.STRING, 5)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.QueryString)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -332,8 +403,36 @@ func (p *Request) fastWriteField5(buf []byte, binaryWriter bthrift.BinaryWriter)
 
 func (p *Request) fastWriteField6(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "body", thrift.STRING, 6)
-	offset += bthrift.Binary.WriteBinaryNocopy(buf[offset:], binaryWriter, []byte(p.Body))
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "params", thrift.LIST, 6)
+	listBeginOffset := offset
+	offset += bthrift.Binary.ListBeginLength(thrift.MAP, 0)
+	var length int
+	for _, v := range p.Params {
+		length++
+		mapBeginOffset := offset
+		offset += bthrift.Binary.MapBeginLength(thrift.STRING, thrift.STRING, 0)
+		var length int
+		for k, v := range v {
+			length++
+
+			offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, k)
+
+			offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, v)
+
+		}
+		bthrift.Binary.WriteMapBegin(buf[mapBeginOffset:], thrift.STRING, thrift.STRING, length)
+		offset += bthrift.Binary.WriteMapEnd(buf[offset:])
+	}
+	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.MAP, length)
+	offset += bthrift.Binary.WriteListEnd(buf[offset:])
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *Request) fastWriteField7(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "bodyBuffer", thrift.STRING, 7)
+	offset += bthrift.Binary.WriteBinaryNocopy(buf[offset:], binaryWriter, []byte(p.BodyBuffer))
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -341,8 +440,8 @@ func (p *Request) fastWriteField6(buf []byte, binaryWriter bthrift.BinaryWriter)
 
 func (p *Request) field1Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("method", thrift.STRING, 1)
-	l += bthrift.Binary.BinaryLengthNocopy([]byte(p.Method))
+	l += bthrift.Binary.FieldBeginLength("methodString", thrift.STRING, 1)
+	l += bthrift.Binary.StringLengthNocopy(p.MethodString)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -350,8 +449,8 @@ func (p *Request) field1Length() int {
 
 func (p *Request) field2Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("fullPath", thrift.STRING, 2)
-	l += bthrift.Binary.StringLengthNocopy(p.FullPath)
+	l += bthrift.Binary.FieldBeginLength("fullPathString", thrift.STRING, 2)
+	l += bthrift.Binary.StringLengthNocopy(p.FullPathString)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -359,8 +458,8 @@ func (p *Request) field2Length() int {
 
 func (p *Request) field3Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("host", thrift.STRING, 3)
-	l += bthrift.Binary.BinaryLengthNocopy([]byte(p.Host))
+	l += bthrift.Binary.FieldBeginLength("hostString", thrift.STRING, 3)
+	l += bthrift.Binary.StringLengthNocopy(p.HostString)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -368,8 +467,8 @@ func (p *Request) field3Length() int {
 
 func (p *Request) field4Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("path", thrift.STRING, 4)
-	l += bthrift.Binary.BinaryLengthNocopy([]byte(p.Path))
+	l += bthrift.Binary.FieldBeginLength("pathString", thrift.STRING, 4)
+	l += bthrift.Binary.StringLengthNocopy(p.PathString)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -377,8 +476,8 @@ func (p *Request) field4Length() int {
 
 func (p *Request) field5Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("query", thrift.STRING, 5)
-	l += bthrift.Binary.BinaryLengthNocopy([]byte(p.Query))
+	l += bthrift.Binary.FieldBeginLength("queryString", thrift.STRING, 5)
+	l += bthrift.Binary.StringLengthNocopy(p.QueryString)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -386,8 +485,28 @@ func (p *Request) field5Length() int {
 
 func (p *Request) field6Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("body", thrift.STRING, 6)
-	l += bthrift.Binary.BinaryLengthNocopy([]byte(p.Body))
+	l += bthrift.Binary.FieldBeginLength("params", thrift.LIST, 6)
+	l += bthrift.Binary.ListBeginLength(thrift.MAP, len(p.Params))
+	for _, v := range p.Params {
+		l += bthrift.Binary.MapBeginLength(thrift.STRING, thrift.STRING, len(v))
+		for k, v := range v {
+
+			l += bthrift.Binary.StringLengthNocopy(k)
+
+			l += bthrift.Binary.StringLengthNocopy(v)
+
+		}
+		l += bthrift.Binary.MapEndLength()
+	}
+	l += bthrift.Binary.ListEndLength()
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *Request) field7Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("bodyBuffer", thrift.STRING, 7)
+	l += bthrift.Binary.BinaryLengthNocopy([]byte(p.BodyBuffer))
 
 	l += bthrift.Binary.FieldEndLength()
 	return l

@@ -36,12 +36,12 @@ func ResourceIndex(ctx context.Context, c *app.RequestContext) {
 
 	req := &admin.ResourceRequest{
 		Request: &admin.Request{
-			Method:   c.Method(),
-			Host:     c.Host(),
-			FullPath: c.FullPath(),
-			Path:     c.Path(),
-			Query:    c.Request.QueryString(),
-			Body:     body,
+			MethodString:   string(c.Method()),
+			HostString:     string(c.Host()),
+			FullPathString: string(c.FullPath()),
+			PathString:     string(c.Path()),
+			QueryString:    string(c.Request.QueryString()),
+			BodyBuffer:     body,
 		},
 	}
 	resp, err := requestClient.ResourceHandle(context.Background(), req, callopt.WithRPCTimeout(3*time.Second))

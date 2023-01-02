@@ -2,12 +2,13 @@ namespace go admin
 
 // 类型定义
 struct Request {
-  1: binary method
-  2: string fullPath
-  3: binary host
-  4: binary path
-  5: binary query
-  6: binary body
+  1: string methodString // 请求方法
+  2: string fullPathString // 路由
+  3: string hostString // 主机地址
+  4: string pathString // URL路径
+  5: string queryString // 请求参数
+  6: list<map<string, string>> params  // URL param
+  7: binary bodyBuffer // 请求的Body数据
 }
 
 struct ResourceRequest {

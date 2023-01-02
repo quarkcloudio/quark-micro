@@ -11,12 +11,13 @@ import (
 )
 
 type Request struct {
-	Method   []byte `thrift:"method,1" frugal:"1,default,binary" json:"method"`
-	FullPath string `thrift:"fullPath,2" frugal:"2,default,string" json:"fullPath"`
-	Host     []byte `thrift:"host,3" frugal:"3,default,binary" json:"host"`
-	Path     []byte `thrift:"path,4" frugal:"4,default,binary" json:"path"`
-	Query    []byte `thrift:"query,5" frugal:"5,default,binary" json:"query"`
-	Body     []byte `thrift:"body,6" frugal:"6,default,binary" json:"body"`
+	MethodString   string              `thrift:"methodString,1" frugal:"1,default,string" json:"methodString"`
+	FullPathString string              `thrift:"fullPathString,2" frugal:"2,default,string" json:"fullPathString"`
+	HostString     string              `thrift:"hostString,3" frugal:"3,default,string" json:"hostString"`
+	PathString     string              `thrift:"pathString,4" frugal:"4,default,string" json:"pathString"`
+	QueryString    string              `thrift:"queryString,5" frugal:"5,default,string" json:"queryString"`
+	Params         []map[string]string `thrift:"params,6" frugal:"6,default,list<map<string:string>>" json:"params"`
+	BodyBuffer     []byte              `thrift:"bodyBuffer,7" frugal:"7,default,binary" json:"bodyBuffer"`
 }
 
 func NewRequest() *Request {
@@ -27,55 +28,63 @@ func (p *Request) InitDefault() {
 	*p = Request{}
 }
 
-func (p *Request) GetMethod() (v []byte) {
-	return p.Method
+func (p *Request) GetMethodString() (v string) {
+	return p.MethodString
 }
 
-func (p *Request) GetFullPath() (v string) {
-	return p.FullPath
+func (p *Request) GetFullPathString() (v string) {
+	return p.FullPathString
 }
 
-func (p *Request) GetHost() (v []byte) {
-	return p.Host
+func (p *Request) GetHostString() (v string) {
+	return p.HostString
 }
 
-func (p *Request) GetPath() (v []byte) {
-	return p.Path
+func (p *Request) GetPathString() (v string) {
+	return p.PathString
 }
 
-func (p *Request) GetQuery() (v []byte) {
-	return p.Query
+func (p *Request) GetQueryString() (v string) {
+	return p.QueryString
 }
 
-func (p *Request) GetBody() (v []byte) {
-	return p.Body
+func (p *Request) GetParams() (v []map[string]string) {
+	return p.Params
 }
-func (p *Request) SetMethod(val []byte) {
-	p.Method = val
+
+func (p *Request) GetBodyBuffer() (v []byte) {
+	return p.BodyBuffer
 }
-func (p *Request) SetFullPath(val string) {
-	p.FullPath = val
+func (p *Request) SetMethodString(val string) {
+	p.MethodString = val
 }
-func (p *Request) SetHost(val []byte) {
-	p.Host = val
+func (p *Request) SetFullPathString(val string) {
+	p.FullPathString = val
 }
-func (p *Request) SetPath(val []byte) {
-	p.Path = val
+func (p *Request) SetHostString(val string) {
+	p.HostString = val
 }
-func (p *Request) SetQuery(val []byte) {
-	p.Query = val
+func (p *Request) SetPathString(val string) {
+	p.PathString = val
 }
-func (p *Request) SetBody(val []byte) {
-	p.Body = val
+func (p *Request) SetQueryString(val string) {
+	p.QueryString = val
+}
+func (p *Request) SetParams(val []map[string]string) {
+	p.Params = val
+}
+func (p *Request) SetBodyBuffer(val []byte) {
+	p.BodyBuffer = val
 }
 
 var fieldIDToName_Request = map[int16]string{
-	1: "method",
-	2: "fullPath",
-	3: "host",
-	4: "path",
-	5: "query",
-	6: "body",
+	1: "methodString",
+	2: "fullPathString",
+	3: "hostString",
+	4: "pathString",
+	5: "queryString",
+	6: "params",
+	7: "bodyBuffer",
 }
 
 func (p *Request) Read(iprot thrift.TProtocol) (err error) {
@@ -148,8 +157,18 @@ func (p *Request) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 6:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField6(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 7:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField7(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -188,10 +207,10 @@ ReadStructEndError:
 }
 
 func (p *Request) ReadField1(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadBinary(); err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Method = []byte(v)
+		p.MethodString = v
 	}
 	return nil
 }
@@ -200,43 +219,84 @@ func (p *Request) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.FullPath = v
+		p.FullPathString = v
 	}
 	return nil
 }
 
 func (p *Request) ReadField3(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadBinary(); err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Host = []byte(v)
+		p.HostString = v
 	}
 	return nil
 }
 
 func (p *Request) ReadField4(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadBinary(); err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Path = []byte(v)
+		p.PathString = v
 	}
 	return nil
 }
 
 func (p *Request) ReadField5(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadBinary(); err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Query = []byte(v)
+		p.QueryString = v
 	}
 	return nil
 }
 
 func (p *Request) ReadField6(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.Params = make([]map[string]string, 0, size)
+	for i := 0; i < size; i++ {
+		_, _, size, err := iprot.ReadMapBegin()
+		if err != nil {
+			return err
+		}
+		_elem := make(map[string]string, size)
+		for i := 0; i < size; i++ {
+			var _key string
+			if v, err := iprot.ReadString(); err != nil {
+				return err
+			} else {
+				_key = v
+			}
+
+			var _val string
+			if v, err := iprot.ReadString(); err != nil {
+				return err
+			} else {
+				_val = v
+			}
+
+			_elem[_key] = _val
+		}
+		if err := iprot.ReadMapEnd(); err != nil {
+			return err
+		}
+
+		p.Params = append(p.Params, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *Request) ReadField7(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadBinary(); err != nil {
 		return err
 	} else {
-		p.Body = []byte(v)
+		p.BodyBuffer = []byte(v)
 	}
 	return nil
 }
@@ -271,6 +331,10 @@ func (p *Request) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 6
 			goto WriteFieldError
 		}
+		if err = p.writeField7(oprot); err != nil {
+			fieldId = 7
+			goto WriteFieldError
+		}
 
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
@@ -291,10 +355,10 @@ WriteStructEndError:
 }
 
 func (p *Request) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("method", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("methodString", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteBinary([]byte(p.Method)); err != nil {
+	if err := oprot.WriteString(p.MethodString); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -308,10 +372,10 @@ WriteFieldEndError:
 }
 
 func (p *Request) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("fullPath", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("fullPathString", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.FullPath); err != nil {
+	if err := oprot.WriteString(p.FullPathString); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -325,10 +389,10 @@ WriteFieldEndError:
 }
 
 func (p *Request) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("host", thrift.STRING, 3); err != nil {
+	if err = oprot.WriteFieldBegin("hostString", thrift.STRING, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteBinary([]byte(p.Host)); err != nil {
+	if err := oprot.WriteString(p.HostString); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -342,10 +406,10 @@ WriteFieldEndError:
 }
 
 func (p *Request) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("path", thrift.STRING, 4); err != nil {
+	if err = oprot.WriteFieldBegin("pathString", thrift.STRING, 4); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteBinary([]byte(p.Path)); err != nil {
+	if err := oprot.WriteString(p.PathString); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -359,10 +423,10 @@ WriteFieldEndError:
 }
 
 func (p *Request) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("query", thrift.STRING, 5); err != nil {
+	if err = oprot.WriteFieldBegin("queryString", thrift.STRING, 5); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteBinary([]byte(p.Query)); err != nil {
+	if err := oprot.WriteString(p.QueryString); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -376,10 +440,31 @@ WriteFieldEndError:
 }
 
 func (p *Request) writeField6(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("body", thrift.STRING, 6); err != nil {
+	if err = oprot.WriteFieldBegin("params", thrift.LIST, 6); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteBinary([]byte(p.Body)); err != nil {
+	if err := oprot.WriteListBegin(thrift.MAP, len(p.Params)); err != nil {
+		return err
+	}
+	for _, v := range p.Params {
+		if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRING, len(v)); err != nil {
+			return err
+		}
+		for k, v := range v {
+
+			if err := oprot.WriteString(k); err != nil {
+				return err
+			}
+
+			if err := oprot.WriteString(v); err != nil {
+				return err
+			}
+		}
+		if err := oprot.WriteMapEnd(); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -390,6 +475,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
+}
+
+func (p *Request) writeField7(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("bodyBuffer", thrift.STRING, 7); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteBinary([]byte(p.BodyBuffer)); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
 }
 
 func (p *Request) String() string {
@@ -405,65 +507,87 @@ func (p *Request) DeepEqual(ano *Request) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Method) {
+	if !p.Field1DeepEqual(ano.MethodString) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.FullPath) {
+	if !p.Field2DeepEqual(ano.FullPathString) {
 		return false
 	}
-	if !p.Field3DeepEqual(ano.Host) {
+	if !p.Field3DeepEqual(ano.HostString) {
 		return false
 	}
-	if !p.Field4DeepEqual(ano.Path) {
+	if !p.Field4DeepEqual(ano.PathString) {
 		return false
 	}
-	if !p.Field5DeepEqual(ano.Query) {
+	if !p.Field5DeepEqual(ano.QueryString) {
 		return false
 	}
-	if !p.Field6DeepEqual(ano.Body) {
+	if !p.Field6DeepEqual(ano.Params) {
+		return false
+	}
+	if !p.Field7DeepEqual(ano.BodyBuffer) {
 		return false
 	}
 	return true
 }
 
-func (p *Request) Field1DeepEqual(src []byte) bool {
+func (p *Request) Field1DeepEqual(src string) bool {
 
-	if bytes.Compare(p.Method, src) != 0 {
+	if strings.Compare(p.MethodString, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *Request) Field2DeepEqual(src string) bool {
 
-	if strings.Compare(p.FullPath, src) != 0 {
+	if strings.Compare(p.FullPathString, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *Request) Field3DeepEqual(src []byte) bool {
+func (p *Request) Field3DeepEqual(src string) bool {
 
-	if bytes.Compare(p.Host, src) != 0 {
+	if strings.Compare(p.HostString, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *Request) Field4DeepEqual(src []byte) bool {
+func (p *Request) Field4DeepEqual(src string) bool {
 
-	if bytes.Compare(p.Path, src) != 0 {
+	if strings.Compare(p.PathString, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *Request) Field5DeepEqual(src []byte) bool {
+func (p *Request) Field5DeepEqual(src string) bool {
 
-	if bytes.Compare(p.Query, src) != 0 {
+	if strings.Compare(p.QueryString, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *Request) Field6DeepEqual(src []byte) bool {
+func (p *Request) Field6DeepEqual(src []map[string]string) bool {
 
-	if bytes.Compare(p.Body, src) != 0 {
+	if len(p.Params) != len(src) {
+		return false
+	}
+	for i, v := range p.Params {
+		_src := src[i]
+		if len(v) != len(_src) {
+			return false
+		}
+		for k, v := range v {
+			_src1 := _src[k]
+			if strings.Compare(v, _src1) != 0 {
+				return false
+			}
+		}
+	}
+	return true
+}
+func (p *Request) Field7DeepEqual(src []byte) bool {
+
+	if bytes.Compare(p.BodyBuffer, src) != 0 {
 		return false
 	}
 	return true

@@ -3,12 +3,23 @@
 package main
 
 import (
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 func main() {
 	h := server.Default(server.WithHostPorts(":3000"))
 
+	// html模板位置
+	h.LoadHTMLGlob("../../../web/template/*")
+
+	// 静态文件目录
+	fs := &app.FS{Root: "../../../website", IndexNames: []string{"index.html"}}
+	h.StaticFS("/", fs)
+
+	// 注册路由
 	register(h)
+
+	// 启动服务
 	h.Spin()
 }

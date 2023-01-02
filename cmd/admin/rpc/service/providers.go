@@ -7,6 +7,6 @@ import (
 
 // 注册服务
 var Providers = []interface{}{
-	&login.Login{},
+	&login.Index{},
 	&resources.Admin{},
 }
