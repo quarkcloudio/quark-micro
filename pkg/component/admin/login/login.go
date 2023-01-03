@@ -4,15 +4,16 @@ import "github.com/quarkcms/quark-hertz/pkg/component/admin/component"
 
 type Component struct {
 	component.Element
-	Component   string                   `json:"component"`
-	Api         string                   `json:"api"`
-	Redirect    string                   `json:"redirect"`
-	Logo        interface{}              `json:"logo"`
-	Title       string                   `json:"title"`
-	Description string                   `json:"description"`
-	CaptchaUrl  string                   `json:"captchaUrl"`
-	Copyright   string                   `json:"copyright"`
-	Links       []map[string]interface{} `json:"links"`
+	Component    string                   `json:"component"`
+	Api          string                   `json:"api"`
+	Redirect     string                   `json:"redirect"`
+	Logo         interface{}              `json:"logo"`
+	Title        string                   `json:"title"`
+	Description  string                   `json:"description"`
+	CaptchaIdUrl string                   `json:"captchaIdUrl"`
+	CaptchaUrl   string                   `json:"captchaUrl"`
+	Copyright    string                   `json:"copyright"`
+	Links        []map[string]interface{} `json:"links"`
 }
 
 // 初始化
@@ -58,6 +59,12 @@ func (p *Component) SetTitle(title string) *Component {
 // 描述
 func (p *Component) SetDescription(description string) *Component {
 	p.Description = description
+	return p
+}
+
+// 获取验证码ID链接
+func (p *Component) SetCaptchaIdUrl(captchaIdUrl string) *Component {
+	p.CaptchaIdUrl = captchaIdUrl
 	return p
 }
 

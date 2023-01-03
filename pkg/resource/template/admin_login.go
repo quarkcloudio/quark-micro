@@ -1,6 +1,12 @@
 package template
 
-import "github.com/quarkcms/quark-hertz/pkg/resource"
+import (
+	"bytes"
+
+	"github.com/dchest/captcha"
+	"github.com/quarkcms/quark-hertz/pkg/msg"
+	"github.com/quarkcms/quark-hertz/pkg/resource"
+)
 
 // 后台登录模板
 type AdminLoginTemplate struct {
@@ -22,14 +28,28 @@ func (p *AdminLoginTemplate) TemplateInit() *AdminLoginTemplate {
 	return p
 }
 
-// 图形验证码
-func (p *AdminLoginTemplate) Captcha(request *resource.Request) interface{} {
-
-	return p
+// 验证码ID
+func (p *AdminLoginTemplate) CaptchaId(request *resource.Request) string {
+	return captcha.NewLen(4)
 }
 
-// 执行登录方法
+// 生成验证码
+func (p *AdminLoginTemplate) Captcha(request *resource.Request) []byte {
+	id := request.Param("id")
+	writer := bytes.Buffer{}
+	captcha.WriteImage(&writer, id, 110, 38)
+
+	return writer.Bytes()
+}
+
+// 登录方法
 func (p *AdminLoginTemplate) Handle(request *resource.Request) interface{} {
 
-	return p
+	return msg.Error("请实现登录方法", "")
+}
+
+// 退出方法
+func (p *AdminLoginTemplate) Logout(request *resource.Request) interface{} {
+
+	return msg.Error("请实现退出方法", "")
 }

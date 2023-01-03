@@ -11,13 +11,13 @@ import (
 )
 
 type Request struct {
-	MethodString   string              `thrift:"methodString,1" frugal:"1,default,string" json:"methodString"`
-	FullPathString string              `thrift:"fullPathString,2" frugal:"2,default,string" json:"fullPathString"`
-	HostString     string              `thrift:"hostString,3" frugal:"3,default,string" json:"hostString"`
-	PathString     string              `thrift:"pathString,4" frugal:"4,default,string" json:"pathString"`
-	QueryString    string              `thrift:"queryString,5" frugal:"5,default,string" json:"queryString"`
-	Params         []map[string]string `thrift:"params,6" frugal:"6,default,list<map<string:string>>" json:"params"`
-	BodyBuffer     []byte              `thrift:"bodyBuffer,7" frugal:"7,default,binary" json:"bodyBuffer"`
+	MethodString   string            `thrift:"methodString,1" frugal:"1,default,string" json:"methodString"`
+	FullPathString string            `thrift:"fullPathString,2" frugal:"2,default,string" json:"fullPathString"`
+	HostString     string            `thrift:"hostString,3" frugal:"3,default,string" json:"hostString"`
+	PathString     string            `thrift:"pathString,4" frugal:"4,default,string" json:"pathString"`
+	QueryString    string            `thrift:"queryString,5" frugal:"5,default,string" json:"queryString"`
+	Params         map[string]string `thrift:"params,6" frugal:"6,default,map<string:string>" json:"params"`
+	BodyBuffer     []byte            `thrift:"bodyBuffer,7" frugal:"7,default,binary" json:"bodyBuffer"`
 }
 
 func NewRequest() *Request {
@@ -48,7 +48,7 @@ func (p *Request) GetQueryString() (v string) {
 	return p.QueryString
 }
 
-func (p *Request) GetParams() (v []map[string]string) {
+func (p *Request) GetParams() (v map[string]string) {
 	return p.Params
 }
 
@@ -70,7 +70,7 @@ func (p *Request) SetPathString(val string) {
 func (p *Request) SetQueryString(val string) {
 	p.QueryString = val
 }
-func (p *Request) SetParams(val []map[string]string) {
+func (p *Request) SetParams(val map[string]string) {
 	p.Params = val
 }
 func (p *Request) SetBodyBuffer(val []byte) {
@@ -157,7 +157,7 @@ func (p *Request) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 6:
-			if fieldTypeId == thrift.LIST {
+			if fieldTypeId == thrift.MAP {
 				if err = p.ReadField6(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -252,41 +252,29 @@ func (p *Request) ReadField5(iprot thrift.TProtocol) error {
 }
 
 func (p *Request) ReadField6(iprot thrift.TProtocol) error {
-	_, size, err := iprot.ReadListBegin()
+	_, _, size, err := iprot.ReadMapBegin()
 	if err != nil {
 		return err
 	}
-	p.Params = make([]map[string]string, 0, size)
+	p.Params = make(map[string]string, size)
 	for i := 0; i < size; i++ {
-		_, _, size, err := iprot.ReadMapBegin()
-		if err != nil {
+		var _key string
+		if v, err := iprot.ReadString(); err != nil {
 			return err
+		} else {
+			_key = v
 		}
-		_elem := make(map[string]string, size)
-		for i := 0; i < size; i++ {
-			var _key string
-			if v, err := iprot.ReadString(); err != nil {
-				return err
-			} else {
-				_key = v
-			}
 
-			var _val string
-			if v, err := iprot.ReadString(); err != nil {
-				return err
-			} else {
-				_val = v
-			}
-
-			_elem[_key] = _val
-		}
-		if err := iprot.ReadMapEnd(); err != nil {
+		var _val string
+		if v, err := iprot.ReadString(); err != nil {
 			return err
+		} else {
+			_val = v
 		}
 
-		p.Params = append(p.Params, _elem)
+		p.Params[_key] = _val
 	}
-	if err := iprot.ReadListEnd(); err != nil {
+	if err := iprot.ReadMapEnd(); err != nil {
 		return err
 	}
 	return nil
@@ -440,31 +428,23 @@ WriteFieldEndError:
 }
 
 func (p *Request) writeField6(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("params", thrift.LIST, 6); err != nil {
+	if err = oprot.WriteFieldBegin("params", thrift.MAP, 6); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteListBegin(thrift.MAP, len(p.Params)); err != nil {
+	if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRING, len(p.Params)); err != nil {
 		return err
 	}
-	for _, v := range p.Params {
-		if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRING, len(v)); err != nil {
+	for k, v := range p.Params {
+
+		if err := oprot.WriteString(k); err != nil {
 			return err
 		}
-		for k, v := range v {
 
-			if err := oprot.WriteString(k); err != nil {
-				return err
-			}
-
-			if err := oprot.WriteString(v); err != nil {
-				return err
-			}
-		}
-		if err := oprot.WriteMapEnd(); err != nil {
+		if err := oprot.WriteString(v); err != nil {
 			return err
 		}
 	}
-	if err := oprot.WriteListEnd(); err != nil {
+	if err := oprot.WriteMapEnd(); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -566,21 +546,15 @@ func (p *Request) Field5DeepEqual(src string) bool {
 	}
 	return true
 }
-func (p *Request) Field6DeepEqual(src []map[string]string) bool {
+func (p *Request) Field6DeepEqual(src map[string]string) bool {
 
 	if len(p.Params) != len(src) {
 		return false
 	}
-	for i, v := range p.Params {
-		_src := src[i]
-		if len(v) != len(_src) {
+	for k, v := range p.Params {
+		_src := src[k]
+		if strings.Compare(v, _src) != 0 {
 			return false
-		}
-		for k, v := range v {
-			_src1 := _src[k]
-			if strings.Compare(v, _src1) != 0 {
-				return false
-			}
 		}
 	}
 	return true
@@ -931,6 +905,8 @@ func (p *ResourceResponse) Field1DeepEqual(src []byte) bool {
 
 type Resource interface {
 	ResourceHandle(ctx context.Context, req *ResourceRequest) (r *ResourceResponse, err error)
+
+	CaptchaHandle(ctx context.Context, req *ResourceRequest) (r *ResourceResponse, err error)
 }
 
 type ResourceClient struct {
@@ -968,6 +944,15 @@ func (p *ResourceClient) ResourceHandle(ctx context.Context, req *ResourceReques
 	}
 	return _result.GetSuccess(), nil
 }
+func (p *ResourceClient) CaptchaHandle(ctx context.Context, req *ResourceRequest) (r *ResourceResponse, err error) {
+	var _args ResourceCaptchaHandleArgs
+	_args.Req = req
+	var _result ResourceCaptchaHandleResult
+	if err = p.Client_().Call(ctx, "captchaHandle", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
 
 type ResourceProcessor struct {
 	processorMap map[string]thrift.TProcessorFunction
@@ -990,6 +975,7 @@ func (p *ResourceProcessor) ProcessorMap() map[string]thrift.TProcessorFunction 
 func NewResourceProcessor(handler Resource) *ResourceProcessor {
 	self := &ResourceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
 	self.AddToProcessorMap("resourceHandle", &resourceProcessorResourceHandle{handler: handler})
+	self.AddToProcessorMap("captchaHandle", &resourceProcessorCaptchaHandle{handler: handler})
 	return self
 }
 func (p *ResourceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -1041,6 +1027,54 @@ func (p *resourceProcessorResourceHandle) Process(ctx context.Context, seqId int
 		result.Success = retval
 	}
 	if err2 = oprot.WriteMessageBegin("resourceHandle", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type resourceProcessorCaptchaHandle struct {
+	handler Resource
+}
+
+func (p *resourceProcessorCaptchaHandle) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := ResourceCaptchaHandleArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("captchaHandle", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := ResourceCaptchaHandleResult{}
+	var retval *ResourceResponse
+	if retval, err2 = p.handler.CaptchaHandle(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing captchaHandle: "+err2.Error())
+		oprot.WriteMessageBegin("captchaHandle", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = retval
+	}
+	if err2 = oprot.WriteMessageBegin("captchaHandle", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -1397,6 +1431,352 @@ func (p *ResourceResourceHandleResult) DeepEqual(ano *ResourceResourceHandleResu
 }
 
 func (p *ResourceResourceHandleResult) Field0DeepEqual(src *ResourceResponse) bool {
+
+	if !p.Success.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+
+type ResourceCaptchaHandleArgs struct {
+	Req *ResourceRequest `thrift:"req,1" frugal:"1,default,ResourceRequest" json:"req"`
+}
+
+func NewResourceCaptchaHandleArgs() *ResourceCaptchaHandleArgs {
+	return &ResourceCaptchaHandleArgs{}
+}
+
+func (p *ResourceCaptchaHandleArgs) InitDefault() {
+	*p = ResourceCaptchaHandleArgs{}
+}
+
+var ResourceCaptchaHandleArgs_Req_DEFAULT *ResourceRequest
+
+func (p *ResourceCaptchaHandleArgs) GetReq() (v *ResourceRequest) {
+	if !p.IsSetReq() {
+		return ResourceCaptchaHandleArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *ResourceCaptchaHandleArgs) SetReq(val *ResourceRequest) {
+	p.Req = val
+}
+
+var fieldIDToName_ResourceCaptchaHandleArgs = map[int16]string{
+	1: "req",
+}
+
+func (p *ResourceCaptchaHandleArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ResourceCaptchaHandleArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ResourceCaptchaHandleArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ResourceCaptchaHandleArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewResourceRequest()
+	if err := p.Req.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ResourceCaptchaHandleArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("captchaHandle_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ResourceCaptchaHandleArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Req.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *ResourceCaptchaHandleArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ResourceCaptchaHandleArgs(%+v)", *p)
+}
+
+func (p *ResourceCaptchaHandleArgs) DeepEqual(ano *ResourceCaptchaHandleArgs) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.Req) {
+		return false
+	}
+	return true
+}
+
+func (p *ResourceCaptchaHandleArgs) Field1DeepEqual(src *ResourceRequest) bool {
+
+	if !p.Req.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+
+type ResourceCaptchaHandleResult struct {
+	Success *ResourceResponse `thrift:"success,0,optional" frugal:"0,optional,ResourceResponse" json:"success,omitempty"`
+}
+
+func NewResourceCaptchaHandleResult() *ResourceCaptchaHandleResult {
+	return &ResourceCaptchaHandleResult{}
+}
+
+func (p *ResourceCaptchaHandleResult) InitDefault() {
+	*p = ResourceCaptchaHandleResult{}
+}
+
+var ResourceCaptchaHandleResult_Success_DEFAULT *ResourceResponse
+
+func (p *ResourceCaptchaHandleResult) GetSuccess() (v *ResourceResponse) {
+	if !p.IsSetSuccess() {
+		return ResourceCaptchaHandleResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *ResourceCaptchaHandleResult) SetSuccess(x interface{}) {
+	p.Success = x.(*ResourceResponse)
+}
+
+var fieldIDToName_ResourceCaptchaHandleResult = map[int16]string{
+	0: "success",
+}
+
+func (p *ResourceCaptchaHandleResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ResourceCaptchaHandleResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ResourceCaptchaHandleResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ResourceCaptchaHandleResult) ReadField0(iprot thrift.TProtocol) error {
+	p.Success = NewResourceResponse()
+	if err := p.Success.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ResourceCaptchaHandleResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("captchaHandle_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ResourceCaptchaHandleResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.Success.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *ResourceCaptchaHandleResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ResourceCaptchaHandleResult(%+v)", *p)
+}
+
+func (p *ResourceCaptchaHandleResult) DeepEqual(ano *ResourceCaptchaHandleResult) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field0DeepEqual(ano.Success) {
+		return false
+	}
+	return true
+}
+
+func (p *ResourceCaptchaHandleResult) Field0DeepEqual(src *ResourceResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false

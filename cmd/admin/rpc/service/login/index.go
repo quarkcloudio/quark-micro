@@ -1,6 +1,7 @@
 package login
 
 import (
+	"github.com/quarkcms/quark-hertz/pkg/msg"
 	"github.com/quarkcms/quark-hertz/pkg/resource"
 	"github.com/quarkcms/quark-hertz/pkg/resource/template"
 )
@@ -24,20 +25,20 @@ func (p *Index) Init(request *resource.Request) interface{} {
 	// 登录页面描述
 	p.Description = "信息丰富的世界里，唯一稀缺的就是人类的注意力"
 
-	// 返回登录页面
+	// 登录后跳转地址
 	p.Redirect = "/index?api=/api/admin/dashboard/index"
 
 	return p
 }
 
-// 图形验证码
-func (p *Index) Captcha(request *resource.Request) interface{} {
-
-	return p
-}
-
-// 执行登录方法
+// 登录方法
 func (p *Index) Handle(request *resource.Request) interface{} {
 
-	return p
+	return msg.Error("请实现登录方法", "")
+}
+
+// 退出方法
+func (p *Index) Logout(request *resource.Request) interface{} {
+
+	return msg.Success("退出成功", "", "")
 }

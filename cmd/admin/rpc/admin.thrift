@@ -7,7 +7,7 @@ struct Request {
   3: string hostString // 主机地址
   4: string pathString // URL路径
   5: string queryString // 请求参数
-  6: list<map<string, string>> params  // URL param
+  6: map<string, string> params  // URL param
   7: binary bodyBuffer // 请求的Body数据
 }
 
@@ -21,5 +21,6 @@ struct ResourceResponse {
 
 // 资源服务
 service Resource {
-    ResourceResponse resourceHandle(1: ResourceRequest req)
+    ResourceResponse resourceHandle(1: ResourceRequest req) // 通用资源服务
+    ResourceResponse captchaHandle(1: ResourceRequest req) // 生成验证码服务
 }

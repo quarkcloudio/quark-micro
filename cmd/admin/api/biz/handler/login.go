@@ -17,7 +17,7 @@ import (
 )
 
 // 登录
-func Login(ctx context.Context, c *app.RequestContext) {
+func LoginIndex(ctx context.Context, c *app.RequestContext) {
 	requestClient, err := resource.NewClient("resource", client.WithHostPorts("0.0.0.0:8888"))
 	if err != nil {
 		log.Fatal(err)
@@ -52,4 +52,111 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	}
 
 	c.JSON(200, data)
+}
+
+// 执行登录
+func LoginHandle(ctx context.Context, c *app.RequestContext) {
+	requestClient, err := resource.NewClient("resource", client.WithHostPorts("0.0.0.0:8888"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	body, err := c.Body()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req := &admin.ResourceRequest{
+		Request: &admin.Request{
+			MethodString:   string(c.Method()),
+			HostString:     string(c.Host()),
+			FullPathString: string(c.FullPath()),
+			PathString:     string(c.Path()),
+			QueryString:    string(c.Request.QueryString()),
+			BodyBuffer:     body,
+		},
+	}
+	resp, err := requestClient.ResourceHandle(context.Background(), req, callopt.WithRPCTimeout(3*time.Second))
+	if err != nil {
+		c.JSON(200, msg.Error("操作失败", err.Error()))
+		return
+	}
+
+	data := map[string]interface{}{}
+	err = json.Unmarshal(resp.RespBody, &data)
+	if err != nil {
+		c.JSON(200, msg.Error("操作失败", err.Error()))
+		return
+	}
+
+	c.JSON(200, data)
+}
+
+// 验证码ID
+func LoginCaptchaId(ctx context.Context, c *app.RequestContext) {
+	requestClient, err := resource.NewClient("resource", client.WithHostPorts("0.0.0.0:8888"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	body, err := c.Body()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req := &admin.ResourceRequest{
+		Request: &admin.Request{
+			MethodString:   string(c.Method()),
+			HostString:     string(c.Host()),
+			FullPathString: string(c.FullPath()),
+			PathString:     string(c.Path()),
+			QueryString:    string(c.Request.QueryString()),
+			BodyBuffer:     body,
+		},
+	}
+	resp, err := requestClient.ResourceHandle(context.Background(), req, callopt.WithRPCTimeout(3*time.Second))
+	if err != nil {
+		c.JSON(200, msg.Error("操作失败", err.Error()))
+		return
+	}
+
+	data := map[string]interface{}{}
+	err = json.Unmarshal(resp.RespBody, &data)
+	if err != nil {
+		c.JSON(200, msg.Error("操作失败", err.Error()))
+		return
+	}
+
+	c.JSON(200, msg.Success("获取成功", "", data))
+}
+
+// 创建验证码
+func LoginCaptcha(ctx context.Context, c *app.RequestContext) {
+	requestClient, err := resource.NewClient("resource", client.WithHostPorts("0.0.0.0:8888"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	body, err := c.Body()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req := &admin.ResourceRequest{
+		Request: &admin.Request{
+			MethodString:   string(c.Method()),
+			HostString:     string(c.Host()),
+			FullPathString: string(c.FullPath()),
+			PathString:     string(c.Path()),
+			QueryString:    string(c.Request.QueryString()),
+			BodyBuffer:     body,
+		},
+	}
+	resp, err := requestClient.CaptchaHandle(context.Background(), req, callopt.WithRPCTimeout(3*time.Second))
+	if err != nil {
+		c.JSON(200, msg.Error("操作失败", err.Error()))
+		return
+	}
+
+	c.Write(resp.RespBody)
 }

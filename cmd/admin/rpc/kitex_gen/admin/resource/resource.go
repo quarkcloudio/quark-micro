@@ -20,6 +20,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	handlerType := (*admin.Resource)(nil)
 	methods := map[string]kitex.MethodInfo{
 		"resourceHandle": kitex.NewMethodInfo(resourceHandleHandler, newResourceResourceHandleArgs, newResourceResourceHandleResult, false),
+		"captchaHandle":  kitex.NewMethodInfo(captchaHandleHandler, newResourceCaptchaHandleArgs, newResourceCaptchaHandleResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "admin",
@@ -53,6 +54,24 @@ func newResourceResourceHandleResult() interface{} {
 	return admin.NewResourceResourceHandleResult()
 }
 
+func captchaHandleHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*admin.ResourceCaptchaHandleArgs)
+	realResult := result.(*admin.ResourceCaptchaHandleResult)
+	success, err := handler.(admin.Resource).CaptchaHandle(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newResourceCaptchaHandleArgs() interface{} {
+	return admin.NewResourceCaptchaHandleArgs()
+}
+
+func newResourceCaptchaHandleResult() interface{} {
+	return admin.NewResourceCaptchaHandleResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -68,6 +87,16 @@ func (p *kClient) ResourceHandle(ctx context.Context, req *admin.ResourceRequest
 	_args.Req = req
 	var _result admin.ResourceResourceHandleResult
 	if err = p.c.Call(ctx, "resourceHandle", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CaptchaHandle(ctx context.Context, req *admin.ResourceRequest) (r *admin.ResourceResponse, err error) {
+	var _args admin.ResourceCaptchaHandleArgs
+	_args.Req = req
+	var _result admin.ResourceCaptchaHandleResult
+	if err = p.c.Call(ctx, "captchaHandle", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

@@ -12,6 +12,7 @@ import (
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	ResourceHandle(ctx context.Context, req *admin.ResourceRequest, callOptions ...callopt.Option) (r *admin.ResourceResponse, err error)
+	CaptchaHandle(ctx context.Context, req *admin.ResourceRequest, callOptions ...callopt.Option) (r *admin.ResourceResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -46,4 +47,9 @@ type kResourceClient struct {
 func (p *kResourceClient) ResourceHandle(ctx context.Context, req *admin.ResourceRequest, callOptions ...callopt.Option) (r *admin.ResourceResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.ResourceHandle(ctx, req)
+}
+
+func (p *kResourceClient) CaptchaHandle(ctx context.Context, req *admin.ResourceRequest, callOptions ...callopt.Option) (r *admin.ResourceResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CaptchaHandle(ctx, req)
 }

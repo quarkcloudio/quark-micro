@@ -39,3 +39,26 @@ func (s *CombineServiceImpl) ResourceHandle(ctx context.Context, req *admin.Reso
 		RespBody: jsonData,
 	}, nil
 }
+
+// CaptchaHandle implements the ResourceImpl interface.
+func (s *CombineServiceImpl) CaptchaHandle(ctx context.Context, req *admin.ResourceRequest) (resp *admin.ResourceResponse, err error) {
+	request := &resource.Request{
+		MethodString:   req.Request.MethodString,
+		FullPathString: req.Request.FullPathString,
+		HostString:     req.Request.HostString,
+		PathString:     req.Request.PathString,
+		QueryString:    req.Request.QueryString,
+		BodyBuffer:     req.Request.BodyBuffer,
+	}
+
+	builder := resource.New(&resource.Config{
+		Request:   request,
+		Providers: service.Providers,
+	})
+
+	data := builder.Run()
+
+	return &admin.ResourceResponse{
+		RespBody: data.([]byte),
+	}, nil
+}

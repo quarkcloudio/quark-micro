@@ -55,6 +55,7 @@ require (
 	github.com/aliyun/credentials-go v1.1.2 // indirect
 	github.com/clbanning/mxj/v2 v2.5.6 // indirect
 	github.com/cloudwego/hertz v0.4.2
+	github.com/dchest/captcha v1.0.0
 	github.com/elazarl/goproxy v0.0.0-20221015165544-a0805db90819 // indirect
 	github.com/gobeam/stringy v0.0.5
 	github.com/json-iterator/go v1.1.12 // indirect

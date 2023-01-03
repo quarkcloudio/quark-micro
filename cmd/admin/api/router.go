@@ -12,6 +12,10 @@ func customizedRegister(r *server.Hertz) {
 
 	// 后台路由组
 	rg := r.Group("/api/admin")
-	rg.GET("/login/:resource", handler.Login)
+	rg.GET("/login/:resource/index", handler.LoginIndex)
+	rg.POST("/login/:resource/handle", handler.LoginHandle)
+	rg.GET("/login/:resource/captchaId", handler.LoginCaptchaId)
+	rg.GET("/login/:resource/captcha/:id", handler.LoginCaptcha)
+
 	rg.GET("/:resource/index", handler.ResourceIndex)
 }
