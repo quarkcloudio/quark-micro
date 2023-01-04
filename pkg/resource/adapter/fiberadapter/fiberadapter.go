@@ -12,7 +12,7 @@ const COMPONENT_RESPONSE = "component" // 组件类型响应
 const ACTION_RESPONSE = "action"       // 行为类型响应
 const FILE_RESPONSE = "file"           // 文件类型响应
 
-// 将gofiber框架的Ctx转换为资源Request适配器
+// 将gofiber框架的Ctx转换为resource框架的Request
 func RequestAdapter(ctx *fiber.Ctx) (*resource.Request, error) {
 
 	return &resource.Request{
@@ -25,7 +25,7 @@ func RequestAdapter(ctx *fiber.Ctx) (*resource.Request, error) {
 	}, nil
 }
 
-// 自动适配gofiber框架的Handler
+// 适配gofiber框架的响应
 func ResponseAdapter(builder *resource.Resource, responseType string, ctx *fiber.Ctx) error {
 	var responseError error
 	request, err := RequestAdapter(ctx)
@@ -44,13 +44,10 @@ func ResponseAdapter(builder *resource.Resource, responseType string, ctx *fiber
 
 	switch responseType {
 	case "component":
-
 		return ctx.JSON(result)
 	case "action":
-
 		return ctx.JSON(msg.Success("操作成功", "", result))
 	case "file":
-
 		return ctx.SendStream(bytes.NewReader(result.([]byte)))
 	}
 

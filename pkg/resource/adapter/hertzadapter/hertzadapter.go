@@ -10,7 +10,7 @@ const COMPONENT_RESPONSE = "component" // 组件类型响应
 const ACTION_RESPONSE = "action"       // 行为类型响应
 const FILE_RESPONSE = "file"           // 文件类型响应
 
-// 将hertz框架的RequestContext转换为资源Request适配器
+// 将hertz框架的RequestContext转换为resource框架的Request
 func RequestAdapter(ctx *app.RequestContext) (*resource.Request, error) {
 	body, err := ctx.Body()
 	if err != nil {
@@ -27,7 +27,7 @@ func RequestAdapter(ctx *app.RequestContext) (*resource.Request, error) {
 	}, nil
 }
 
-// 自动适配hertz框架Handler
+// 适配hertz框架的响应
 func ResponseAdapter(builder *resource.Resource, responseType string, ctx *app.RequestContext) {
 	request, err := RequestAdapter(ctx)
 	if err != nil {
@@ -47,13 +47,10 @@ func ResponseAdapter(builder *resource.Resource, responseType string, ctx *app.R
 
 	switch responseType {
 	case "component":
-
 		ctx.JSON(200, result)
 	case "action":
-
 		ctx.JSON(200, msg.Success("操作成功", "", result))
 	case "file":
-
 		ctx.Write(result.([]byte))
 	}
 }

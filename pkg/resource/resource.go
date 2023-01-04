@@ -4,12 +4,21 @@ import (
 	"errors"
 	"reflect"
 	"strings"
+
+	"github.com/quarkcms/quark-hertz/pkg/resource/dal"
+	"gorm.io/gorm"
 )
+
+type DBConfig struct {
+	Dialector gorm.Dialector
+	Opts      gorm.Option
+}
 
 type Config struct {
 	Providers  []interface{} // 服务列表
 	Request    *Request      // 请求数据
 	AdminRoute *AdminRoute   // 后台路由
+	DBConfig   *DBConfig     // 数据库配置
 }
 
 type Resourcer interface {
@@ -24,6 +33,17 @@ type Resource struct {
 	Request          *Request      // 请求数据
 	AdminRoute       *AdminRoute   // 后台路由
 	ResourceInstance interface{}
+}
+
+// 通用配置应用方法
+func (p *Config) DBConn() *Config {
+
+	// 初始化数据库
+	if p.DBConfig != nil {
+		dal.InitDB(p.DBConfig.Dialector, p.DBConfig.Opts)
+	}
+
+	return p
 }
 
 // 初始化对象

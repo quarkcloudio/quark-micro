@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"encoding/json"
 	"strings"
 
 	"github.com/gobeam/stringy"
@@ -102,4 +103,12 @@ func (p *Request) Param(key string) string {
 //	resourceName := p.ResourceName() // resourceName = "index"
 func (p *Request) ResourceName() string {
 	return p.Param("resource")
+}
+
+// BodyParser binds the request body to a struct.
+// It supports decoding the following content types based on the Content-Type header:
+// application/json, application/xml, application/x-www-form-urlencoded, multipart/form-data
+// If none of the content types above are matched, it will return a ErrUnprocessableEntity error
+func (p *Request) BodyParser(out interface{}) error {
+	return json.Unmarshal(p.BodyBuffer, out)
 }

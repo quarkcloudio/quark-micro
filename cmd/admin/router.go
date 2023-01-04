@@ -10,16 +10,29 @@ import (
 	handler "github.com/quarkcms/quark-hertz/cmd/admin/biz/handler"
 	"github.com/quarkcms/quark-hertz/pkg/resource"
 	"github.com/quarkcms/quark-hertz/pkg/resource/adapter/hertzadapter"
+	"github.com/quarkcms/quark-hertz/pkg/resource/dal/db"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-var builder *resource.Resource
+// 定义全局资源变量
+var config *resource.Config
 
+// 初始化
 func init() {
 
-	// 初始化
-	builder = resource.New(&resource.Config{
+	// 数据库配置信息
+	dsn := "root:Bc5HQFJc4bLjZCcC@tcp(127.0.0.1:3306)/quarkgo?charset=utf8&parseTime=True&loc=Local"
+
+	// 初始化数据库连接
+	db.Init(mysql.Open(dsn), &gorm.Config{})
+
+	// 配置资源
+	config = &resource.Config{
 		Providers: handler.Providers,
-	})
+	}
+
+	config.DBConn()
 }
 
 // customizeRegister registers customize routers.
@@ -30,20 +43,20 @@ func customizedRegister(r *server.Hertz) {
 
 	// 登录
 	rg.GET("/login/:resource/index", func(c context.Context, ctx *app.RequestContext) {
-		hertzadapter.ResponseAdapter(builder, hertzadapter.COMPONENT_RESPONSE, ctx)
+		hertzadapter.ResponseAdapter(resource.New(config), hertzadapter.COMPONENT_RESPONSE, ctx)
 	})
 	rg.POST("/login/:resource/handle", func(c context.Context, ctx *app.RequestContext) {
-		hertzadapter.ResponseAdapter(builder, hertzadapter.ACTION_RESPONSE, ctx)
+		hertzadapter.ResponseAdapter(resource.New(config), hertzadapter.ACTION_RESPONSE, ctx)
 	})
 	rg.GET("/login/:resource/captchaId", func(c context.Context, ctx *app.RequestContext) {
-		hertzadapter.ResponseAdapter(builder, hertzadapter.ACTION_RESPONSE, ctx)
+		hertzadapter.ResponseAdapter(resource.New(config), hertzadapter.ACTION_RESPONSE, ctx)
 	})
 	rg.GET("/login/:resource/captcha/:id", func(c context.Context, ctx *app.RequestContext) {
-		hertzadapter.ResponseAdapter(builder, hertzadapter.FILE_RESPONSE, ctx)
+		hertzadapter.ResponseAdapter(resource.New(config), hertzadapter.FILE_RESPONSE, ctx)
 	})
 
 	// 资源
 	rg.GET("/:resource/index", func(c context.Context, ctx *app.RequestContext) {
-		hertzadapter.ResponseAdapter(builder, "component", ctx)
+		hertzadapter.ResponseAdapter(resource.New(config), hertzadapter.COMPONENT_RESPONSE, ctx)
 	})
 }
