@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"errors"
 	"reflect"
 	"strings"
 )
@@ -42,6 +43,8 @@ func (p *Resource) Use(args interface{}) *Resource {
 	switch argsName {
 	case "*resource.AdminRoute":
 		p.AdminRoute = getAdminRouteConfig(args.(*AdminRoute))
+	case "*resource.Request":
+		p.Request = args.(*Request)
 	}
 
 	return p
@@ -67,7 +70,7 @@ func (p *Resource) IsCurrentResourceInstance(provider interface{}) bool {
 }
 
 // 设置当前实例
-func (p *Resource) SetResourceInstance(templateType string) interface{} {
+func (p *Resource) SetResourceInstance(templateType string) (interface{}, error) {
 	var resourceInstance interface{}
 
 	for _, provider := range p.Providers {
@@ -94,12 +97,17 @@ func (p *Resource) SetResourceInstance(templateType string) interface{} {
 		}
 	}
 
-	return resourceInstance
+	if resourceInstance == nil {
+		return nil, errors.New("未获取到实例")
+	}
+
+	return resourceInstance, nil
 }
 
 // 处理执行
-func (p *Resource) Run() interface{} {
-	var component interface{}
+func (p *Resource) Run() (interface{}, error) {
+	var result interface{}
+	var err error
 
 	// 获取request参数
 	currentRequest := (&Request{}).Init(p.Request)
@@ -111,29 +119,29 @@ func (p *Resource) Run() interface{} {
 		p.SetResourceInstance("adminLoginTemplate")
 
 		// 渲染页面
-		component = p.AdminLoginRender(currentRequest)
+		result, err = p.AdminLoginRender(currentRequest)
 	case p.AdminRoute.LoginCaptchaIdRoute:
 
 		// 设置当前实例
 		p.SetResourceInstance("adminLoginTemplate")
 
 		// 返回验证码ID
-		component = p.AdminLoginCaptchaId(currentRequest)
+		result, err = p.AdminLoginCaptchaId(currentRequest)
 	case p.AdminRoute.LoginCaptchaRoute:
 
 		// 设置当前实例
 		p.SetResourceInstance("adminLoginTemplate")
 
 		// 生成验证码
-		component = p.AdminLoginCaptcha(currentRequest)
+		result, err = p.AdminLoginCaptcha(currentRequest)
 	case p.AdminRoute.LoginHandleRoute:
 
 		// 设置当前实例
 		p.SetResourceInstance("adminLoginTemplate")
 
 		// 执行登录
-		component = p.AdminLoginHandle(currentRequest)
+		result, err = p.AdminLoginHandle(currentRequest)
 	}
 
-	return component
+	return result, err
 }

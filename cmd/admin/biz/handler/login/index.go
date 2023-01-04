@@ -1,7 +1,8 @@
 package login
 
 import (
-	"github.com/quarkcms/quark-hertz/pkg/msg"
+	"errors"
+
 	"github.com/quarkcms/quark-hertz/pkg/resource"
 	"github.com/quarkcms/quark-hertz/pkg/resource/template"
 )
@@ -32,13 +33,13 @@ func (p *Index) Init(request *resource.Request) interface{} {
 }
 
 // 登录方法
-func (p *Index) Handle(request *resource.Request) interface{} {
+func (p *Index) Handle(request *resource.Request) (interface{}, error) {
 
-	return msg.Error("请实现登录方法", "")
+	return nil, errors.New("请实现登录方法")
 }
 
 // 退出方法
-func (p *Index) Logout(request *resource.Request) interface{} {
+func (p *Index) Logout(request *resource.Request) (interface{}, error) {
 
-	return msg.Success("退出成功", "", "")
+	return nil, errors.New("请实现退出方法")
 }

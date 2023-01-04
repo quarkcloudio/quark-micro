@@ -2,9 +2,9 @@ package template
 
 import (
 	"bytes"
+	"errors"
 
 	"github.com/dchest/captcha"
-	"github.com/quarkcms/quark-hertz/pkg/msg"
 	"github.com/quarkcms/quark-hertz/pkg/resource"
 )
 
@@ -18,6 +18,15 @@ type AdminLoginTemplate struct {
 	Description  string      // 描述
 }
 
+// 初始化
+func (p *AdminLoginTemplate) Init(request *resource.Request) interface{} {
+
+	// 初始化模板
+	p.TemplateInit()
+
+	return p
+}
+
 // 初始化模板
 func (p *AdminLoginTemplate) TemplateInit() *AdminLoginTemplate {
 	p.TemplateType = "adminLoginTemplate"
@@ -29,27 +38,30 @@ func (p *AdminLoginTemplate) TemplateInit() *AdminLoginTemplate {
 }
 
 // 验证码ID
-func (p *AdminLoginTemplate) CaptchaId(request *resource.Request) string {
-	return captcha.NewLen(4)
+func (p *AdminLoginTemplate) CaptchaId(request *resource.Request) (interface{}, error) {
+
+	return map[string]string{
+		"captchaId": captcha.NewLen(4),
+	}, nil
 }
 
 // 生成验证码
-func (p *AdminLoginTemplate) Captcha(request *resource.Request) []byte {
+func (p *AdminLoginTemplate) Captcha(request *resource.Request) (interface{}, error) {
 	id := request.Param("id")
 	writer := bytes.Buffer{}
 	captcha.WriteImage(&writer, id, 110, 38)
 
-	return writer.Bytes()
+	return writer.Bytes(), nil
 }
 
 // 登录方法
-func (p *AdminLoginTemplate) Handle(request *resource.Request) interface{} {
+func (p *AdminLoginTemplate) Handle(request *resource.Request) (interface{}, error) {
 
-	return msg.Error("请实现登录方法", "")
+	return nil, errors.New("请实现登录方法")
 }
 
 // 退出方法
-func (p *AdminLoginTemplate) Logout(request *resource.Request) interface{} {
+func (p *AdminLoginTemplate) Logout(request *resource.Request) (interface{}, error) {
 
-	return msg.Error("请实现退出方法", "")
+	return nil, errors.New("请实现退出方法")
 }

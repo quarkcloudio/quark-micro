@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"errors"
 	"reflect"
 	"time"
 
@@ -51,10 +52,10 @@ func getAdminRouteConfig(adminRoute *AdminRoute) *AdminRoute {
 }
 
 // 后台登录页面渲染
-func (p *Resource) AdminLoginRender(request *Request) interface{} {
+func (p *Resource) AdminLoginRender(request *Request) (interface{}, error) {
 	resourceInstance := p.ResourceInstance
 	if resourceInstance == nil {
-		return nil
+		return nil, errors.New("未获取到实例")
 	}
 
 	// 默认登录接口
@@ -124,49 +125,41 @@ func (p *Resource) AdminLoginRender(request *Request) interface{} {
 		}).
 		JsonSerialize()
 
-	return component
+	return component, nil
 }
 
 // 返回验证码ID
-func (p *Resource) AdminLoginCaptchaId(request *Request) interface{} {
+func (p *Resource) AdminLoginCaptchaId(request *Request) (interface{}, error) {
 	resourceInstance := p.ResourceInstance
 	if resourceInstance == nil {
-		return nil
+		return nil, errors.New("未获取到实例")
 	}
 
-	captchaId := resourceInstance.(interface {
-		CaptchaId(request *Request) string
+	return resourceInstance.(interface {
+		CaptchaId(request *Request) (interface{}, error)
 	}).CaptchaId(request)
-
-	return map[string]string{
-		"captchaId": captchaId,
-	}
 }
 
 // 生成验证码
-func (p *Resource) AdminLoginCaptcha(request *Request) interface{} {
+func (p *Resource) AdminLoginCaptcha(request *Request) (interface{}, error) {
 	resourceInstance := p.ResourceInstance
 	if resourceInstance == nil {
-		return nil
+		return nil, errors.New("未获取到实例")
 	}
 
-	captcha := resourceInstance.(interface {
-		Captcha(request *Request) []byte
+	return resourceInstance.(interface {
+		Captcha(request *Request) (interface{}, error)
 	}).Captcha(request)
-
-	return captcha
 }
 
 // 执行登录
-func (p *Resource) AdminLoginHandle(request *Request) interface{} {
+func (p *Resource) AdminLoginHandle(request *Request) (interface{}, error) {
 	resourceInstance := p.ResourceInstance
 	if resourceInstance == nil {
-		return nil
+		return nil, errors.New("未获取到实例")
 	}
 
-	result := resourceInstance.(interface {
-		Handle(request *Request) interface{}
+	return resourceInstance.(interface {
+		Handle(request *Request) (interface{}, error)
 	}).Handle(request)
-
-	return result
 }
