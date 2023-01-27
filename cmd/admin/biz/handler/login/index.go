@@ -1,28 +1,30 @@
 package login
 
 import (
-	"errors"
-	"fmt"
+	"bytes"
 
-	"github.com/quarkcms/quark-hertz/pkg/resource"
-	"github.com/quarkcms/quark-hertz/pkg/resource/dal/db"
-	"github.com/quarkcms/quark-hertz/pkg/resource/model"
-	"github.com/quarkcms/quark-hertz/pkg/resource/template"
+	"github.com/dchest/captcha"
+	"github.com/golang-jwt/jwt/v4"
+	"github.com/quarkcms/quark-go/pkg/app/model"
+	"github.com/quarkcms/quark-go/pkg/builder"
+	"github.com/quarkcms/quark-go/pkg/builder/template/adminlogin"
+	"github.com/quarkcms/quark-go/pkg/hash"
+	"github.com/quarkcms/quark-go/pkg/msg"
 )
 
 type Index struct {
-	template.AdminLoginTemplate
+	adminlogin.Template
 }
 
 type LoginRequest struct {
-	Username string `json:"username" form:"username"`
-	Password string `json:"password" form:"password"`
-	Captcha  string `json:"captcha" form:"captcha"`
+	Username  string `json:"username" form:"username"`
+	Password  string `json:"password" form:"password"`
+	CaptchaId string `json:"captchaId" form:"captchaId"`
+	Captcha   string `json:"captcha" form:"captcha"`
 }
 
 // 初始化
-func (p *Index) Init(request *resource.Request) interface{} {
-
+func (p *Index) Init() interface{} {
 	// 初始化模板
 	p.TemplateInit()
 
@@ -36,35 +38,71 @@ func (p *Index) Init(request *resource.Request) interface{} {
 	p.Description = "信息丰富的世界里，唯一稀缺的就是人类的注意力"
 
 	// 登录后跳转地址
-	p.Redirect = "/index?api=/api/admin/dashboard/index"
+	p.Redirect = "/index?api=/api/admin/dashboard/index/index"
 
 	return p
 }
 
+// 验证码ID
+func (p *Index) CaptchaId(request *builder.Request, resource *builder.Resource, templateInstance interface{}) interface{} {
+
+	return msg.Success("获取成功", "", map[string]string{
+		"captchaId": captcha.NewLen(4),
+	})
+}
+
+// 生成验证码
+func (p *Index) Captcha(request *builder.Request, resource *builder.Resource, templateInstance interface{}) interface{} {
+	id := request.Param("id")
+	writer := bytes.Buffer{}
+	captcha.WriteImage(&writer, id, 110, 38)
+
+	return writer.Bytes()
+}
+
 // 登录方法
-func (p *Index) Handle(request *resource.Request) (interface{}, error) {
+func (p *Index) Handle(request *builder.Request, resource *builder.Resource, templateInstance interface{}) interface{} {
 	loginRequest := &LoginRequest{}
 	if err := request.BodyParser(loginRequest); err != nil {
-		return nil, err
+		return msg.Error(err.Error(), "")
+	}
+	if loginRequest.CaptchaId == "" || loginRequest.Captcha == "" {
+		return msg.Error("验证码不能为空", "")
 	}
 
-	if loginRequest.Captcha == "" {
-		return nil, errors.New("验证码不能为空！")
+	verifyResult := captcha.VerifyString(loginRequest.CaptchaId, loginRequest.Captcha)
+	if !verifyResult {
+		return msg.Error("验证码错误", "")
 	}
+	captcha.Reload(loginRequest.CaptchaId)
 
 	if loginRequest.Username == "" || loginRequest.Password == "" {
-		return nil, errors.New("用户名或密码不能为空")
+		return msg.Error("用户名或密码不能为空", "")
 	}
 
-	var admin model.Admin
-	db.DB.First(&admin)
-	fmt.Print(admin)
+	adminInfo, err := (&model.Admin{}).GetInfoByUsername(loginRequest.Username)
+	if err != nil {
+		return msg.Error(err.Error(), "")
+	}
 
-	return nil, errors.New("请实现登录方法")
+	// 检验账号和密码
+	if !hash.Check(adminInfo.Password, loginRequest.Password) {
+		return msg.Error("用户名或密码错误", "")
+	}
+
+	config := builder.GetConfig()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, (&model.Admin{}).GetClaims(adminInfo))
+
+	// 获取token字符串
+	tokenString, err := token.SignedString([]byte(config.AppKey))
+
+	return msg.Success("获取成功", "", map[string]string{
+		"token": tokenString,
+	})
 }
 
 // 退出方法
-func (p *Index) Logout(request *resource.Request) (interface{}, error) {
+func (p *Index) Logout(request *builder.Request, resource *builder.Resource, templateInstance interface{}) interface{} {
 
-	return "退出成功", nil
+	return msg.Success("退出成功", "", "")
 }
