@@ -64,14 +64,14 @@ require (
 	github.com/alibabacloud-go/tea-xml v1.1.2 // indirect
 	github.com/aliyun/credentials-go v1.1.2 // indirect
 	github.com/clbanning/mxj/v2 v2.5.6 // indirect
-	github.com/cloudwego/hertz v0.4.2
+	github.com/cloudwego/hertz v0.5.2
 	github.com/dchest/captcha v1.0.0
 	github.com/gobeam/stringy v0.0.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/quarkcms/quark-go v1.0.2
+	github.com/quarkcms/quark-go v1.1.1
 	github.com/tjfoc/gmsm v1.3.2 // indirect
 	golang.org/x/net v0.5.0 // indirect
 	gopkg.in/ini.v1 v1.56.0 // indirect
