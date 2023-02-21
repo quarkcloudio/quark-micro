@@ -4,7 +4,7 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	router "github.com/quarkcms/quark-hertz/cmd/admin/biz/router"
+	router "github.com/quarkcms/quark-micro/cmd/admin/biz/router"
 )
 
 // register registers all routers.

@@ -1,9 +1,9 @@
-package dashboards
+package dashboard
 
 import (
 	"github.com/quarkcms/quark-go/pkg/builder"
 	"github.com/quarkcms/quark-go/pkg/builder/template/admindashboard"
-	"github.com/quarkcms/quark-hertz/cmd/admin/biz/handler/metrics"
+	"github.com/quarkcms/quark-micro/cmd/admin/biz/handler/metric"
 )
 
 type Index struct {
@@ -22,14 +22,14 @@ func (p *Index) Init() interface{} {
 }
 
 // 内容
-func (p *Index) Cards(request *builder.Request) interface{} {
+func (p *Index) Cards(ctx *builder.Context) interface{} {
 
 	return []any{
-		&metrics.TotalAdmin{},
-		&metrics.TotalLog{},
-		&metrics.TotalPicture{},
-		&metrics.TotalFile{},
-		&metrics.SystemInfo{},
-		&metrics.TeamInfo{},
+		&metric.TotalAdmin{},
+		&metric.TotalLog{},
+		&metric.TotalPicture{},
+		&metric.TotalFile{},
+		&metric.SystemInfo{},
+		&metric.TeamInfo{},
 	}
 }

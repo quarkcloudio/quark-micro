@@ -10,6 +10,7 @@ import (
 	"github.com/quarkcms/quark-go/pkg/builder/template/adminlogin"
 	"github.com/quarkcms/quark-go/pkg/hash"
 	"github.com/quarkcms/quark-go/pkg/msg"
+	"github.com/quarkcms/quark-micro/config"
 )
 
 type Index struct {
@@ -32,10 +33,10 @@ func (p *Index) Init() interface{} {
 	p.Logo = false
 
 	// 登录页面标题
-	p.Title = "QuarkGo"
+	p.Title = config.Admin.Title
 
-	// 登录页面描述
-	p.SubTitle = "信息丰富的世界里，唯一稀缺的就是人类的注意力"
+	// 登录页面子标题
+	p.SubTitle = config.Admin.SubTitle
 
 	// 登录后跳转地址
 	p.Redirect = "/index?api=/api/admin/dashboard/index/index"
@@ -44,65 +45,65 @@ func (p *Index) Init() interface{} {
 }
 
 // 验证码ID
-func (p *Index) CaptchaId(request *builder.Request, resource *builder.Resource, templateInstance interface{}) interface{} {
+func (p *Index) CaptchaId(ctx *builder.Context) interface{} {
 
-	return msg.Success("获取成功", "", map[string]string{
+	return ctx.JSON(200, msg.Success("获取成功", "", map[string]string{
 		"captchaId": captcha.NewLen(4),
-	})
+	}))
 }
 
 // 生成验证码
-func (p *Index) Captcha(request *builder.Request, resource *builder.Resource, templateInstance interface{}) interface{} {
-	id := request.Param("id")
+func (p *Index) Captcha(ctx *builder.Context) interface{} {
+	id := ctx.Param("id")
 	writer := bytes.Buffer{}
 	captcha.WriteImage(&writer, id, 110, 38)
+	ctx.Write(writer.Bytes())
 
-	return writer.Bytes()
+	return nil
 }
 
 // 登录方法
-func (p *Index) Handle(request *builder.Request, resource *builder.Resource, templateInstance interface{}) interface{} {
+func (p *Index) Handle(ctx *builder.Context) interface{} {
 	loginRequest := &LoginRequest{}
-	if err := request.BodyParser(loginRequest); err != nil {
-		return msg.Error(err.Error(), "")
+	if err := ctx.BodyParser(loginRequest); err != nil {
+		return ctx.JSON(200, msg.Error(err.Error(), ""))
 	}
 	if loginRequest.CaptchaId == "" || loginRequest.Captcha == "" {
-		return msg.Error("验证码不能为空", "")
+		return ctx.JSON(200, msg.Error("验证码不能为空", ""))
 	}
 
 	verifyResult := captcha.VerifyString(loginRequest.CaptchaId, loginRequest.Captcha)
 	if !verifyResult {
-		return msg.Error("验证码错误", "")
+		return ctx.JSON(200, msg.Error("验证码错误", ""))
 	}
 	captcha.Reload(loginRequest.CaptchaId)
 
 	if loginRequest.Username == "" || loginRequest.Password == "" {
-		return msg.Error("用户名或密码不能为空", "")
+		return ctx.JSON(200, msg.Error("用户名或密码不能为空", ""))
 	}
 
 	adminInfo, err := (&model.Admin{}).GetInfoByUsername(loginRequest.Username)
 	if err != nil {
-		return msg.Error(err.Error(), "")
+		return ctx.JSON(200, msg.Error(err.Error(), ""))
 	}
 
 	// 检验账号和密码
 	if !hash.Check(adminInfo.Password, loginRequest.Password) {
-		return msg.Error("用户名或密码错误", "")
+		return ctx.JSON(200, msg.Error("用户名或密码错误", ""))
 	}
 
-	config := builder.GetConfig()
+	config := ctx.Engine.GetConfig()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, (&model.Admin{}).GetClaims(adminInfo))
 
 	// 获取token字符串
 	tokenString, err := token.SignedString([]byte(config.AppKey))
 
-	return msg.Success("获取成功", "", map[string]string{
+	return ctx.JSON(200, msg.Success("登录成功", "", map[string]string{
 		"token": tokenString,
-	})
+	}))
 }
 
 // 退出方法
-func (p *Index) Logout(request *builder.Request, resource *builder.Resource, templateInstance interface{}) interface{} {
-
-	return msg.Success("退出成功", "", "")
+func (p *Index) Logout(ctx *builder.Context) interface{} {
+	return ctx.JSON(200, msg.Success("退出成功", "", ""))
 }

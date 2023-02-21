@@ -10,13 +10,15 @@ import (
 	"github.com/quarkcms/quark-go/pkg/app/install"
 	"github.com/quarkcms/quark-go/pkg/app/middleware"
 	"github.com/quarkcms/quark-go/pkg/builder"
-	adminprovider "github.com/quarkcms/quark-hertz/cmd/admin/biz/handler"
+	"github.com/quarkcms/quark-micro/cmd/admin/biz/handler"
+	appinstall "github.com/quarkcms/quark-micro/cmd/admin/biz/install"
+	"github.com/quarkcms/quark-micro/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func main() {
-	h := server.Default(server.WithHostPorts(":3000"))
+	h := server.Default(server.WithHostPorts(config.App.Host))
 
 	// 注册路由
 	register(h)
@@ -31,25 +33,54 @@ func main() {
 	fs := &app.FS{Root: "../../website", IndexNames: []string{"index.html"}}
 	h.StaticFS("/", fs)
 
+	// 配置信息
+	var (
+		appKey     = config.App.Key
+		dbUser     = config.Mysql.Username
+		dbPassword = config.Mysql.Password
+		dbHost     = config.Mysql.Host
+		dbPort     = config.Mysql.Port
+		dbName     = config.Mysql.Database
+		dbCharset  = config.Mysql.Charset
+	)
+
 	// 数据库配置信息
-	dsn := "root:Bc5HQFJc4bLjZCcC@tcp(127.0.0.1:3306)/quarkgo?charset=utf8&parseTime=True&loc=Local"
+	dsn := dbUser + ":" + dbPassword + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=" + dbCharset + "&parseTime=True&loc=Local"
 
 	// 配置资源
-	config := &builder.Config{
-		AppKey:    "123456",
-		Providers: append(admin.Providers, adminprovider.Providers...),
+	getConfig := &builder.Config{
+		AppKey: appKey,
 		DBConfig: &builder.DBConfig{
 			Dialector: mysql.Open(dsn),
 			Opts:      &gorm.Config{},
 		},
+		Providers: append(admin.Providers, handler.Provider...),
+		AdminLayout: &builder.AdminLayout{
+			Title:        config.Admin.Title,
+			Logo:         config.Admin.Logo,
+			Layout:       config.Admin.Layout,
+			SplitMenus:   config.Admin.SplitMenus,
+			ContentWidth: config.Admin.ContentWidth,
+			PrimaryColor: config.Admin.PrimaryColor,
+			FixedHeader:  config.Admin.FixedHeader,
+			FixSiderbar:  config.Admin.FixSiderbar,
+			IconfontUrl:  config.Admin.IconfontUrl,
+			Locale:       config.Admin.Locale,
+			SiderWidth:   config.Admin.SiderWidth,
+			Copyright:    config.Admin.Copyright,
+			Links:        config.Admin.Links,
+		},
 		StaticPath: "../../website",
 	}
 
-	// 创建对象
-	b := builder.New(config)
+	// 实例化对象
+	b := builder.New(getConfig)
 
 	// 初始化安装
-	b.Use(install.Handle)
+	install.Handle()
+
+	// 初始化本项目数据库
+	appinstall.Handle()
 
 	// 中间件
 	b.Use(middleware.Handle)
