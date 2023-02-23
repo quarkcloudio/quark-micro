@@ -1,4 +1,4 @@
-namespace go post
+namespace go api
 
 struct PostRequest {
   1: string query
@@ -13,6 +13,7 @@ struct PostResponse {
 
 // 文章
 service Post {
+  
     // 获取文章列表
-    PostResponse listHandle(1: PostRequest req)
+    PostResponse getPostList(1: PostRequest req)
 }
