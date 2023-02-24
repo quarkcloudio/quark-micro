@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	h := server.Default(server.WithHostPorts(":8000"))
+	h := server.Default(server.WithHostPorts(config.App.Host))
 
 	// 配置信息
 	var (

@@ -13,6 +13,7 @@ import (
 	"github.com/cloudwego/kitex/client/callopt"
 	"github.com/quarkcms/quark-micro/cmd/post/kitex_gen/post"
 	"github.com/quarkcms/quark-micro/cmd/post/kitex_gen/post/postservice"
+	"github.com/quarkcms/quark-micro/cmd/post/rpc/config"
 )
 
 // 首页
@@ -24,7 +25,7 @@ func Index(ctx context.Context, c *app.RequestContext) {
 
 // 获取文章列表
 func List(ctx context.Context, c *app.RequestContext) {
-	postClient, err := postservice.NewClient("post", client.WithHostPorts("0.0.0.0:9000"))
+	postClient, err := postservice.NewClient("post", client.WithHostPorts(config.App.Host))
 	if err != nil {
 		log.Fatal(err)
 	}
