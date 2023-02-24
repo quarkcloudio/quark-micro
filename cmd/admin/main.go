@@ -12,7 +12,7 @@ import (
 	"github.com/quarkcms/quark-go/pkg/builder"
 	"github.com/quarkcms/quark-micro/cmd/admin/biz/handler"
 	appinstall "github.com/quarkcms/quark-micro/cmd/admin/biz/install"
-	"github.com/quarkcms/quark-micro/config"
+	"github.com/quarkcms/quark-micro/cmd/admin/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

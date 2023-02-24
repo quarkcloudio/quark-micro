@@ -10,7 +10,7 @@ import (
 	"github.com/quarkcms/quark-go/pkg/builder/template/adminlogin"
 	"github.com/quarkcms/quark-go/pkg/hash"
 	"github.com/quarkcms/quark-go/pkg/msg"
-	"github.com/quarkcms/quark-micro/config"
+	"github.com/quarkcms/quark-micro/cmd/admin/config"
 )
 
 type Index struct {

@@ -1,0 +1,6 @@
+kitexinfo:
+   ServiceName: 'post'
+   ToolVersion: 'v0.4.4'
+server:
+  addr: 0.0.0.0:8084
+  logLevel: debug
