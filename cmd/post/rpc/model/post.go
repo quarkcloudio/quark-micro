@@ -40,7 +40,7 @@ type Post struct {
 	DeletedAt     gorm.DeletedAt `json:"deleted_at"`
 }
 
-// 获取菜单的有序列表
+// 获取列表
 func (model *Post) List() (list *post.ArticleListResp, err error) {
 	var (
 		getList []*Post
