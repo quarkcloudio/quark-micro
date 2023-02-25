@@ -33,7 +33,7 @@ var Registry = &RegistryConfig{
 	Endpoint: &Endpoint{
 
 		// 服务名称
-		ServiceName: "post",
+		ServiceName: "Post",
 
 		// 方法
 		Method: "",

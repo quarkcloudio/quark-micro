@@ -45,12 +45,23 @@ func (model *Post) List() (list *post.ArticleListResp, err error) {
 	var (
 		getList []*Post
 		items   []*post.Post
+		total   int64
 	)
 
-	err = db.Client.
+	// 获取列表
+	query := db.Client.
 		Model(&model).
 		Where("type", "ARTICLE").
-		Find(&getList).Error
+		Find(&getList)
+
+	// 获取总数量
+	query.Count(&total)
+
+	// 获取错误信息
+	err = query.Error
+	if err != nil {
+		return
+	}
 
 	for _, v := range getList {
 		items = append(items, &post.Post{
@@ -61,7 +72,7 @@ func (model *Post) List() (list *post.ArticleListResp, err error) {
 
 	list = &post.ArticleListResp{
 		Items: items,
-		Total: 10,
+		Total: total,
 	}
 
 	return
