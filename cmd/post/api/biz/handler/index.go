@@ -11,9 +11,9 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
-	"github.com/quarkcms/quark-micro/cmd/post/kitex_gen/post"
-	"github.com/quarkcms/quark-micro/cmd/post/kitex_gen/post/postservice"
 	"github.com/quarkcms/quark-micro/cmd/post/rpc/config"
+	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
+	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post/postservice"
 )
 
 // 首页

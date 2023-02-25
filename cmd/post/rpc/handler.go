@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	post "github.com/quarkcms/quark-micro/cmd/post/kitex_gen/post"
+
+	post "github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
 )
 
 // PostServiceImpl implements the last service interface defined in the IDL.

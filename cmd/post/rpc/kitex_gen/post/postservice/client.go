@@ -6,7 +6,7 @@ import (
 	"context"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
-	post "github.com/quarkcms/quark-micro/cmd/post/kitex_gen/post"
+	post "github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.

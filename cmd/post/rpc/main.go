@@ -6,15 +6,15 @@ import (
 
 	"github.com/cloudwego/kitex/server"
 	"github.com/quarkcms/quark-go/pkg/dal"
-	post "github.com/quarkcms/quark-micro/cmd/post/kitex_gen/post/postservice"
 	"github.com/quarkcms/quark-micro/cmd/post/rpc/config"
+	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post/postservice"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func main() {
 	addr, _ := net.ResolveTCPAddr("tcp", config.App.Host)
-	svr := post.NewServer(new(PostServiceImpl), server.WithServiceAddr(addr))
+	svr := postservice.NewServer(new(PostServiceImpl), server.WithServiceAddr(addr))
 
 	// 配置信息
 	var (
