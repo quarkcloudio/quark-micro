@@ -4,7 +4,6 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -18,14 +17,14 @@ import (
 	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post/postservice"
 )
 
-// 获取rpc客户端
-func getClient() postservice.Client {
+// 获取请求客户端
+func newClient() postservice.Client {
 	r, err := etcd.NewEtcdResolver([]string{config.Registry.Host})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	getClient, err := postservice.NewClient(config.Endpoint.ServiceName, client.WithResolver(r))
+	getClient, err := postservice.NewClient(config.Registry.Endpoint.ServiceName, client.WithResolver(r))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,14 +42,20 @@ func Index(ctx context.Context, c *app.RequestContext) {
 // 获取文章列表
 func List(ctx context.Context, c *app.RequestContext) {
 	req := &post.ArticleListReq{}
-	resp, err := getClient().GetArticleList(context.Background(), req, callopt.WithRPCTimeout(3*time.Second))
+	resp, err := newClient().GetArticleList(context.Background(), req, callopt.WithRPCTimeout(3*time.Second))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(resp)
+	if resp == nil {
+		c.JSON(200, utils.H{
+			"message": "数据不存在！",
+		})
+		return
+	}
 
 	c.JSON(200, utils.H{
-		"message": "Hello World!",
+		"message": "获取成功！",
+		"data":    resp,
 	})
 }

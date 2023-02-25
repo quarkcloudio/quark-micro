@@ -4,6 +4,7 @@ import (
 	"context"
 
 	post "github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
+	"github.com/quarkcms/quark-micro/cmd/post/rpc/model"
 )
 
 // PostServiceImpl implements the last service interface defined in the IDL.
@@ -23,9 +24,7 @@ func (s *PostServiceImpl) GetArticleDetail(ctx context.Context, req *post.Articl
 
 // GetArticleList implements the PostServiceImpl interface.
 func (s *PostServiceImpl) GetArticleList(ctx context.Context, req *post.ArticleListReq) (resp *post.ArticleListResp, err error) {
-	resp = &post.ArticleListResp{
-		Total: 10,
-	}
+	resp, err = (&model.Post{}).List()
 
 	return
 }

@@ -41,17 +41,28 @@ type Post struct {
 }
 
 // 获取菜单的有序列表
-func (model *Post) List() (list []*post.ArticleListResp, Error error) {
-	var getList []*Post
+func (model *Post) List() (list *post.ArticleListResp, err error) {
+	var (
+		getList []*Post
+		items   []*post.Post
+	)
 
-	err := db.Client.
+	err = db.Client.
 		Model(&model).
-		Where("type", "PAGE").
-		Order("id asc").
+		Where("type", "ARTICLE").
 		Find(&getList).Error
-	if err != nil {
-		return list, err
+
+	for _, v := range getList {
+		items = append(items, &post.Post{
+			Id:   int64(v.Id),
+			Name: v.Name,
+		})
 	}
 
-	return list, nil
+	list = &post.ArticleListResp{
+		Items: items,
+		Total: 10,
+	}
+
+	return
 }
