@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/quarkcms/quark-go/pkg/dal/db"
-	"github.com/quarkcms/quark-micro/cmd/post/kitex_gen/post"
+	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
 	"gorm.io/gorm"
 )
 

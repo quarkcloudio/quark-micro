@@ -4,6 +4,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -11,10 +12,26 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
-	"github.com/quarkcms/quark-micro/cmd/post/rpc/config"
+	etcd "github.com/kitex-contrib/registry-etcd"
+	"github.com/quarkcms/quark-micro/cmd/post/api/config"
 	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
 	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post/postservice"
 )
+
+// 获取rpc客户端
+func getClient() postservice.Client {
+	r, err := etcd.NewEtcdResolver([]string{config.Registry.Host})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	getClient, err := postservice.NewClient(config.Endpoint.ServiceName, client.WithResolver(r))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return getClient
+}
 
 // 首页
 func Index(ctx context.Context, c *app.RequestContext) {
@@ -25,18 +42,15 @@ func Index(ctx context.Context, c *app.RequestContext) {
 
 // 获取文章列表
 func List(ctx context.Context, c *app.RequestContext) {
-	postClient, err := postservice.NewClient("post", client.WithHostPorts(config.App.Host))
+	req := &post.ArticleListReq{}
+	resp, err := getClient().GetArticleList(context.Background(), req, callopt.WithRPCTimeout(3*time.Second))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	req := &post.ArticleListReq{}
-	resp, err := postClient.GetArticleList(context.Background(), req, callopt.WithRPCTimeout(3*time.Second))
-	if err != nil {
-		log.Fatal(err)
-	}
+	fmt.Println(resp)
 
 	c.JSON(200, utils.H{
-		"message": resp.Items,
+		"message": "Hello World!",
 	})
 }

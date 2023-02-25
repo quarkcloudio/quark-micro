@@ -10,8 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func main() {
-	h := server.Default(server.WithHostPorts(config.App.Host))
+// 初始化数据库配置
+func dbInit() {
 
 	// 配置信息
 	var (
@@ -27,6 +27,15 @@ func main() {
 	dsn := dbUser + ":" + dbPassword + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=" + dbCharset + "&parseTime=True&loc=Local"
 
 	dal.InitDB(mysql.Open(dsn), &gorm.Config{})
+}
+
+func main() {
+
+	// 初始化数据库
+	dbInit()
+
+	// 初始化服务
+	h := server.Default(server.WithHostPorts(config.Service.Host))
 
 	register(h)
 	h.Spin()

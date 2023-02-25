@@ -23,6 +23,9 @@ func (s *PostServiceImpl) GetArticleDetail(ctx context.Context, req *post.Articl
 
 // GetArticleList implements the PostServiceImpl interface.
 func (s *PostServiceImpl) GetArticleList(ctx context.Context, req *post.ArticleListReq) (resp *post.ArticleListResp, err error) {
-	// TODO: Your code here...
+	resp = &post.ArticleListResp{
+		Total: 10,
+	}
+
 	return
 }
