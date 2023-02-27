@@ -11,9 +11,9 @@ import (
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-	GetPage(ctx context.Context, req *post.PageReq, callOptions ...callopt.Option) (r *post.PageResp, err error)
-	GetArticleDetail(ctx context.Context, req *post.ArticleDetailReq, callOptions ...callopt.Option) (r *post.ArticleDetailResp, err error)
-	GetArticleList(ctx context.Context, req *post.ArticleListReq, callOptions ...callopt.Option) (r *post.ArticleListResp, err error)
+	GetPage(ctx context.Context, req *post.PageRequest, callOptions ...callopt.Option) (r *post.PageResponse, err error)
+	GetArticleDetail(ctx context.Context, req *post.ArticleDetailRequest, callOptions ...callopt.Option) (r *post.ArticleDetailResponse, err error)
+	GetArticleList(ctx context.Context, req *post.ArticleListRequest, callOptions ...callopt.Option) (r *post.ArticleListResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -45,17 +45,17 @@ type kPostServiceClient struct {
 	*kClient
 }
 
-func (p *kPostServiceClient) GetPage(ctx context.Context, req *post.PageReq, callOptions ...callopt.Option) (r *post.PageResp, err error) {
+func (p *kPostServiceClient) GetPage(ctx context.Context, req *post.PageRequest, callOptions ...callopt.Option) (r *post.PageResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetPage(ctx, req)
 }
 
-func (p *kPostServiceClient) GetArticleDetail(ctx context.Context, req *post.ArticleDetailReq, callOptions ...callopt.Option) (r *post.ArticleDetailResp, err error) {
+func (p *kPostServiceClient) GetArticleDetail(ctx context.Context, req *post.ArticleDetailRequest, callOptions ...callopt.Option) (r *post.ArticleDetailResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetArticleDetail(ctx, req)
 }
 
-func (p *kPostServiceClient) GetArticleList(ctx context.Context, req *post.ArticleListReq, callOptions ...callopt.Option) (r *post.ArticleListResp, err error) {
+func (p *kPostServiceClient) GetArticleList(ctx context.Context, req *post.ArticleListRequest, callOptions ...callopt.Option) (r *post.ArticleListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetArticleList(ctx, req)
 }

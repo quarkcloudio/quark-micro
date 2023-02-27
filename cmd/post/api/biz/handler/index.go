@@ -7,8 +7,9 @@ import (
 	"log"
 	"time"
 
+	"github.com/quarkcms/quark-go/pkg/msg"
+
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
 	etcd "github.com/kitex-contrib/registry-etcd"
@@ -32,30 +33,43 @@ func newClient() postservice.Client {
 	return getClient
 }
 
-// 首页
-func Index(ctx context.Context, c *app.RequestContext) {
-	c.JSON(200, utils.H{
-		"message": "Hello World!",
-	})
-}
-
 // 获取文章列表
 func List(ctx context.Context, c *app.RequestContext) {
-	req := &post.ArticleListReq{}
-	resp, err := newClient().GetArticleList(context.Background(), req, callopt.WithRPCTimeout(3*time.Second))
-	if err != nil {
-		log.Fatal(err)
+
+	// 请求结构体
+	type Request struct {
+		Search   *string `query:"search" vd:"len($) >= 0"`
+		Page     int64   `query:"page" vd:"len($) >= 0"`
+		PageSize int64   `query:"page_size" vd:"len($) >= 0"`
 	}
 
-	if resp == nil {
-		c.JSON(200, utils.H{
-			"message": "数据不存在！",
-		})
+	// 定义变量
+	var req Request
+
+	// 验证并绑定值
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		c.JSON(200, msg.Error(err.Error(), ""))
 		return
 	}
 
-	c.JSON(200, utils.H{
-		"message": "获取成功！",
-		"data":    resp,
-	})
+	resp, err := newClient().GetArticleList(context.Background(),
+		&post.ArticleListRequest{
+			Search:   req.Search,
+			Page:     req.Page,
+			PageSize: req.PageSize,
+		},
+		callopt.WithRPCTimeout(3*time.Second),
+	)
+	if err != nil {
+		c.JSON(200, msg.Error(err.Error(), ""))
+		return
+	}
+
+	if resp == nil {
+		c.JSON(200, msg.Error("数据不存在", ""))
+		return
+	}
+
+	c.JSON(200, msg.Success("获取成功", "", resp))
 }

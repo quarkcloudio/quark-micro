@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/quarkcms/quark-go/pkg/dal/db"
-	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
 	"gorm.io/gorm"
 )
 
@@ -41,21 +40,42 @@ type Post struct {
 }
 
 // 获取列表
-func (model *Post) List() (list *post.ArticleListResp, err error) {
+func (model *Post) List(search *string, limit int64, offset int64, order string, categoryId int64) (items []*Post, total int64, err error) {
 	var (
-		getList []*Post
-		items   []*post.Post
-		total   int64
+		getItems []*Post
+		getTotal int64
 	)
 
-	// 获取列表
+	// 查询对象
 	query := db.Client.
 		Model(&model).
-		Where("type", "ARTICLE").
-		Find(&getList)
+		Where("type", "ARTICLE")
 
-	// 获取总数量
-	query.Count(&total)
+	if search != nil {
+		query.Where("title like ?", "%"+*search+"%")
+	}
+
+	if limit != 0 {
+		query.Limit(int(limit))
+	}
+
+	if offset != 0 {
+		query.Offset(int(offset))
+	}
+
+	if order != "" {
+		query.Order(order)
+	}
+
+	if categoryId != 0 {
+		query.Where("category_id = ?", categoryId)
+	}
+
+	// 查询列表
+	query.Find(&getItems)
+
+	// 查询总数量
+	query.Count(&getTotal)
 
 	// 获取错误信息
 	err = query.Error
@@ -63,20 +83,5 @@ func (model *Post) List() (list *post.ArticleListResp, err error) {
 		return
 	}
 
-	for _, v := range getList {
-		items = append(items, &post.Post{
-			Id:         int64(v.Id),
-			Title:      v.Title,
-			Name:       v.Name,
-			CategoryId: int64(v.CategoryId),
-			Content:    v.Content,
-		})
-	}
-
-	list = &post.ArticleListResp{
-		Items: items,
-		Total: total,
-	}
-
-	return
+	return getItems, getTotal, err
 }

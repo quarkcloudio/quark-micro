@@ -8,31 +8,33 @@ struct Post {
     5: string content
 }
 
-struct PageReq {
-    1: i64 Id (vt.gt = "0")
-    2: optional string name
-}
-
-struct PageResp {
-    1: i64 id
-}
-
-struct ArticleDetailReq {
+struct PageRequest {
     1: i64 id (vt.gt = "0")
     2: optional string name
 }
 
-struct ArticleDetailResp {
+struct PageResponse {
     1: i64 id
 }
 
-struct ArticleListReq {
-    1: optional string query
-    2: i64 offset (vt.ge = "0")
-    3: i64 limit (vt.ge = "0")
+struct ArticleDetailRequest {
+    1: i64 id (vt.gt = "0")
+    2: optional string name
 }
 
-struct ArticleListResp {
+struct ArticleDetailResponse {
+    1: i64 id
+}
+
+struct ArticleListRequest {
+    1: optional string search
+    2: i64 page (vt.ge = "1")
+    3: i64 page_size (vt.ge = "0")
+    4: string order
+    5: i64 category_id (vt.ge = "0")
+}
+
+struct ArticleListResponse {
     1: list<Post> items
     2: i64 total
 }
@@ -41,11 +43,11 @@ struct ArticleListResp {
 service PostService {
 
     // 获取单页内容
-    PageResp GetPage(1: PageReq req)
+    PageResponse GetPage(1: PageRequest req)
   
     // 获取文章详情
-    ArticleDetailResp GetArticleDetail(1: ArticleDetailReq req)
+    ArticleDetailResponse GetArticleDetail(1: ArticleDetailRequest req)
 
     // 获取文章列表
-    ArticleListResp GetArticleList(1: ArticleListReq req)
+    ArticleListResponse GetArticleList(1: ArticleListRequest req)
 }

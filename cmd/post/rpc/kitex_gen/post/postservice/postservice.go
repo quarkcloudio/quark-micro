@@ -101,7 +101,7 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) GetPage(ctx context.Context, req *post.PageReq) (r *post.PageResp, err error) {
+func (p *kClient) GetPage(ctx context.Context, req *post.PageRequest) (r *post.PageResponse, err error) {
 	var _args post.PostServiceGetPageArgs
 	_args.Req = req
 	var _result post.PostServiceGetPageResult
@@ -111,7 +111,7 @@ func (p *kClient) GetPage(ctx context.Context, req *post.PageReq) (r *post.PageR
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetArticleDetail(ctx context.Context, req *post.ArticleDetailReq) (r *post.ArticleDetailResp, err error) {
+func (p *kClient) GetArticleDetail(ctx context.Context, req *post.ArticleDetailRequest) (r *post.ArticleDetailResponse, err error) {
 	var _args post.PostServiceGetArticleDetailArgs
 	_args.Req = req
 	var _result post.PostServiceGetArticleDetailResult
@@ -121,7 +121,7 @@ func (p *kClient) GetArticleDetail(ctx context.Context, req *post.ArticleDetailR
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetArticleList(ctx context.Context, req *post.ArticleListReq) (r *post.ArticleListResp, err error) {
+func (p *kClient) GetArticleList(ctx context.Context, req *post.ArticleListRequest) (r *post.ArticleListResponse, err error) {
 	var _args post.PostServiceGetArticleListArgs
 	_args.Req = req
 	var _result post.PostServiceGetArticleListResult

@@ -11,20 +11,36 @@ import (
 type PostServiceImpl struct{}
 
 // GetPage implements the PostServiceImpl interface.
-func (s *PostServiceImpl) GetPage(ctx context.Context, req *post.PageReq) (resp *post.PageResp, err error) {
+func (s *PostServiceImpl) GetPage(ctx context.Context, req *post.PageRequest) (resp *post.PageResponse, err error) {
 	// TODO: Your code here...
 	return
 }
 
 // GetArticleDetail implements the PostServiceImpl interface.
-func (s *PostServiceImpl) GetArticleDetail(ctx context.Context, req *post.ArticleDetailReq) (resp *post.ArticleDetailResp, err error) {
+func (s *PostServiceImpl) GetArticleDetail(ctx context.Context, req *post.ArticleDetailRequest) (resp *post.ArticleDetailResponse, err error) {
 	// TODO: Your code here...
 	return
 }
 
 // GetArticleList implements the PostServiceImpl interface.
-func (s *PostServiceImpl) GetArticleList(ctx context.Context, req *post.ArticleListReq) (resp *post.ArticleListResp, err error) {
-	resp, err = (&model.Post{}).List()
+func (s *PostServiceImpl) GetArticleList(ctx context.Context, req *post.ArticleListRequest) (resp *post.ArticleListResponse, err error) {
+	var getItems []*post.Post
+
+	items, total, err := (&model.Post{}).List(req.Search, req.PageSize, (req.Page-1)*req.PageSize, req.Order, req.CategoryId)
+	for _, v := range items {
+		getItems = append(getItems, &post.Post{
+			Id:         int64(v.Id),
+			CategoryId: int64(v.CategoryId),
+			Name:       v.Name,
+			Title:      v.Title,
+			Content:    v.Content,
+		})
+	}
+
+	resp = &post.ArticleListResponse{
+		Items: getItems,
+		Total: total,
+	}
 
 	return
 }

@@ -9,8 +9,8 @@ import (
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
-	r.GET("/", handler.Index)
-	r.GET("/api/article/list", handler.List)
+	r.GET("/ping", handler.Ping)
+	r.GET("/v1/article/list", handler.List)
 
 	// your code ...
 }
