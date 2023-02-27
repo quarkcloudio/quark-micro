@@ -1,37 +1,40 @@
 namespace go post
 
 struct Post {
-    1: i64 Id (vt.gt = "0")
-    2: string Name
+    1: i64 id (vt.gt = "0")
+    2: string title
+    3: string name
+    4: i64 category_id
+    5: string content
 }
 
 struct PageReq {
     1: i64 Id (vt.gt = "0")
-    2: optional string Name
+    2: optional string name
 }
 
 struct PageResp {
-    1: i64 Id
+    1: i64 id
 }
 
 struct ArticleDetailReq {
-    1: i64 Id (vt.gt = "0")
-    2: optional string Name
+    1: i64 id (vt.gt = "0")
+    2: optional string name
 }
 
 struct ArticleDetailResp {
-    1: i64 Id
+    1: i64 id
 }
 
 struct ArticleListReq {
-    1: optional string Query
-    2: i64 Offset (vt.ge = "0")
-    3: i64 Limit (vt.ge = "0")
+    1: optional string query
+    2: i64 offset (vt.ge = "0")
+    3: i64 limit (vt.ge = "0")
 }
 
 struct ArticleListResp {
-    1: list<Post> Items
-    2: i64 Total
+    1: list<Post> items
+    2: i64 total
 }
 
 // 内容服务

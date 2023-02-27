@@ -65,8 +65,11 @@ func (model *Post) List() (list *post.ArticleListResp, err error) {
 
 	for _, v := range getList {
 		items = append(items, &post.Post{
-			Id:   int64(v.Id),
-			Name: v.Name,
+			Id:         int64(v.Id),
+			Title:      v.Title,
+			Name:       v.Name,
+			CategoryId: int64(v.CategoryId),
+			Content:    v.Content,
 		})
 	}
 
