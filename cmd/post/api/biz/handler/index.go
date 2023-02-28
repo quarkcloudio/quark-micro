@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/quarkcms/quark-go/pkg/msg"
+	"github.com/quarkcms/quark-micro/pkg/msg"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/kitex/client"
@@ -49,7 +49,7 @@ func List(ctx context.Context, c *app.RequestContext) {
 	// 验证并绑定值
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(200, msg.Error(err.Error(), ""))
+		c.JSON(200, msg.Error(err.Error()))
 		return
 	}
 
@@ -62,14 +62,14 @@ func List(ctx context.Context, c *app.RequestContext) {
 		callopt.WithRPCTimeout(3*time.Second),
 	)
 	if err != nil {
-		c.JSON(200, msg.Error(err.Error(), ""))
+		c.JSON(200, msg.Error(err.Error()))
 		return
 	}
 
 	if resp == nil {
-		c.JSON(200, msg.Error("数据不存在", ""))
+		c.JSON(200, msg.Error("数据不存在"))
 		return
 	}
 
-	c.JSON(200, msg.Success("获取成功", "", resp))
+	c.JSON(200, msg.Success("获取成功", resp))
 }
