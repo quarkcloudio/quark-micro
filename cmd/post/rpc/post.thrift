@@ -23,7 +23,15 @@ struct ArticleDetailRequest {
 }
 
 struct ArticleDetailResponse {
-    1: i64 id
+    1: i64 id (vt.gt = "0")
+    2: i64 category_id
+    3: string title
+    4: string name
+    5: string author
+    6: string source
+    7: string description
+    8: string cover_ids
+    9: string content
 }
 
 struct ArticleListRequest {

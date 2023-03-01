@@ -4,6 +4,9 @@ hertz工具
 
 ```bash
 
- # cd到项目目录
-hz new -mod github.com/quarkcms/quark-micro 
+# 在cmd/post/api项目，生成代码
+hz new -mod github.com/quarkcms/quark-micro/cmd/post/api -idl ./idl/article.thrift
+
+# 在cmd/post/api项目，更新代码
+hz update -mod github.com/quarkcms/quark-micro/cmd/post/api -idl ./idl/article.thrift
 ```

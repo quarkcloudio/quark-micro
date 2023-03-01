@@ -72,7 +72,17 @@ func GetArticleDetail(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(articleapi.GetArticleDetailResponse)
+	resp, err := newClient().GetArticleDetail(context.Background(),
+		&post.ArticleDetailRequest{
+			Id:   req.ID,
+			Name: &req.Name,
+		},
+		callopt.WithRPCTimeout(3*time.Second),
+	)
+	if err != nil {
+		c.JSON(200, msg.Error(msg.InternalServerError))
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, msg.Success(resp))
 }

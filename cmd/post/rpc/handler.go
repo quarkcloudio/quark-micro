@@ -18,7 +18,19 @@ func (s *PostServiceImpl) GetPage(ctx context.Context, req *post.PageRequest) (r
 
 // GetArticleDetail implements the PostServiceImpl interface.
 func (s *PostServiceImpl) GetArticleDetail(ctx context.Context, req *post.ArticleDetailRequest) (resp *post.ArticleDetailResponse, err error) {
-	// TODO: Your code here...
+	item, err := (&model.Post{}).Info(req.Id, *req.Name)
+
+	resp = &post.ArticleDetailResponse{
+		Id:          int64(item.Id),
+		CategoryId:  int64(item.CategoryId),
+		Title:       item.Title,
+		Name:        item.Name,
+		Author:      item.Author,
+		Source:      item.Source,
+		Description: item.Description,
+		Content:     item.Content,
+	}
+
 	return
 }
 

@@ -39,6 +39,33 @@ type Post struct {
 	DeletedAt     gorm.DeletedAt `json:"deleted_at"`
 }
 
+// 获取详细信息
+func (model *Post) Info(id int64, name string) (post *Post, err error) {
+	// 查询对象
+	query := db.Client.
+		Model(&model).
+		Where("id", id)
+
+	if id != 0 {
+		query.Where("id = ?", id)
+	}
+
+	if name != "" {
+		query.Where("name = ?", name)
+	}
+
+	// 查询信息
+	query.Find(&post)
+
+	// 获取错误信息
+	err = query.Error
+	if err != nil {
+		return
+	}
+
+	return post, err
+}
+
 // 获取列表
 func (model *Post) List(search *string, limit int64, offset int64, order string, categoryId int64) (items []*Post, total int64, err error) {
 	var (
