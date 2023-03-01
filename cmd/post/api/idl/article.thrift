@@ -16,6 +16,6 @@ struct GetArticleDetailRequest {
 struct GetArticleDetailResponse {}
 
 service ApiService {
-    GetArticleListResponse GetArticleList(1: GetArticleListRequest req) (api.get="/v1/article/list")
-    GetArticleDetailResponse GetArticleDetail(1: GetArticleDetailRequest req) (api.get="/v1/article/detail")
+    GetArticleListResponse GetArticleList(1: GetArticleListRequest req) (api.get="/api/v1/article/list")
+    GetArticleDetailResponse GetArticleDetail(1: GetArticleDetailRequest req) (api.get="/api/v1/article/detail")
 }
