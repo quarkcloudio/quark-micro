@@ -22,7 +22,17 @@ struct PageRequest {
 }
 
 struct PageResponse {
-    1: i64 id
+    1: i64 id (vt.gt = "0")
+    2: i64 category_id
+    3: string title
+    4: string name
+    5: string description
+    6: string cover_ids
+    7: string content
+    8: i64 view
+    9: string file_ids
+    10: string created_at
+    11: string updated_at
 }
 
 struct ArticleDetailRequest {
@@ -62,7 +72,7 @@ struct ArticleListResponse {
 // 内容服务
 service PostService {
 
-    // 获取单页内容
+    // 获取单页
     PageResponse GetPage(1: PageRequest req)
   
     // 获取文章详情

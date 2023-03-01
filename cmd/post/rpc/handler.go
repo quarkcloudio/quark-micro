@@ -12,7 +12,20 @@ type PostServiceImpl struct{}
 
 // GetPage implements the PostServiceImpl interface.
 func (s *PostServiceImpl) GetPage(ctx context.Context, req *post.PageRequest) (resp *post.PageResponse, err error) {
-	// TODO: Your code here...
+	item, err := (&model.Post{}).Info(req.Id, *req.Name)
+
+	resp = &post.PageResponse{
+		Id:          int64(item.Id),
+		CategoryId:  int64(item.CategoryId),
+		Title:       item.Title,
+		Name:        item.Name,
+		Description: item.Description,
+		Content:     item.Content,
+		View:        int64(item.View),
+		CreatedAt:   item.CreatedAt.String(),
+		UpdatedAt:   item.UpdatedAt.String(),
+	}
+
 	return
 }
 

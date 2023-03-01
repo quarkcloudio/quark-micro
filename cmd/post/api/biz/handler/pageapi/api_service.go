@@ -4,11 +4,35 @@ package pageapi
 
 import (
 	"context"
+	"log"
+	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/client/callopt"
+	etcd "github.com/kitex-contrib/registry-etcd"
 	pageapi "github.com/quarkcms/quark-micro/cmd/post/api/biz/model/pageapi"
+	"github.com/quarkcms/quark-micro/cmd/post/api/config"
+	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
+	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post/postservice"
+	"github.com/quarkcms/quark-micro/pkg/msg"
 )
+
+// 获取请求客户端
+func newClient() postservice.Client {
+	r, err := etcd.NewEtcdResolver([]string{config.Registry.Host})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	getClient, err := postservice.NewClient(config.Registry.Endpoint.ServiceName, client.WithResolver(r))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return getClient
+}
 
 // GetPage .
 // @router /api/v1/page/index [GET]
@@ -21,7 +45,17 @@ func GetPage(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(pageapi.GetPageResponse)
+	resp, err := newClient().GetPage(context.Background(),
+		&post.PageRequest{
+			Id:   req.ID,
+			Name: &req.Name,
+		},
+		callopt.WithRPCTimeout(3*time.Second),
+	)
+	if err != nil {
+		c.JSON(200, msg.Error(msg.InternalServerError))
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, msg.Success(resp))
 }
