@@ -2,10 +2,18 @@ namespace go post
 
 struct Post {
     1: i64 id (vt.gt = "0")
-    2: string title
-    3: string name
-    4: i64 category_id
-    5: string content
+    2: i64 category_id
+    3: string title
+    4: string name
+    5: string author
+    6: string source
+    7: string description
+    8: string cover_ids
+    9: string content
+    10: i64 view
+    11: string file_ids
+    12: string created_at
+    13: string updated_at
 }
 
 struct PageRequest {
@@ -32,6 +40,10 @@ struct ArticleDetailResponse {
     7: string description
     8: string cover_ids
     9: string content
+    10: i64 view
+    11: string file_ids
+    12: string created_at
+    13: string updated_at
 }
 
 struct ArticleListRequest {

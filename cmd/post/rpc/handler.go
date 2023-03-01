@@ -29,6 +29,9 @@ func (s *PostServiceImpl) GetArticleDetail(ctx context.Context, req *post.Articl
 		Source:      item.Source,
 		Description: item.Description,
 		Content:     item.Content,
+		View:        int64(item.View),
+		CreatedAt:   item.CreatedAt.String(),
+		UpdatedAt:   item.UpdatedAt.String(),
 	}
 
 	return
