@@ -37,6 +37,7 @@ type Post struct {
 	CreatedAt     time.Time      `json:"created_at"`
 	UpdatedAt     time.Time      `json:"updated_at"`
 	DeletedAt     gorm.DeletedAt `json:"deleted_at"`
+	CategoryName  string         `json:"category_name" gorm:"<-:false"`
 }
 
 // 获取详细信息
@@ -44,7 +45,7 @@ func (model *Post) Info(id int64, name string) (post *Post, err error) {
 	// 查询对象
 	query := db.Client.
 		Model(&model).
-		Select("posts.*, categories.name").
+		Select("posts.*, categories.name as category_name").
 		Joins("left join categories on categories.id = posts.category_id").
 		Where("posts.status", 1)
 
@@ -78,7 +79,7 @@ func (model *Post) List(search *string, limit int64, offset int64, order string,
 	// 查询对象
 	query := db.Client.
 		Model(&model).
-		Select("posts.*, categories.name").
+		Select("posts.*, categories.name as category_name").
 		Joins("left join categories on categories.id = posts.category_id").
 		Where("posts.status", 1).
 		Where("posts.type", "ARTICLE")

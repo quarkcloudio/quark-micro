@@ -3,17 +3,18 @@ namespace go post
 struct Post {
     1: i64 id (vt.gt = "0")
     2: i64 category_id
-    3: string title
-    4: string name
-    5: string author
-    6: string source
-    7: string description
-    8: string cover_ids
-    9: string content
-    10: i64 view
-    11: string file_ids
-    12: string created_at
-    13: string updated_at
+    3: string category_name
+    4: string title
+    5: string name
+    6: string author
+    7: string source
+    8: string description
+    9: string cover_ids
+    10: string content
+    11: i64 view
+    12: string file_ids
+    13: string created_at
+    14: string updated_at
 }
 
 struct PageRequest {
@@ -23,16 +24,15 @@ struct PageRequest {
 
 struct PageResponse {
     1: i64 id (vt.gt = "0")
-    2: i64 category_id
-    3: string title
-    4: string name
-    5: string description
-    6: string cover_ids
-    7: string content
-    8: i64 view
-    9: string file_ids
-    10: string created_at
-    11: string updated_at
+    2: string title
+    3: string name
+    4: string description
+    5: string cover_ids
+    6: string content
+    7: i64 view
+    8: string file_ids
+    9: string created_at
+    10: string updated_at
 }
 
 struct ArticleDetailRequest {
@@ -43,17 +43,18 @@ struct ArticleDetailRequest {
 struct ArticleDetailResponse {
     1: i64 id (vt.gt = "0")
     2: i64 category_id
-    3: string title
-    4: string name
-    5: string author
-    6: string source
-    7: string description
-    8: string cover_ids
-    9: string content
-    10: i64 view
-    11: string file_ids
-    12: string created_at
-    13: string updated_at
+    3: string category_name
+    4: string title
+    5: string name
+    6: string author
+    7: string source
+    8: string description
+    9: string cover_ids
+    10: string content
+    11: i64 view
+    12: string file_ids
+    13: string created_at
+    14: string updated_at
 }
 
 struct ArticleListRequest {

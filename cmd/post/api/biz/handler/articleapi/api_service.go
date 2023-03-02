@@ -35,7 +35,7 @@ func newClient() postservice.Client {
 }
 
 // GetArticleList .
-// @router /v1/article/list [GET]
+// @router /api/v1/article/list [GET]
 func GetArticleList(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req articleapi.GetArticleListRequest
@@ -62,7 +62,7 @@ func GetArticleList(ctx context.Context, c *app.RequestContext) {
 }
 
 // GetArticleDetail .
-// @router /v1/article/detail [GET]
+// @router /api/v1/article/detail [GET]
 func GetArticleDetail(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req articleapi.GetArticleDetailRequest
