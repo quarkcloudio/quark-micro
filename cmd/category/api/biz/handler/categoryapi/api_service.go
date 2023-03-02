@@ -50,6 +50,7 @@ func GetCategoryList(ctx context.Context, c *app.RequestContext) {
 			Search:   req.Search,
 			Page:     req.Page,
 			PageSize: req.PageSize,
+			Order:    "sort asc",
 			Pid:      req.Pid,
 			Type:     req.Type,
 		},
