@@ -44,14 +44,16 @@ func (model *Post) Info(id int64, name string) (post *Post, err error) {
 	// 查询对象
 	query := db.Client.
 		Model(&model).
-		Where("id", id)
+		Select("posts.*, categories.name").
+		Joins("left join categories on categories.id = posts.category_id").
+		Where("posts.status", 1)
 
 	if id != 0 {
-		query.Where("id = ?", id)
+		query.Where("posts.id = ?", id)
 	}
 
 	if name != "" {
-		query.Where("name = ?", name)
+		query.Where("posts.name = ?", name)
 	}
 
 	// 查询信息
@@ -76,10 +78,13 @@ func (model *Post) List(search *string, limit int64, offset int64, order string,
 	// 查询对象
 	query := db.Client.
 		Model(&model).
-		Where("type", "ARTICLE")
+		Select("posts.*, categories.name").
+		Joins("left join categories on categories.id = posts.category_id").
+		Where("posts.status", 1).
+		Where("posts.type", "ARTICLE")
 
 	if search != nil {
-		query.Where("title like ?", "%"+*search+"%")
+		query.Where("posts.title like ?", "%"+*search+"%")
 	}
 
 	if limit != 0 {
@@ -95,7 +100,7 @@ func (model *Post) List(search *string, limit int64, offset int64, order string,
 	}
 
 	if categoryId != 0 {
-		query.Where("category_id = ?", categoryId)
+		query.Where("posts.category_id = ?", categoryId)
 	}
 
 	// 查询列表

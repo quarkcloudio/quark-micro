@@ -1,8 +1,8 @@
-# QuarkHertz
+# QuarkMicro
 
 Overview:
 
-Quark-hertz is a golang micro-services based on hertz
+QuarkMicro is a golang micro-services based on hertz & kitex
 
 Install:
 
