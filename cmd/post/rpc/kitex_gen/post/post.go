@@ -10,20 +10,21 @@ import (
 )
 
 type Post struct {
-	Id           int64  `thrift:"id,1" frugal:"1,default,i64" json:"id"`
-	CategoryId   int64  `thrift:"category_id,2" frugal:"2,default,i64" json:"category_id"`
-	CategoryName string `thrift:"category_name,3" frugal:"3,default,string" json:"category_name"`
-	Title        string `thrift:"title,4" frugal:"4,default,string" json:"title"`
-	Name         string `thrift:"name,5" frugal:"5,default,string" json:"name"`
-	Author       string `thrift:"author,6" frugal:"6,default,string" json:"author"`
-	Source       string `thrift:"source,7" frugal:"7,default,string" json:"source"`
-	Description  string `thrift:"description,8" frugal:"8,default,string" json:"description"`
-	CoverIds     string `thrift:"cover_ids,9" frugal:"9,default,string" json:"cover_ids"`
-	Content      string `thrift:"content,10" frugal:"10,default,string" json:"content"`
-	View         int64  `thrift:"view,11" frugal:"11,default,i64" json:"view"`
-	FileIds      string `thrift:"file_ids,12" frugal:"12,default,string" json:"file_ids"`
-	CreatedAt    string `thrift:"created_at,13" frugal:"13,default,string" json:"created_at"`
-	UpdatedAt    string `thrift:"updated_at,14" frugal:"14,default,string" json:"updated_at"`
+	Id            int64  `thrift:"id,1" frugal:"1,default,i64" json:"id"`
+	CategoryId    int64  `thrift:"category_id,2" frugal:"2,default,i64" json:"category_id"`
+	CategoryName  string `thrift:"category_name,3" frugal:"3,default,string" json:"category_name"`
+	CategoryTitle string `thrift:"category_title,4" frugal:"4,default,string" json:"category_title"`
+	Title         string `thrift:"title,5" frugal:"5,default,string" json:"title"`
+	Name          string `thrift:"name,6" frugal:"6,default,string" json:"name"`
+	Author        string `thrift:"author,7" frugal:"7,default,string" json:"author"`
+	Source        string `thrift:"source,8" frugal:"8,default,string" json:"source"`
+	Description   string `thrift:"description,9" frugal:"9,default,string" json:"description"`
+	CoverIds      string `thrift:"cover_ids,10" frugal:"10,default,string" json:"cover_ids"`
+	Content       string `thrift:"content,11" frugal:"11,default,string" json:"content"`
+	View          int64  `thrift:"view,12" frugal:"12,default,i64" json:"view"`
+	FileIds       string `thrift:"file_ids,13" frugal:"13,default,string" json:"file_ids"`
+	CreatedAt     string `thrift:"created_at,14" frugal:"14,default,string" json:"created_at"`
+	UpdatedAt     string `thrift:"updated_at,15" frugal:"15,default,string" json:"updated_at"`
 }
 
 func NewPost() *Post {
@@ -44,6 +45,10 @@ func (p *Post) GetCategoryId() (v int64) {
 
 func (p *Post) GetCategoryName() (v string) {
 	return p.CategoryName
+}
+
+func (p *Post) GetCategoryTitle() (v string) {
+	return p.CategoryTitle
 }
 
 func (p *Post) GetTitle() (v string) {
@@ -98,6 +103,9 @@ func (p *Post) SetCategoryId(val int64) {
 func (p *Post) SetCategoryName(val string) {
 	p.CategoryName = val
 }
+func (p *Post) SetCategoryTitle(val string) {
+	p.CategoryTitle = val
+}
 func (p *Post) SetTitle(val string) {
 	p.Title = val
 }
@@ -136,17 +144,18 @@ var fieldIDToName_Post = map[int16]string{
 	1:  "id",
 	2:  "category_id",
 	3:  "category_name",
-	4:  "title",
-	5:  "name",
-	6:  "author",
-	7:  "source",
-	8:  "description",
-	9:  "cover_ids",
-	10: "content",
-	11: "view",
-	12: "file_ids",
-	13: "created_at",
-	14: "updated_at",
+	4:  "category_title",
+	5:  "title",
+	6:  "name",
+	7:  "author",
+	8:  "source",
+	9:  "description",
+	10: "cover_ids",
+	11: "content",
+	12: "view",
+	13: "file_ids",
+	14: "created_at",
+	15: "updated_at",
 }
 
 func (p *Post) Read(iprot thrift.TProtocol) (err error) {
@@ -269,7 +278,7 @@ func (p *Post) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 11:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField11(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -279,7 +288,7 @@ func (p *Post) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 12:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField12(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -301,6 +310,16 @@ func (p *Post) Read(iprot thrift.TProtocol) (err error) {
 		case 14:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField14(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 15:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField15(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -369,7 +388,7 @@ func (p *Post) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Title = v
+		p.CategoryTitle = v
 	}
 	return nil
 }
@@ -378,7 +397,7 @@ func (p *Post) ReadField5(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Name = v
+		p.Title = v
 	}
 	return nil
 }
@@ -387,7 +406,7 @@ func (p *Post) ReadField6(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Author = v
+		p.Name = v
 	}
 	return nil
 }
@@ -396,7 +415,7 @@ func (p *Post) ReadField7(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Source = v
+		p.Author = v
 	}
 	return nil
 }
@@ -405,7 +424,7 @@ func (p *Post) ReadField8(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Description = v
+		p.Source = v
 	}
 	return nil
 }
@@ -414,7 +433,7 @@ func (p *Post) ReadField9(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.CoverIds = v
+		p.Description = v
 	}
 	return nil
 }
@@ -423,12 +442,21 @@ func (p *Post) ReadField10(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Content = v
+		p.CoverIds = v
 	}
 	return nil
 }
 
 func (p *Post) ReadField11(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Content = v
+	}
+	return nil
+}
+
+func (p *Post) ReadField12(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
@@ -437,7 +465,7 @@ func (p *Post) ReadField11(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *Post) ReadField12(iprot thrift.TProtocol) error {
+func (p *Post) ReadField13(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -446,7 +474,7 @@ func (p *Post) ReadField12(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *Post) ReadField13(iprot thrift.TProtocol) error {
+func (p *Post) ReadField14(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -455,7 +483,7 @@ func (p *Post) ReadField13(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *Post) ReadField14(iprot thrift.TProtocol) error {
+func (p *Post) ReadField15(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -524,6 +552,10 @@ func (p *Post) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField14(oprot); err != nil {
 			fieldId = 14
+			goto WriteFieldError
+		}
+		if err = p.writeField15(oprot); err != nil {
+			fieldId = 15
 			goto WriteFieldError
 		}
 
@@ -597,10 +629,10 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("title", thrift.STRING, 4); err != nil {
+	if err = oprot.WriteFieldBegin("category_title", thrift.STRING, 4); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Title); err != nil {
+	if err := oprot.WriteString(p.CategoryTitle); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -614,10 +646,10 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("name", thrift.STRING, 5); err != nil {
+	if err = oprot.WriteFieldBegin("title", thrift.STRING, 5); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Name); err != nil {
+	if err := oprot.WriteString(p.Title); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -631,10 +663,10 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField6(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("author", thrift.STRING, 6); err != nil {
+	if err = oprot.WriteFieldBegin("name", thrift.STRING, 6); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Author); err != nil {
+	if err := oprot.WriteString(p.Name); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -648,10 +680,10 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField7(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("source", thrift.STRING, 7); err != nil {
+	if err = oprot.WriteFieldBegin("author", thrift.STRING, 7); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Source); err != nil {
+	if err := oprot.WriteString(p.Author); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -665,10 +697,10 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField8(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("description", thrift.STRING, 8); err != nil {
+	if err = oprot.WriteFieldBegin("source", thrift.STRING, 8); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Description); err != nil {
+	if err := oprot.WriteString(p.Source); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -682,10 +714,10 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField9(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("cover_ids", thrift.STRING, 9); err != nil {
+	if err = oprot.WriteFieldBegin("description", thrift.STRING, 9); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.CoverIds); err != nil {
+	if err := oprot.WriteString(p.Description); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -699,10 +731,10 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField10(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("content", thrift.STRING, 10); err != nil {
+	if err = oprot.WriteFieldBegin("cover_ids", thrift.STRING, 10); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Content); err != nil {
+	if err := oprot.WriteString(p.CoverIds); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -716,10 +748,10 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField11(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("view", thrift.I64, 11); err != nil {
+	if err = oprot.WriteFieldBegin("content", thrift.STRING, 11); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.View); err != nil {
+	if err := oprot.WriteString(p.Content); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -733,10 +765,10 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField12(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("file_ids", thrift.STRING, 12); err != nil {
+	if err = oprot.WriteFieldBegin("view", thrift.I64, 12); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.FileIds); err != nil {
+	if err := oprot.WriteI64(p.View); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -750,10 +782,10 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField13(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("created_at", thrift.STRING, 13); err != nil {
+	if err = oprot.WriteFieldBegin("file_ids", thrift.STRING, 13); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.CreatedAt); err != nil {
+	if err := oprot.WriteString(p.FileIds); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -767,10 +799,10 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField14(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("updated_at", thrift.STRING, 14); err != nil {
+	if err = oprot.WriteFieldBegin("created_at", thrift.STRING, 14); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.UpdatedAt); err != nil {
+	if err := oprot.WriteString(p.CreatedAt); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -781,6 +813,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 14 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 14 end error: ", p), err)
+}
+
+func (p *Post) writeField15(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("updated_at", thrift.STRING, 15); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.UpdatedAt); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 end error: ", p), err)
 }
 
 func (p *Post) String() string {
@@ -805,37 +854,40 @@ func (p *Post) DeepEqual(ano *Post) bool {
 	if !p.Field3DeepEqual(ano.CategoryName) {
 		return false
 	}
-	if !p.Field4DeepEqual(ano.Title) {
+	if !p.Field4DeepEqual(ano.CategoryTitle) {
 		return false
 	}
-	if !p.Field5DeepEqual(ano.Name) {
+	if !p.Field5DeepEqual(ano.Title) {
 		return false
 	}
-	if !p.Field6DeepEqual(ano.Author) {
+	if !p.Field6DeepEqual(ano.Name) {
 		return false
 	}
-	if !p.Field7DeepEqual(ano.Source) {
+	if !p.Field7DeepEqual(ano.Author) {
 		return false
 	}
-	if !p.Field8DeepEqual(ano.Description) {
+	if !p.Field8DeepEqual(ano.Source) {
 		return false
 	}
-	if !p.Field9DeepEqual(ano.CoverIds) {
+	if !p.Field9DeepEqual(ano.Description) {
 		return false
 	}
-	if !p.Field10DeepEqual(ano.Content) {
+	if !p.Field10DeepEqual(ano.CoverIds) {
 		return false
 	}
-	if !p.Field11DeepEqual(ano.View) {
+	if !p.Field11DeepEqual(ano.Content) {
 		return false
 	}
-	if !p.Field12DeepEqual(ano.FileIds) {
+	if !p.Field12DeepEqual(ano.View) {
 		return false
 	}
-	if !p.Field13DeepEqual(ano.CreatedAt) {
+	if !p.Field13DeepEqual(ano.FileIds) {
 		return false
 	}
-	if !p.Field14DeepEqual(ano.UpdatedAt) {
+	if !p.Field14DeepEqual(ano.CreatedAt) {
+		return false
+	}
+	if !p.Field15DeepEqual(ano.UpdatedAt) {
 		return false
 	}
 	return true
@@ -864,75 +916,82 @@ func (p *Post) Field3DeepEqual(src string) bool {
 }
 func (p *Post) Field4DeepEqual(src string) bool {
 
-	if strings.Compare(p.Title, src) != 0 {
+	if strings.Compare(p.CategoryTitle, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *Post) Field5DeepEqual(src string) bool {
 
-	if strings.Compare(p.Name, src) != 0 {
+	if strings.Compare(p.Title, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *Post) Field6DeepEqual(src string) bool {
 
-	if strings.Compare(p.Author, src) != 0 {
+	if strings.Compare(p.Name, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *Post) Field7DeepEqual(src string) bool {
 
-	if strings.Compare(p.Source, src) != 0 {
+	if strings.Compare(p.Author, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *Post) Field8DeepEqual(src string) bool {
 
-	if strings.Compare(p.Description, src) != 0 {
+	if strings.Compare(p.Source, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *Post) Field9DeepEqual(src string) bool {
 
-	if strings.Compare(p.CoverIds, src) != 0 {
+	if strings.Compare(p.Description, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *Post) Field10DeepEqual(src string) bool {
 
+	if strings.Compare(p.CoverIds, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *Post) Field11DeepEqual(src string) bool {
+
 	if strings.Compare(p.Content, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *Post) Field11DeepEqual(src int64) bool {
+func (p *Post) Field12DeepEqual(src int64) bool {
 
 	if p.View != src {
 		return false
 	}
 	return true
 }
-func (p *Post) Field12DeepEqual(src string) bool {
+func (p *Post) Field13DeepEqual(src string) bool {
 
 	if strings.Compare(p.FileIds, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *Post) Field13DeepEqual(src string) bool {
+func (p *Post) Field14DeepEqual(src string) bool {
 
 	if strings.Compare(p.CreatedAt, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *Post) Field14DeepEqual(src string) bool {
+func (p *Post) Field15DeepEqual(src string) bool {
 
 	if strings.Compare(p.UpdatedAt, src) != 0 {
 		return false
@@ -2114,20 +2173,21 @@ func (p *ArticleDetailRequest) Field2DeepEqual(src *string) bool {
 }
 
 type ArticleDetailResponse struct {
-	Id           int64  `thrift:"id,1" frugal:"1,default,i64" json:"id"`
-	CategoryId   int64  `thrift:"category_id,2" frugal:"2,default,i64" json:"category_id"`
-	CategoryName string `thrift:"category_name,3" frugal:"3,default,string" json:"category_name"`
-	Title        string `thrift:"title,4" frugal:"4,default,string" json:"title"`
-	Name         string `thrift:"name,5" frugal:"5,default,string" json:"name"`
-	Author       string `thrift:"author,6" frugal:"6,default,string" json:"author"`
-	Source       string `thrift:"source,7" frugal:"7,default,string" json:"source"`
-	Description  string `thrift:"description,8" frugal:"8,default,string" json:"description"`
-	CoverIds     string `thrift:"cover_ids,9" frugal:"9,default,string" json:"cover_ids"`
-	Content      string `thrift:"content,10" frugal:"10,default,string" json:"content"`
-	View         int64  `thrift:"view,11" frugal:"11,default,i64" json:"view"`
-	FileIds      string `thrift:"file_ids,12" frugal:"12,default,string" json:"file_ids"`
-	CreatedAt    string `thrift:"created_at,13" frugal:"13,default,string" json:"created_at"`
-	UpdatedAt    string `thrift:"updated_at,14" frugal:"14,default,string" json:"updated_at"`
+	Id            int64  `thrift:"id,1" frugal:"1,default,i64" json:"id"`
+	CategoryId    int64  `thrift:"category_id,2" frugal:"2,default,i64" json:"category_id"`
+	CategoryName  string `thrift:"category_name,3" frugal:"3,default,string" json:"category_name"`
+	CategoryTitle string `thrift:"category_title,4" frugal:"4,default,string" json:"category_title"`
+	Title         string `thrift:"title,5" frugal:"5,default,string" json:"title"`
+	Name          string `thrift:"name,6" frugal:"6,default,string" json:"name"`
+	Author        string `thrift:"author,7" frugal:"7,default,string" json:"author"`
+	Source        string `thrift:"source,8" frugal:"8,default,string" json:"source"`
+	Description   string `thrift:"description,9" frugal:"9,default,string" json:"description"`
+	CoverIds      string `thrift:"cover_ids,10" frugal:"10,default,string" json:"cover_ids"`
+	Content       string `thrift:"content,11" frugal:"11,default,string" json:"content"`
+	View          int64  `thrift:"view,12" frugal:"12,default,i64" json:"view"`
+	FileIds       string `thrift:"file_ids,13" frugal:"13,default,string" json:"file_ids"`
+	CreatedAt     string `thrift:"created_at,14" frugal:"14,default,string" json:"created_at"`
+	UpdatedAt     string `thrift:"updated_at,15" frugal:"15,default,string" json:"updated_at"`
 }
 
 func NewArticleDetailResponse() *ArticleDetailResponse {
@@ -2148,6 +2208,10 @@ func (p *ArticleDetailResponse) GetCategoryId() (v int64) {
 
 func (p *ArticleDetailResponse) GetCategoryName() (v string) {
 	return p.CategoryName
+}
+
+func (p *ArticleDetailResponse) GetCategoryTitle() (v string) {
+	return p.CategoryTitle
 }
 
 func (p *ArticleDetailResponse) GetTitle() (v string) {
@@ -2202,6 +2266,9 @@ func (p *ArticleDetailResponse) SetCategoryId(val int64) {
 func (p *ArticleDetailResponse) SetCategoryName(val string) {
 	p.CategoryName = val
 }
+func (p *ArticleDetailResponse) SetCategoryTitle(val string) {
+	p.CategoryTitle = val
+}
 func (p *ArticleDetailResponse) SetTitle(val string) {
 	p.Title = val
 }
@@ -2240,17 +2307,18 @@ var fieldIDToName_ArticleDetailResponse = map[int16]string{
 	1:  "id",
 	2:  "category_id",
 	3:  "category_name",
-	4:  "title",
-	5:  "name",
-	6:  "author",
-	7:  "source",
-	8:  "description",
-	9:  "cover_ids",
-	10: "content",
-	11: "view",
-	12: "file_ids",
-	13: "created_at",
-	14: "updated_at",
+	4:  "category_title",
+	5:  "title",
+	6:  "name",
+	7:  "author",
+	8:  "source",
+	9:  "description",
+	10: "cover_ids",
+	11: "content",
+	12: "view",
+	13: "file_ids",
+	14: "created_at",
+	15: "updated_at",
 }
 
 func (p *ArticleDetailResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -2373,7 +2441,7 @@ func (p *ArticleDetailResponse) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 11:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField11(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2383,7 +2451,7 @@ func (p *ArticleDetailResponse) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 12:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField12(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2405,6 +2473,16 @@ func (p *ArticleDetailResponse) Read(iprot thrift.TProtocol) (err error) {
 		case 14:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField14(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 15:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField15(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -2473,7 +2551,7 @@ func (p *ArticleDetailResponse) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Title = v
+		p.CategoryTitle = v
 	}
 	return nil
 }
@@ -2482,7 +2560,7 @@ func (p *ArticleDetailResponse) ReadField5(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Name = v
+		p.Title = v
 	}
 	return nil
 }
@@ -2491,7 +2569,7 @@ func (p *ArticleDetailResponse) ReadField6(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Author = v
+		p.Name = v
 	}
 	return nil
 }
@@ -2500,7 +2578,7 @@ func (p *ArticleDetailResponse) ReadField7(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Source = v
+		p.Author = v
 	}
 	return nil
 }
@@ -2509,7 +2587,7 @@ func (p *ArticleDetailResponse) ReadField8(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Description = v
+		p.Source = v
 	}
 	return nil
 }
@@ -2518,7 +2596,7 @@ func (p *ArticleDetailResponse) ReadField9(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.CoverIds = v
+		p.Description = v
 	}
 	return nil
 }
@@ -2527,12 +2605,21 @@ func (p *ArticleDetailResponse) ReadField10(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Content = v
+		p.CoverIds = v
 	}
 	return nil
 }
 
 func (p *ArticleDetailResponse) ReadField11(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.Content = v
+	}
+	return nil
+}
+
+func (p *ArticleDetailResponse) ReadField12(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
@@ -2541,7 +2628,7 @@ func (p *ArticleDetailResponse) ReadField11(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *ArticleDetailResponse) ReadField12(iprot thrift.TProtocol) error {
+func (p *ArticleDetailResponse) ReadField13(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -2550,7 +2637,7 @@ func (p *ArticleDetailResponse) ReadField12(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *ArticleDetailResponse) ReadField13(iprot thrift.TProtocol) error {
+func (p *ArticleDetailResponse) ReadField14(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -2559,7 +2646,7 @@ func (p *ArticleDetailResponse) ReadField13(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *ArticleDetailResponse) ReadField14(iprot thrift.TProtocol) error {
+func (p *ArticleDetailResponse) ReadField15(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -2628,6 +2715,10 @@ func (p *ArticleDetailResponse) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField14(oprot); err != nil {
 			fieldId = 14
+			goto WriteFieldError
+		}
+		if err = p.writeField15(oprot); err != nil {
+			fieldId = 15
 			goto WriteFieldError
 		}
 
@@ -2701,10 +2792,10 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("title", thrift.STRING, 4); err != nil {
+	if err = oprot.WriteFieldBegin("category_title", thrift.STRING, 4); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Title); err != nil {
+	if err := oprot.WriteString(p.CategoryTitle); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2718,10 +2809,10 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("name", thrift.STRING, 5); err != nil {
+	if err = oprot.WriteFieldBegin("title", thrift.STRING, 5); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Name); err != nil {
+	if err := oprot.WriteString(p.Title); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2735,10 +2826,10 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField6(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("author", thrift.STRING, 6); err != nil {
+	if err = oprot.WriteFieldBegin("name", thrift.STRING, 6); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Author); err != nil {
+	if err := oprot.WriteString(p.Name); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2752,10 +2843,10 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField7(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("source", thrift.STRING, 7); err != nil {
+	if err = oprot.WriteFieldBegin("author", thrift.STRING, 7); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Source); err != nil {
+	if err := oprot.WriteString(p.Author); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2769,10 +2860,10 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField8(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("description", thrift.STRING, 8); err != nil {
+	if err = oprot.WriteFieldBegin("source", thrift.STRING, 8); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Description); err != nil {
+	if err := oprot.WriteString(p.Source); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2786,10 +2877,10 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField9(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("cover_ids", thrift.STRING, 9); err != nil {
+	if err = oprot.WriteFieldBegin("description", thrift.STRING, 9); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.CoverIds); err != nil {
+	if err := oprot.WriteString(p.Description); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2803,10 +2894,10 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField10(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("content", thrift.STRING, 10); err != nil {
+	if err = oprot.WriteFieldBegin("cover_ids", thrift.STRING, 10); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Content); err != nil {
+	if err := oprot.WriteString(p.CoverIds); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2820,10 +2911,10 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField11(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("view", thrift.I64, 11); err != nil {
+	if err = oprot.WriteFieldBegin("content", thrift.STRING, 11); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.View); err != nil {
+	if err := oprot.WriteString(p.Content); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2837,10 +2928,10 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField12(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("file_ids", thrift.STRING, 12); err != nil {
+	if err = oprot.WriteFieldBegin("view", thrift.I64, 12); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.FileIds); err != nil {
+	if err := oprot.WriteI64(p.View); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2854,10 +2945,10 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField13(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("created_at", thrift.STRING, 13); err != nil {
+	if err = oprot.WriteFieldBegin("file_ids", thrift.STRING, 13); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.CreatedAt); err != nil {
+	if err := oprot.WriteString(p.FileIds); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2871,10 +2962,10 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField14(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("updated_at", thrift.STRING, 14); err != nil {
+	if err = oprot.WriteFieldBegin("created_at", thrift.STRING, 14); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.UpdatedAt); err != nil {
+	if err := oprot.WriteString(p.CreatedAt); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2885,6 +2976,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 14 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 14 end error: ", p), err)
+}
+
+func (p *ArticleDetailResponse) writeField15(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("updated_at", thrift.STRING, 15); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.UpdatedAt); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 15 end error: ", p), err)
 }
 
 func (p *ArticleDetailResponse) String() string {
@@ -2909,37 +3017,40 @@ func (p *ArticleDetailResponse) DeepEqual(ano *ArticleDetailResponse) bool {
 	if !p.Field3DeepEqual(ano.CategoryName) {
 		return false
 	}
-	if !p.Field4DeepEqual(ano.Title) {
+	if !p.Field4DeepEqual(ano.CategoryTitle) {
 		return false
 	}
-	if !p.Field5DeepEqual(ano.Name) {
+	if !p.Field5DeepEqual(ano.Title) {
 		return false
 	}
-	if !p.Field6DeepEqual(ano.Author) {
+	if !p.Field6DeepEqual(ano.Name) {
 		return false
 	}
-	if !p.Field7DeepEqual(ano.Source) {
+	if !p.Field7DeepEqual(ano.Author) {
 		return false
 	}
-	if !p.Field8DeepEqual(ano.Description) {
+	if !p.Field8DeepEqual(ano.Source) {
 		return false
 	}
-	if !p.Field9DeepEqual(ano.CoverIds) {
+	if !p.Field9DeepEqual(ano.Description) {
 		return false
 	}
-	if !p.Field10DeepEqual(ano.Content) {
+	if !p.Field10DeepEqual(ano.CoverIds) {
 		return false
 	}
-	if !p.Field11DeepEqual(ano.View) {
+	if !p.Field11DeepEqual(ano.Content) {
 		return false
 	}
-	if !p.Field12DeepEqual(ano.FileIds) {
+	if !p.Field12DeepEqual(ano.View) {
 		return false
 	}
-	if !p.Field13DeepEqual(ano.CreatedAt) {
+	if !p.Field13DeepEqual(ano.FileIds) {
 		return false
 	}
-	if !p.Field14DeepEqual(ano.UpdatedAt) {
+	if !p.Field14DeepEqual(ano.CreatedAt) {
+		return false
+	}
+	if !p.Field15DeepEqual(ano.UpdatedAt) {
 		return false
 	}
 	return true
@@ -2968,75 +3079,82 @@ func (p *ArticleDetailResponse) Field3DeepEqual(src string) bool {
 }
 func (p *ArticleDetailResponse) Field4DeepEqual(src string) bool {
 
-	if strings.Compare(p.Title, src) != 0 {
+	if strings.Compare(p.CategoryTitle, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *ArticleDetailResponse) Field5DeepEqual(src string) bool {
 
-	if strings.Compare(p.Name, src) != 0 {
+	if strings.Compare(p.Title, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *ArticleDetailResponse) Field6DeepEqual(src string) bool {
 
-	if strings.Compare(p.Author, src) != 0 {
+	if strings.Compare(p.Name, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *ArticleDetailResponse) Field7DeepEqual(src string) bool {
 
-	if strings.Compare(p.Source, src) != 0 {
+	if strings.Compare(p.Author, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *ArticleDetailResponse) Field8DeepEqual(src string) bool {
 
-	if strings.Compare(p.Description, src) != 0 {
+	if strings.Compare(p.Source, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *ArticleDetailResponse) Field9DeepEqual(src string) bool {
 
-	if strings.Compare(p.CoverIds, src) != 0 {
+	if strings.Compare(p.Description, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *ArticleDetailResponse) Field10DeepEqual(src string) bool {
 
+	if strings.Compare(p.CoverIds, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *ArticleDetailResponse) Field11DeepEqual(src string) bool {
+
 	if strings.Compare(p.Content, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *ArticleDetailResponse) Field11DeepEqual(src int64) bool {
+func (p *ArticleDetailResponse) Field12DeepEqual(src int64) bool {
 
 	if p.View != src {
 		return false
 	}
 	return true
 }
-func (p *ArticleDetailResponse) Field12DeepEqual(src string) bool {
+func (p *ArticleDetailResponse) Field13DeepEqual(src string) bool {
 
 	if strings.Compare(p.FileIds, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *ArticleDetailResponse) Field13DeepEqual(src string) bool {
+func (p *ArticleDetailResponse) Field14DeepEqual(src string) bool {
 
 	if strings.Compare(p.CreatedAt, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *ArticleDetailResponse) Field14DeepEqual(src string) bool {
+func (p *ArticleDetailResponse) Field15DeepEqual(src string) bool {
 
 	if strings.Compare(p.UpdatedAt, src) != 0 {
 		return false

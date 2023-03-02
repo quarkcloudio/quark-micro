@@ -33,18 +33,19 @@ func (s *PostServiceImpl) GetArticleDetail(ctx context.Context, req *post.Articl
 	item, err := (&model.Post{}).Info(req.Id, *req.Name)
 
 	resp = &post.ArticleDetailResponse{
-		Id:           int64(item.Id),
-		CategoryId:   int64(item.CategoryId),
-		CategoryName: item.CategoryName,
-		Title:        item.Title,
-		Name:         item.Name,
-		Author:       item.Author,
-		Source:       item.Source,
-		Description:  item.Description,
-		Content:      item.Content,
-		View:         int64(item.View),
-		CreatedAt:    item.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:    item.UpdatedAt.Format("2006-01-02 15:04:05"),
+		Id:            int64(item.Id),
+		CategoryId:    int64(item.CategoryId),
+		CategoryName:  item.CategoryName,
+		CategoryTitle: item.CategoryTitle,
+		Title:         item.Title,
+		Name:          item.Name,
+		Author:        item.Author,
+		Source:        item.Source,
+		Description:   item.Description,
+		Content:       item.Content,
+		View:          int64(item.View),
+		CreatedAt:     item.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt:     item.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 
 	return
@@ -55,20 +56,21 @@ func (s *PostServiceImpl) GetArticleList(ctx context.Context, req *post.ArticleL
 	var getItems []*post.Post
 
 	items, total, err := (&model.Post{}).List(req.Search, req.PageSize, (req.Page-1)*req.PageSize, req.Order, req.CategoryId)
-	for _, v := range items {
+	for _, item := range items {
 		getItems = append(getItems, &post.Post{
-			Id:           int64(v.Id),
-			CategoryId:   int64(v.CategoryId),
-			CategoryName: v.CategoryName,
-			Title:        v.Title,
-			Name:         v.Name,
-			Author:       v.Author,
-			Source:       v.Source,
-			Description:  v.Description,
-			Content:      v.Content,
-			View:         int64(v.View),
-			CreatedAt:    v.CreatedAt.Format("2006-01-02 15:04:05"),
-			UpdatedAt:    v.UpdatedAt.Format("2006-01-02 15:04:05"),
+			Id:            int64(item.Id),
+			CategoryId:    int64(item.CategoryId),
+			CategoryName:  item.CategoryName,
+			CategoryTitle: item.CategoryTitle,
+			Title:         item.Title,
+			Name:          item.Name,
+			Author:        item.Author,
+			Source:        item.Source,
+			Description:   item.Description,
+			Content:       item.Content,
+			View:          int64(item.View),
+			CreatedAt:     item.CreatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt:     item.UpdatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
 

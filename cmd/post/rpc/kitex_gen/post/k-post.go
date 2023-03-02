@@ -186,7 +186,7 @@ func (p *Post) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 11:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField11(buf[offset:])
 				offset += l
 				if err != nil {
@@ -200,7 +200,7 @@ func (p *Post) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 12:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				l, err = p.FastReadField12(buf[offset:])
 				offset += l
 				if err != nil {
@@ -230,6 +230,20 @@ func (p *Post) FastRead(buf []byte) (int, error) {
 		case 14:
 			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField14(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 15:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField15(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -326,7 +340,7 @@ func (p *Post) FastReadField4(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Title = v
+		p.CategoryTitle = v
 
 	}
 	return offset, nil
@@ -340,7 +354,7 @@ func (p *Post) FastReadField5(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Name = v
+		p.Title = v
 
 	}
 	return offset, nil
@@ -354,7 +368,7 @@ func (p *Post) FastReadField6(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Author = v
+		p.Name = v
 
 	}
 	return offset, nil
@@ -368,7 +382,7 @@ func (p *Post) FastReadField7(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Source = v
+		p.Author = v
 
 	}
 	return offset, nil
@@ -382,7 +396,7 @@ func (p *Post) FastReadField8(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Description = v
+		p.Source = v
 
 	}
 	return offset, nil
@@ -396,7 +410,7 @@ func (p *Post) FastReadField9(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.CoverIds = v
+		p.Description = v
 
 	}
 	return offset, nil
@@ -410,13 +424,27 @@ func (p *Post) FastReadField10(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Content = v
+		p.CoverIds = v
 
 	}
 	return offset, nil
 }
 
 func (p *Post) FastReadField11(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.Content = v
+
+	}
+	return offset, nil
+}
+
+func (p *Post) FastReadField12(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
@@ -430,7 +458,7 @@ func (p *Post) FastReadField11(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *Post) FastReadField12(buf []byte) (int, error) {
+func (p *Post) FastReadField13(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
@@ -444,7 +472,7 @@ func (p *Post) FastReadField12(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *Post) FastReadField13(buf []byte) (int, error) {
+func (p *Post) FastReadField14(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
@@ -458,7 +486,7 @@ func (p *Post) FastReadField13(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *Post) FastReadField14(buf []byte) (int, error) {
+func (p *Post) FastReadField15(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
@@ -483,7 +511,7 @@ func (p *Post) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) in
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
-		offset += p.fastWriteField11(buf[offset:], binaryWriter)
+		offset += p.fastWriteField12(buf[offset:], binaryWriter)
 		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 		offset += p.fastWriteField4(buf[offset:], binaryWriter)
 		offset += p.fastWriteField5(buf[offset:], binaryWriter)
@@ -492,9 +520,10 @@ func (p *Post) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) in
 		offset += p.fastWriteField8(buf[offset:], binaryWriter)
 		offset += p.fastWriteField9(buf[offset:], binaryWriter)
 		offset += p.fastWriteField10(buf[offset:], binaryWriter)
-		offset += p.fastWriteField12(buf[offset:], binaryWriter)
+		offset += p.fastWriteField11(buf[offset:], binaryWriter)
 		offset += p.fastWriteField13(buf[offset:], binaryWriter)
 		offset += p.fastWriteField14(buf[offset:], binaryWriter)
+		offset += p.fastWriteField15(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -519,6 +548,7 @@ func (p *Post) BLength() int {
 		l += p.field12Length()
 		l += p.field13Length()
 		l += p.field14Length()
+		l += p.field15Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -554,8 +584,8 @@ func (p *Post) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) in
 
 func (p *Post) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "title", thrift.STRING, 4)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Title)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "category_title", thrift.STRING, 4)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CategoryTitle)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -563,8 +593,8 @@ func (p *Post) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) in
 
 func (p *Post) fastWriteField5(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "name", thrift.STRING, 5)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Name)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "title", thrift.STRING, 5)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Title)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -572,8 +602,8 @@ func (p *Post) fastWriteField5(buf []byte, binaryWriter bthrift.BinaryWriter) in
 
 func (p *Post) fastWriteField6(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "author", thrift.STRING, 6)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Author)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "name", thrift.STRING, 6)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Name)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -581,8 +611,8 @@ func (p *Post) fastWriteField6(buf []byte, binaryWriter bthrift.BinaryWriter) in
 
 func (p *Post) fastWriteField7(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "source", thrift.STRING, 7)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Source)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "author", thrift.STRING, 7)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Author)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -590,8 +620,8 @@ func (p *Post) fastWriteField7(buf []byte, binaryWriter bthrift.BinaryWriter) in
 
 func (p *Post) fastWriteField8(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "description", thrift.STRING, 8)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Description)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "source", thrift.STRING, 8)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Source)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -599,8 +629,8 @@ func (p *Post) fastWriteField8(buf []byte, binaryWriter bthrift.BinaryWriter) in
 
 func (p *Post) fastWriteField9(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_ids", thrift.STRING, 9)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CoverIds)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "description", thrift.STRING, 9)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Description)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -608,8 +638,8 @@ func (p *Post) fastWriteField9(buf []byte, binaryWriter bthrift.BinaryWriter) in
 
 func (p *Post) fastWriteField10(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "content", thrift.STRING, 10)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Content)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_ids", thrift.STRING, 10)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CoverIds)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -617,8 +647,8 @@ func (p *Post) fastWriteField10(buf []byte, binaryWriter bthrift.BinaryWriter) i
 
 func (p *Post) fastWriteField11(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "view", thrift.I64, 11)
-	offset += bthrift.Binary.WriteI64(buf[offset:], p.View)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "content", thrift.STRING, 11)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Content)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -626,8 +656,8 @@ func (p *Post) fastWriteField11(buf []byte, binaryWriter bthrift.BinaryWriter) i
 
 func (p *Post) fastWriteField12(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_ids", thrift.STRING, 12)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileIds)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "view", thrift.I64, 12)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.View)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -635,8 +665,8 @@ func (p *Post) fastWriteField12(buf []byte, binaryWriter bthrift.BinaryWriter) i
 
 func (p *Post) fastWriteField13(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "created_at", thrift.STRING, 13)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CreatedAt)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_ids", thrift.STRING, 13)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileIds)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -644,7 +674,16 @@ func (p *Post) fastWriteField13(buf []byte, binaryWriter bthrift.BinaryWriter) i
 
 func (p *Post) fastWriteField14(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "updated_at", thrift.STRING, 14)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "created_at", thrift.STRING, 14)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CreatedAt)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *Post) fastWriteField15(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "updated_at", thrift.STRING, 15)
 	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.UpdatedAt)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
@@ -680,8 +719,8 @@ func (p *Post) field3Length() int {
 
 func (p *Post) field4Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("title", thrift.STRING, 4)
-	l += bthrift.Binary.StringLengthNocopy(p.Title)
+	l += bthrift.Binary.FieldBeginLength("category_title", thrift.STRING, 4)
+	l += bthrift.Binary.StringLengthNocopy(p.CategoryTitle)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -689,8 +728,8 @@ func (p *Post) field4Length() int {
 
 func (p *Post) field5Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("name", thrift.STRING, 5)
-	l += bthrift.Binary.StringLengthNocopy(p.Name)
+	l += bthrift.Binary.FieldBeginLength("title", thrift.STRING, 5)
+	l += bthrift.Binary.StringLengthNocopy(p.Title)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -698,8 +737,8 @@ func (p *Post) field5Length() int {
 
 func (p *Post) field6Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("author", thrift.STRING, 6)
-	l += bthrift.Binary.StringLengthNocopy(p.Author)
+	l += bthrift.Binary.FieldBeginLength("name", thrift.STRING, 6)
+	l += bthrift.Binary.StringLengthNocopy(p.Name)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -707,8 +746,8 @@ func (p *Post) field6Length() int {
 
 func (p *Post) field7Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("source", thrift.STRING, 7)
-	l += bthrift.Binary.StringLengthNocopy(p.Source)
+	l += bthrift.Binary.FieldBeginLength("author", thrift.STRING, 7)
+	l += bthrift.Binary.StringLengthNocopy(p.Author)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -716,8 +755,8 @@ func (p *Post) field7Length() int {
 
 func (p *Post) field8Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("description", thrift.STRING, 8)
-	l += bthrift.Binary.StringLengthNocopy(p.Description)
+	l += bthrift.Binary.FieldBeginLength("source", thrift.STRING, 8)
+	l += bthrift.Binary.StringLengthNocopy(p.Source)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -725,8 +764,8 @@ func (p *Post) field8Length() int {
 
 func (p *Post) field9Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("cover_ids", thrift.STRING, 9)
-	l += bthrift.Binary.StringLengthNocopy(p.CoverIds)
+	l += bthrift.Binary.FieldBeginLength("description", thrift.STRING, 9)
+	l += bthrift.Binary.StringLengthNocopy(p.Description)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -734,8 +773,8 @@ func (p *Post) field9Length() int {
 
 func (p *Post) field10Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("content", thrift.STRING, 10)
-	l += bthrift.Binary.StringLengthNocopy(p.Content)
+	l += bthrift.Binary.FieldBeginLength("cover_ids", thrift.STRING, 10)
+	l += bthrift.Binary.StringLengthNocopy(p.CoverIds)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -743,8 +782,8 @@ func (p *Post) field10Length() int {
 
 func (p *Post) field11Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("view", thrift.I64, 11)
-	l += bthrift.Binary.I64Length(p.View)
+	l += bthrift.Binary.FieldBeginLength("content", thrift.STRING, 11)
+	l += bthrift.Binary.StringLengthNocopy(p.Content)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -752,8 +791,8 @@ func (p *Post) field11Length() int {
 
 func (p *Post) field12Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("file_ids", thrift.STRING, 12)
-	l += bthrift.Binary.StringLengthNocopy(p.FileIds)
+	l += bthrift.Binary.FieldBeginLength("view", thrift.I64, 12)
+	l += bthrift.Binary.I64Length(p.View)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -761,8 +800,8 @@ func (p *Post) field12Length() int {
 
 func (p *Post) field13Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("created_at", thrift.STRING, 13)
-	l += bthrift.Binary.StringLengthNocopy(p.CreatedAt)
+	l += bthrift.Binary.FieldBeginLength("file_ids", thrift.STRING, 13)
+	l += bthrift.Binary.StringLengthNocopy(p.FileIds)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -770,7 +809,16 @@ func (p *Post) field13Length() int {
 
 func (p *Post) field14Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("updated_at", thrift.STRING, 14)
+	l += bthrift.Binary.FieldBeginLength("created_at", thrift.STRING, 14)
+	l += bthrift.Binary.StringLengthNocopy(p.CreatedAt)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *Post) field15Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("updated_at", thrift.STRING, 15)
 	l += bthrift.Binary.StringLengthNocopy(p.UpdatedAt)
 
 	l += bthrift.Binary.FieldEndLength()
@@ -1864,7 +1912,7 @@ func (p *ArticleDetailResponse) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 11:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField11(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1878,7 +1926,7 @@ func (p *ArticleDetailResponse) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 12:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				l, err = p.FastReadField12(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1908,6 +1956,20 @@ func (p *ArticleDetailResponse) FastRead(buf []byte) (int, error) {
 		case 14:
 			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField14(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 15:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField15(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -2004,7 +2066,7 @@ func (p *ArticleDetailResponse) FastReadField4(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Title = v
+		p.CategoryTitle = v
 
 	}
 	return offset, nil
@@ -2018,7 +2080,7 @@ func (p *ArticleDetailResponse) FastReadField5(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Name = v
+		p.Title = v
 
 	}
 	return offset, nil
@@ -2032,7 +2094,7 @@ func (p *ArticleDetailResponse) FastReadField6(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Author = v
+		p.Name = v
 
 	}
 	return offset, nil
@@ -2046,7 +2108,7 @@ func (p *ArticleDetailResponse) FastReadField7(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Source = v
+		p.Author = v
 
 	}
 	return offset, nil
@@ -2060,7 +2122,7 @@ func (p *ArticleDetailResponse) FastReadField8(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Description = v
+		p.Source = v
 
 	}
 	return offset, nil
@@ -2074,7 +2136,7 @@ func (p *ArticleDetailResponse) FastReadField9(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.CoverIds = v
+		p.Description = v
 
 	}
 	return offset, nil
@@ -2088,13 +2150,27 @@ func (p *ArticleDetailResponse) FastReadField10(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Content = v
+		p.CoverIds = v
 
 	}
 	return offset, nil
 }
 
 func (p *ArticleDetailResponse) FastReadField11(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.Content = v
+
+	}
+	return offset, nil
+}
+
+func (p *ArticleDetailResponse) FastReadField12(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
@@ -2108,7 +2184,7 @@ func (p *ArticleDetailResponse) FastReadField11(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *ArticleDetailResponse) FastReadField12(buf []byte) (int, error) {
+func (p *ArticleDetailResponse) FastReadField13(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
@@ -2122,7 +2198,7 @@ func (p *ArticleDetailResponse) FastReadField12(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *ArticleDetailResponse) FastReadField13(buf []byte) (int, error) {
+func (p *ArticleDetailResponse) FastReadField14(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
@@ -2136,7 +2212,7 @@ func (p *ArticleDetailResponse) FastReadField13(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *ArticleDetailResponse) FastReadField14(buf []byte) (int, error) {
+func (p *ArticleDetailResponse) FastReadField15(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
@@ -2161,7 +2237,7 @@ func (p *ArticleDetailResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
-		offset += p.fastWriteField11(buf[offset:], binaryWriter)
+		offset += p.fastWriteField12(buf[offset:], binaryWriter)
 		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 		offset += p.fastWriteField4(buf[offset:], binaryWriter)
 		offset += p.fastWriteField5(buf[offset:], binaryWriter)
@@ -2170,9 +2246,10 @@ func (p *ArticleDetailResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift
 		offset += p.fastWriteField8(buf[offset:], binaryWriter)
 		offset += p.fastWriteField9(buf[offset:], binaryWriter)
 		offset += p.fastWriteField10(buf[offset:], binaryWriter)
-		offset += p.fastWriteField12(buf[offset:], binaryWriter)
+		offset += p.fastWriteField11(buf[offset:], binaryWriter)
 		offset += p.fastWriteField13(buf[offset:], binaryWriter)
 		offset += p.fastWriteField14(buf[offset:], binaryWriter)
+		offset += p.fastWriteField15(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -2197,6 +2274,7 @@ func (p *ArticleDetailResponse) BLength() int {
 		l += p.field12Length()
 		l += p.field13Length()
 		l += p.field14Length()
+		l += p.field15Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -2232,8 +2310,8 @@ func (p *ArticleDetailResponse) fastWriteField3(buf []byte, binaryWriter bthrift
 
 func (p *ArticleDetailResponse) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "title", thrift.STRING, 4)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Title)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "category_title", thrift.STRING, 4)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CategoryTitle)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2241,8 +2319,8 @@ func (p *ArticleDetailResponse) fastWriteField4(buf []byte, binaryWriter bthrift
 
 func (p *ArticleDetailResponse) fastWriteField5(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "name", thrift.STRING, 5)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Name)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "title", thrift.STRING, 5)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Title)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2250,8 +2328,8 @@ func (p *ArticleDetailResponse) fastWriteField5(buf []byte, binaryWriter bthrift
 
 func (p *ArticleDetailResponse) fastWriteField6(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "author", thrift.STRING, 6)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Author)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "name", thrift.STRING, 6)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Name)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2259,8 +2337,8 @@ func (p *ArticleDetailResponse) fastWriteField6(buf []byte, binaryWriter bthrift
 
 func (p *ArticleDetailResponse) fastWriteField7(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "source", thrift.STRING, 7)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Source)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "author", thrift.STRING, 7)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Author)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2268,8 +2346,8 @@ func (p *ArticleDetailResponse) fastWriteField7(buf []byte, binaryWriter bthrift
 
 func (p *ArticleDetailResponse) fastWriteField8(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "description", thrift.STRING, 8)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Description)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "source", thrift.STRING, 8)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Source)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2277,8 +2355,8 @@ func (p *ArticleDetailResponse) fastWriteField8(buf []byte, binaryWriter bthrift
 
 func (p *ArticleDetailResponse) fastWriteField9(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_ids", thrift.STRING, 9)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CoverIds)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "description", thrift.STRING, 9)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Description)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2286,8 +2364,8 @@ func (p *ArticleDetailResponse) fastWriteField9(buf []byte, binaryWriter bthrift
 
 func (p *ArticleDetailResponse) fastWriteField10(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "content", thrift.STRING, 10)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Content)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_ids", thrift.STRING, 10)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CoverIds)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2295,8 +2373,8 @@ func (p *ArticleDetailResponse) fastWriteField10(buf []byte, binaryWriter bthrif
 
 func (p *ArticleDetailResponse) fastWriteField11(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "view", thrift.I64, 11)
-	offset += bthrift.Binary.WriteI64(buf[offset:], p.View)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "content", thrift.STRING, 11)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Content)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2304,8 +2382,8 @@ func (p *ArticleDetailResponse) fastWriteField11(buf []byte, binaryWriter bthrif
 
 func (p *ArticleDetailResponse) fastWriteField12(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_ids", thrift.STRING, 12)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileIds)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "view", thrift.I64, 12)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.View)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2313,8 +2391,8 @@ func (p *ArticleDetailResponse) fastWriteField12(buf []byte, binaryWriter bthrif
 
 func (p *ArticleDetailResponse) fastWriteField13(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "created_at", thrift.STRING, 13)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CreatedAt)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_ids", thrift.STRING, 13)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileIds)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2322,7 +2400,16 @@ func (p *ArticleDetailResponse) fastWriteField13(buf []byte, binaryWriter bthrif
 
 func (p *ArticleDetailResponse) fastWriteField14(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "updated_at", thrift.STRING, 14)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "created_at", thrift.STRING, 14)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CreatedAt)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *ArticleDetailResponse) fastWriteField15(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "updated_at", thrift.STRING, 15)
 	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.UpdatedAt)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
@@ -2358,8 +2445,8 @@ func (p *ArticleDetailResponse) field3Length() int {
 
 func (p *ArticleDetailResponse) field4Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("title", thrift.STRING, 4)
-	l += bthrift.Binary.StringLengthNocopy(p.Title)
+	l += bthrift.Binary.FieldBeginLength("category_title", thrift.STRING, 4)
+	l += bthrift.Binary.StringLengthNocopy(p.CategoryTitle)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -2367,8 +2454,8 @@ func (p *ArticleDetailResponse) field4Length() int {
 
 func (p *ArticleDetailResponse) field5Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("name", thrift.STRING, 5)
-	l += bthrift.Binary.StringLengthNocopy(p.Name)
+	l += bthrift.Binary.FieldBeginLength("title", thrift.STRING, 5)
+	l += bthrift.Binary.StringLengthNocopy(p.Title)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -2376,8 +2463,8 @@ func (p *ArticleDetailResponse) field5Length() int {
 
 func (p *ArticleDetailResponse) field6Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("author", thrift.STRING, 6)
-	l += bthrift.Binary.StringLengthNocopy(p.Author)
+	l += bthrift.Binary.FieldBeginLength("name", thrift.STRING, 6)
+	l += bthrift.Binary.StringLengthNocopy(p.Name)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -2385,8 +2472,8 @@ func (p *ArticleDetailResponse) field6Length() int {
 
 func (p *ArticleDetailResponse) field7Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("source", thrift.STRING, 7)
-	l += bthrift.Binary.StringLengthNocopy(p.Source)
+	l += bthrift.Binary.FieldBeginLength("author", thrift.STRING, 7)
+	l += bthrift.Binary.StringLengthNocopy(p.Author)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -2394,8 +2481,8 @@ func (p *ArticleDetailResponse) field7Length() int {
 
 func (p *ArticleDetailResponse) field8Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("description", thrift.STRING, 8)
-	l += bthrift.Binary.StringLengthNocopy(p.Description)
+	l += bthrift.Binary.FieldBeginLength("source", thrift.STRING, 8)
+	l += bthrift.Binary.StringLengthNocopy(p.Source)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -2403,8 +2490,8 @@ func (p *ArticleDetailResponse) field8Length() int {
 
 func (p *ArticleDetailResponse) field9Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("cover_ids", thrift.STRING, 9)
-	l += bthrift.Binary.StringLengthNocopy(p.CoverIds)
+	l += bthrift.Binary.FieldBeginLength("description", thrift.STRING, 9)
+	l += bthrift.Binary.StringLengthNocopy(p.Description)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -2412,8 +2499,8 @@ func (p *ArticleDetailResponse) field9Length() int {
 
 func (p *ArticleDetailResponse) field10Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("content", thrift.STRING, 10)
-	l += bthrift.Binary.StringLengthNocopy(p.Content)
+	l += bthrift.Binary.FieldBeginLength("cover_ids", thrift.STRING, 10)
+	l += bthrift.Binary.StringLengthNocopy(p.CoverIds)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -2421,8 +2508,8 @@ func (p *ArticleDetailResponse) field10Length() int {
 
 func (p *ArticleDetailResponse) field11Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("view", thrift.I64, 11)
-	l += bthrift.Binary.I64Length(p.View)
+	l += bthrift.Binary.FieldBeginLength("content", thrift.STRING, 11)
+	l += bthrift.Binary.StringLengthNocopy(p.Content)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -2430,8 +2517,8 @@ func (p *ArticleDetailResponse) field11Length() int {
 
 func (p *ArticleDetailResponse) field12Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("file_ids", thrift.STRING, 12)
-	l += bthrift.Binary.StringLengthNocopy(p.FileIds)
+	l += bthrift.Binary.FieldBeginLength("view", thrift.I64, 12)
+	l += bthrift.Binary.I64Length(p.View)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -2439,8 +2526,8 @@ func (p *ArticleDetailResponse) field12Length() int {
 
 func (p *ArticleDetailResponse) field13Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("created_at", thrift.STRING, 13)
-	l += bthrift.Binary.StringLengthNocopy(p.CreatedAt)
+	l += bthrift.Binary.FieldBeginLength("file_ids", thrift.STRING, 13)
+	l += bthrift.Binary.StringLengthNocopy(p.FileIds)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -2448,7 +2535,16 @@ func (p *ArticleDetailResponse) field13Length() int {
 
 func (p *ArticleDetailResponse) field14Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("updated_at", thrift.STRING, 14)
+	l += bthrift.Binary.FieldBeginLength("created_at", thrift.STRING, 14)
+	l += bthrift.Binary.StringLengthNocopy(p.CreatedAt)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *ArticleDetailResponse) field15Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("updated_at", thrift.STRING, 15)
 	l += bthrift.Binary.StringLengthNocopy(p.UpdatedAt)
 
 	l += bthrift.Binary.FieldEndLength()

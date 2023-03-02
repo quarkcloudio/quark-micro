@@ -38,14 +38,16 @@ type Post struct {
 	UpdatedAt     time.Time      `json:"updated_at"`
 	DeletedAt     gorm.DeletedAt `json:"deleted_at"`
 	CategoryName  string         `json:"category_name" gorm:"<-:false"`
+	CategoryTitle string         `json:"category_title" gorm:"<-:false"`
 }
 
 // 获取详细信息
 func (model *Post) Info(id int64, name string) (post *Post, err error) {
+
 	// 查询对象
 	query := db.Client.
 		Model(&model).
-		Select("posts.*, categories.name as category_name").
+		Select("posts.*, categories.name as category_name, categories.title as category_title").
 		Joins("left join categories on categories.id = posts.category_id").
 		Where("posts.status", 1)
 
@@ -58,10 +60,26 @@ func (model *Post) Info(id int64, name string) (post *Post, err error) {
 	}
 
 	// 查询信息
-	query.Find(&post)
+	err = query.Find(&post).Error
+	if err != nil {
+		return
+	}
 
-	// 获取错误信息
-	err = query.Error
+	// 更新浏览量
+	viewUpdate := db.Client.
+		Model(&model).
+		Where("status", 1)
+
+	if id != 0 {
+		viewUpdate.Where("id = ?", id)
+	}
+
+	if name != "" {
+		viewUpdate.Where("name = ?", name)
+	}
+
+	// 浏览量+1
+	err = viewUpdate.UpdateColumn("view", gorm.Expr("view + ?", 1)).Error
 	if err != nil {
 		return
 	}
@@ -79,7 +97,7 @@ func (model *Post) List(search *string, limit int64, offset int64, order string,
 	// 查询对象
 	query := db.Client.
 		Model(&model).
-		Select("posts.*, categories.name as category_name").
+		Select("posts.*, categories.name as category_name, categories.title as category_title").
 		Joins("left join categories on categories.id = posts.category_id").
 		Where("posts.status", 1).
 		Where("posts.type", "ARTICLE")

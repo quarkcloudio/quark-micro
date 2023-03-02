@@ -4,17 +4,18 @@ struct Post {
     1: i64 id (vt.gt = "0")
     2: i64 category_id
     3: string category_name
-    4: string title
-    5: string name
-    6: string author
-    7: string source
-    8: string description
-    9: string cover_ids
-    10: string content
-    11: i64 view
-    12: string file_ids
-    13: string created_at
-    14: string updated_at
+    4: string category_title
+    5: string title
+    6: string name
+    7: string author
+    8: string source
+    9: string description
+    10: string cover_ids
+    11: string content
+    12: i64 view
+    13: string file_ids
+    14: string created_at
+    15: string updated_at
 }
 
 struct PageRequest {
@@ -44,17 +45,18 @@ struct ArticleDetailResponse {
     1: i64 id (vt.gt = "0")
     2: i64 category_id
     3: string category_name
-    4: string title
-    5: string name
-    6: string author
-    7: string source
-    8: string description
-    9: string cover_ids
-    10: string content
-    11: i64 view
-    12: string file_ids
-    13: string created_at
-    14: string updated_at
+    4: string category_title
+    5: string title
+    6: string name
+    7: string author
+    8: string source
+    9: string description
+    10: string cover_ids
+    11: string content
+    12: i64 view
+    13: string file_ids
+    14: string created_at
+    15: string updated_at
 }
 
 struct ArticleListRequest {
