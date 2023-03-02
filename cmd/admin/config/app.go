@@ -25,7 +25,7 @@ var App = &AppConfig{
 	Env: env.Get("APP_ENV", "local"),
 
 	// 服务地址
-	Host: env.Get("APP_HOST", "127.0.0.1:3000"),
+	Host: env.Get("APP_HOST", "127.0.0.1:8000"),
 
 	// 令牌加密key，如果设置绝对不可泄漏
 	Key: env.Get("APP_KEY", "Your App Key"),
