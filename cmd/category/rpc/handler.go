@@ -46,5 +46,6 @@ func (s *CategoryServiceImpl) GetCategoryList(ctx context.Context, req *category
 		Items: getItems,
 		Total: total,
 	}
+
 	return
 }
