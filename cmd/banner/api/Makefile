@@ -1,5 +1,5 @@
 init:
-	hz new -mod github.com/quarkcms/quark-micro/cmd/banner/api -idl ./idl/banner.thrift
+	hz new -idl ./idl/banner.thrift
 
 update:
-	hz update -mod github.com/quarkcms/quark-micro/cmd/banner/api -idl ./idl/banner.thrift
+	hz update -idl ./idl/banner.thrift
