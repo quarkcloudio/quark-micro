@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 
-	models "github.com/quarkcms/quark-go/pkg/app/model"
 	banner "github.com/quarkcms/quark-micro/cmd/banner/rpc/kitex_gen/banner"
 	"github.com/quarkcms/quark-micro/cmd/banner/rpc/model"
+	"github.com/quarkcms/quark-micro/pkg/utils"
 )
 
 // BannerServiceImpl implements the last service interface defined in the IDL.
@@ -22,7 +22,7 @@ func (s *BannerServiceImpl) GetBannerList(ctx context.Context, req *banner.Banne
 			Title:     item.Title,
 			UrlType:   int32(item.UrlType),
 			Url:       item.Url,
-			CoverPath: (&models.Picture{}).GetPath(item.CoverId),
+			CoverPath: utils.GetPicturePath(item.CoverId),
 			CreatedAt: item.CreatedAt.Format("2006-01-02 15:04:05"),
 			UpdatedAt: item.UpdatedAt.Format("2006-01-02 15:04:05"),
 		})

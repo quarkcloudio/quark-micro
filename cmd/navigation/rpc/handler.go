@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 
-	models "github.com/quarkcms/quark-go/pkg/app/model"
 	navigation "github.com/quarkcms/quark-micro/cmd/navigation/rpc/kitex_gen/navigation"
 	"github.com/quarkcms/quark-micro/cmd/navigation/rpc/model"
+	"github.com/quarkcms/quark-micro/pkg/utils"
 )
 
 // NavigationServiceImpl implements the last service interface defined in the IDL.
@@ -22,7 +22,7 @@ func (s *NavigationServiceImpl) GetNavigationList(ctx context.Context, req *navi
 			Title:     item.Title,
 			UrlType:   int32(item.UrlType),
 			Url:       item.Url,
-			CoverPath: (&models.Picture{}).GetPath(item.CoverId),
+			CoverPath: utils.GetPicturePath(item.CoverId),
 			CreatedAt: item.CreatedAt.Format("2006-01-02 15:04:05"),
 			UpdatedAt: item.UpdatedAt.Format("2006-01-02 15:04:05"),
 		})
