@@ -106,14 +106,6 @@ func (model *Post) List(search *string, limit int64, offset int64, order string,
 		query.Where("posts.title like ?", "%"+*search+"%")
 	}
 
-	if limit != 0 {
-		query.Limit(int(limit))
-	}
-
-	if offset != 0 {
-		query.Offset(int(offset))
-	}
-
 	if order != "" {
 		query.Order(order)
 	}
@@ -122,11 +114,19 @@ func (model *Post) List(search *string, limit int64, offset int64, order string,
 		query.Where("posts.category_id = ?", categoryId)
 	}
 
-	// 查询列表
-	query.Find(&getItems)
-
 	// 查询总数量
 	query.Count(&getTotal)
+
+	if limit != 0 {
+		query.Limit(int(limit))
+	}
+
+	if offset != 0 {
+		query.Offset(int(offset))
+	}
+
+	// 查询列表
+	query.Find(&getItems)
 
 	// 获取错误信息
 	err = query.Error

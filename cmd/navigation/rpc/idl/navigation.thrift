@@ -13,12 +13,13 @@ struct Navigation {
 
 struct NavigationListRequest {
     1: i64 limit (vt.ge = "0")
-    2: string order
-    3: i64 pid (vt.ge = "0")
+    2: i64 pid (vt.ge = "0")
+    3: string order
 }
 
 struct NavigationListResponse {
     1: list<Navigation> items
+    2: i64 total
 }
 
 // 导航服务

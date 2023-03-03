@@ -1,0 +1,24 @@
+package config
+
+import (
+	"github.com/quarkcms/quark-micro/pkg/env"
+)
+
+type RegistryConfig struct {
+	Host     string // 服务地址
+	Username string // 用户名
+	Password string // 密码
+}
+
+// 注册中心配置
+var Registry = &RegistryConfig{
+
+	// 服务地址
+	Host: env.Get("REGISTRY_HOST", "127.0.0.1:2379"),
+
+	// 用户名
+	Username: env.Get("REGISTRY_USERNAME", ""),
+
+	// 密码
+	Password: env.Get("REGISTRY_PASSWORD", ""),
+}

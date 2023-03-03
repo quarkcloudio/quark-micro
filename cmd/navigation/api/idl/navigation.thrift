@@ -8,5 +8,5 @@ struct GetNavigationListRequest {
 struct GetNavigationListResponse {}
 
 service ApiService {
-    GetNavigationListResponse GetCategoryList(1: GetNavigationListRequest req) (api.get="/api/v1/navigation/list")
+    GetNavigationListResponse GetNavigationList(1: GetNavigationListRequest req) (api.get="/api/v1/navigation/list")
 }
