@@ -10,21 +10,21 @@ import (
 )
 
 type Post struct {
-	Id            int64  `thrift:"id,1" frugal:"1,default,i64" json:"id"`
-	CategoryId    int64  `thrift:"category_id,2" frugal:"2,default,i64" json:"category_id"`
-	CategoryName  string `thrift:"category_name,3" frugal:"3,default,string" json:"category_name"`
-	CategoryTitle string `thrift:"category_title,4" frugal:"4,default,string" json:"category_title"`
-	Title         string `thrift:"title,5" frugal:"5,default,string" json:"title"`
-	Name          string `thrift:"name,6" frugal:"6,default,string" json:"name"`
-	Author        string `thrift:"author,7" frugal:"7,default,string" json:"author"`
-	Source        string `thrift:"source,8" frugal:"8,default,string" json:"source"`
-	Description   string `thrift:"description,9" frugal:"9,default,string" json:"description"`
-	CoverIds      string `thrift:"cover_ids,10" frugal:"10,default,string" json:"cover_ids"`
-	Content       string `thrift:"content,11" frugal:"11,default,string" json:"content"`
-	View          int64  `thrift:"view,12" frugal:"12,default,i64" json:"view"`
-	FileIds       string `thrift:"file_ids,13" frugal:"13,default,string" json:"file_ids"`
-	CreatedAt     string `thrift:"created_at,14" frugal:"14,default,string" json:"created_at"`
-	UpdatedAt     string `thrift:"updated_at,15" frugal:"15,default,string" json:"updated_at"`
+	Id            int64    `thrift:"id,1" frugal:"1,default,i64" json:"id"`
+	CategoryId    int64    `thrift:"category_id,2" frugal:"2,default,i64" json:"category_id"`
+	CategoryName  string   `thrift:"category_name,3" frugal:"3,default,string" json:"category_name"`
+	CategoryTitle string   `thrift:"category_title,4" frugal:"4,default,string" json:"category_title"`
+	Title         string   `thrift:"title,5" frugal:"5,default,string" json:"title"`
+	Name          string   `thrift:"name,6" frugal:"6,default,string" json:"name"`
+	Author        string   `thrift:"author,7" frugal:"7,default,string" json:"author"`
+	Source        string   `thrift:"source,8" frugal:"8,default,string" json:"source"`
+	Description   string   `thrift:"description,9" frugal:"9,default,string" json:"description"`
+	CoverPaths    []string `thrift:"cover_paths,10" frugal:"10,default,list<string>" json:"cover_paths"`
+	Content       string   `thrift:"content,11" frugal:"11,default,string" json:"content"`
+	View          int64    `thrift:"view,12" frugal:"12,default,i64" json:"view"`
+	FilePaths     []string `thrift:"file_paths,13" frugal:"13,default,list<string>" json:"file_paths"`
+	CreatedAt     string   `thrift:"created_at,14" frugal:"14,default,string" json:"created_at"`
+	UpdatedAt     string   `thrift:"updated_at,15" frugal:"15,default,string" json:"updated_at"`
 }
 
 func NewPost() *Post {
@@ -71,8 +71,8 @@ func (p *Post) GetDescription() (v string) {
 	return p.Description
 }
 
-func (p *Post) GetCoverIds() (v string) {
-	return p.CoverIds
+func (p *Post) GetCoverPaths() (v []string) {
+	return p.CoverPaths
 }
 
 func (p *Post) GetContent() (v string) {
@@ -83,8 +83,8 @@ func (p *Post) GetView() (v int64) {
 	return p.View
 }
 
-func (p *Post) GetFileIds() (v string) {
-	return p.FileIds
+func (p *Post) GetFilePaths() (v []string) {
+	return p.FilePaths
 }
 
 func (p *Post) GetCreatedAt() (v string) {
@@ -121,8 +121,8 @@ func (p *Post) SetSource(val string) {
 func (p *Post) SetDescription(val string) {
 	p.Description = val
 }
-func (p *Post) SetCoverIds(val string) {
-	p.CoverIds = val
+func (p *Post) SetCoverPaths(val []string) {
+	p.CoverPaths = val
 }
 func (p *Post) SetContent(val string) {
 	p.Content = val
@@ -130,8 +130,8 @@ func (p *Post) SetContent(val string) {
 func (p *Post) SetView(val int64) {
 	p.View = val
 }
-func (p *Post) SetFileIds(val string) {
-	p.FileIds = val
+func (p *Post) SetFilePaths(val []string) {
+	p.FilePaths = val
 }
 func (p *Post) SetCreatedAt(val string) {
 	p.CreatedAt = val
@@ -150,10 +150,10 @@ var fieldIDToName_Post = map[int16]string{
 	7:  "author",
 	8:  "source",
 	9:  "description",
-	10: "cover_ids",
+	10: "cover_paths",
 	11: "content",
 	12: "view",
-	13: "file_ids",
+	13: "file_paths",
 	14: "created_at",
 	15: "updated_at",
 }
@@ -268,7 +268,7 @@ func (p *Post) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 10:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField10(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -298,7 +298,7 @@ func (p *Post) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 13:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField13(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -439,10 +439,23 @@ func (p *Post) ReadField9(iprot thrift.TProtocol) error {
 }
 
 func (p *Post) ReadField10(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
 		return err
-	} else {
-		p.CoverIds = v
+	}
+	p.CoverPaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, err := iprot.ReadString(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		p.CoverPaths = append(p.CoverPaths, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
 	}
 	return nil
 }
@@ -466,10 +479,23 @@ func (p *Post) ReadField12(iprot thrift.TProtocol) error {
 }
 
 func (p *Post) ReadField13(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
 		return err
-	} else {
-		p.FileIds = v
+	}
+	p.FilePaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, err := iprot.ReadString(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		p.FilePaths = append(p.FilePaths, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
 	}
 	return nil
 }
@@ -731,10 +757,18 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField10(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("cover_ids", thrift.STRING, 10); err != nil {
+	if err = oprot.WriteFieldBegin("cover_paths", thrift.LIST, 10); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.CoverIds); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRING, len(p.CoverPaths)); err != nil {
+		return err
+	}
+	for _, v := range p.CoverPaths {
+		if err := oprot.WriteString(v); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -782,10 +816,18 @@ WriteFieldEndError:
 }
 
 func (p *Post) writeField13(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("file_ids", thrift.STRING, 13); err != nil {
+	if err = oprot.WriteFieldBegin("file_paths", thrift.LIST, 13); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.FileIds); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRING, len(p.FilePaths)); err != nil {
+		return err
+	}
+	for _, v := range p.FilePaths {
+		if err := oprot.WriteString(v); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -872,7 +914,7 @@ func (p *Post) DeepEqual(ano *Post) bool {
 	if !p.Field9DeepEqual(ano.Description) {
 		return false
 	}
-	if !p.Field10DeepEqual(ano.CoverIds) {
+	if !p.Field10DeepEqual(ano.CoverPaths) {
 		return false
 	}
 	if !p.Field11DeepEqual(ano.Content) {
@@ -881,7 +923,7 @@ func (p *Post) DeepEqual(ano *Post) bool {
 	if !p.Field12DeepEqual(ano.View) {
 		return false
 	}
-	if !p.Field13DeepEqual(ano.FileIds) {
+	if !p.Field13DeepEqual(ano.FilePaths) {
 		return false
 	}
 	if !p.Field14DeepEqual(ano.CreatedAt) {
@@ -956,10 +998,16 @@ func (p *Post) Field9DeepEqual(src string) bool {
 	}
 	return true
 }
-func (p *Post) Field10DeepEqual(src string) bool {
+func (p *Post) Field10DeepEqual(src []string) bool {
 
-	if strings.Compare(p.CoverIds, src) != 0 {
+	if len(p.CoverPaths) != len(src) {
 		return false
+	}
+	for i, v := range p.CoverPaths {
+		_src := src[i]
+		if strings.Compare(v, _src) != 0 {
+			return false
+		}
 	}
 	return true
 }
@@ -977,10 +1025,16 @@ func (p *Post) Field12DeepEqual(src int64) bool {
 	}
 	return true
 }
-func (p *Post) Field13DeepEqual(src string) bool {
+func (p *Post) Field13DeepEqual(src []string) bool {
 
-	if strings.Compare(p.FileIds, src) != 0 {
+	if len(p.FilePaths) != len(src) {
 		return false
+	}
+	for i, v := range p.FilePaths {
+		_src := src[i]
+		if strings.Compare(v, _src) != 0 {
+			return false
+		}
 	}
 	return true
 }
@@ -1239,16 +1293,16 @@ func (p *PageRequest) Field2DeepEqual(src *string) bool {
 }
 
 type PageResponse struct {
-	Id          int64  `thrift:"id,1" frugal:"1,default,i64" json:"id"`
-	Title       string `thrift:"title,2" frugal:"2,default,string" json:"title"`
-	Name        string `thrift:"name,3" frugal:"3,default,string" json:"name"`
-	Description string `thrift:"description,4" frugal:"4,default,string" json:"description"`
-	CoverIds    string `thrift:"cover_ids,5" frugal:"5,default,string" json:"cover_ids"`
-	Content     string `thrift:"content,6" frugal:"6,default,string" json:"content"`
-	View        int64  `thrift:"view,7" frugal:"7,default,i64" json:"view"`
-	FileIds     string `thrift:"file_ids,8" frugal:"8,default,string" json:"file_ids"`
-	CreatedAt   string `thrift:"created_at,9" frugal:"9,default,string" json:"created_at"`
-	UpdatedAt   string `thrift:"updated_at,10" frugal:"10,default,string" json:"updated_at"`
+	Id          int64    `thrift:"id,1" frugal:"1,default,i64" json:"id"`
+	Title       string   `thrift:"title,2" frugal:"2,default,string" json:"title"`
+	Name        string   `thrift:"name,3" frugal:"3,default,string" json:"name"`
+	Description string   `thrift:"description,4" frugal:"4,default,string" json:"description"`
+	CoverPaths  []string `thrift:"cover_paths,5" frugal:"5,default,list<string>" json:"cover_paths"`
+	Content     string   `thrift:"content,6" frugal:"6,default,string" json:"content"`
+	View        int64    `thrift:"view,7" frugal:"7,default,i64" json:"view"`
+	FilePaths   []string `thrift:"file_paths,8" frugal:"8,default,list<string>" json:"file_paths"`
+	CreatedAt   string   `thrift:"created_at,9" frugal:"9,default,string" json:"created_at"`
+	UpdatedAt   string   `thrift:"updated_at,10" frugal:"10,default,string" json:"updated_at"`
 }
 
 func NewPageResponse() *PageResponse {
@@ -1275,8 +1329,8 @@ func (p *PageResponse) GetDescription() (v string) {
 	return p.Description
 }
 
-func (p *PageResponse) GetCoverIds() (v string) {
-	return p.CoverIds
+func (p *PageResponse) GetCoverPaths() (v []string) {
+	return p.CoverPaths
 }
 
 func (p *PageResponse) GetContent() (v string) {
@@ -1287,8 +1341,8 @@ func (p *PageResponse) GetView() (v int64) {
 	return p.View
 }
 
-func (p *PageResponse) GetFileIds() (v string) {
-	return p.FileIds
+func (p *PageResponse) GetFilePaths() (v []string) {
+	return p.FilePaths
 }
 
 func (p *PageResponse) GetCreatedAt() (v string) {
@@ -1310,8 +1364,8 @@ func (p *PageResponse) SetName(val string) {
 func (p *PageResponse) SetDescription(val string) {
 	p.Description = val
 }
-func (p *PageResponse) SetCoverIds(val string) {
-	p.CoverIds = val
+func (p *PageResponse) SetCoverPaths(val []string) {
+	p.CoverPaths = val
 }
 func (p *PageResponse) SetContent(val string) {
 	p.Content = val
@@ -1319,8 +1373,8 @@ func (p *PageResponse) SetContent(val string) {
 func (p *PageResponse) SetView(val int64) {
 	p.View = val
 }
-func (p *PageResponse) SetFileIds(val string) {
-	p.FileIds = val
+func (p *PageResponse) SetFilePaths(val []string) {
+	p.FilePaths = val
 }
 func (p *PageResponse) SetCreatedAt(val string) {
 	p.CreatedAt = val
@@ -1334,10 +1388,10 @@ var fieldIDToName_PageResponse = map[int16]string{
 	2:  "title",
 	3:  "name",
 	4:  "description",
-	5:  "cover_ids",
+	5:  "cover_paths",
 	6:  "content",
 	7:  "view",
-	8:  "file_ids",
+	8:  "file_paths",
 	9:  "created_at",
 	10: "updated_at",
 }
@@ -1402,7 +1456,7 @@ func (p *PageResponse) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 5:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField5(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1432,7 +1486,7 @@ func (p *PageResponse) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 8:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField8(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1528,10 +1582,23 @@ func (p *PageResponse) ReadField4(iprot thrift.TProtocol) error {
 }
 
 func (p *PageResponse) ReadField5(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
 		return err
-	} else {
-		p.CoverIds = v
+	}
+	p.CoverPaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, err := iprot.ReadString(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		p.CoverPaths = append(p.CoverPaths, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
 	}
 	return nil
 }
@@ -1555,10 +1622,23 @@ func (p *PageResponse) ReadField7(iprot thrift.TProtocol) error {
 }
 
 func (p *PageResponse) ReadField8(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
 		return err
-	} else {
-		p.FileIds = v
+	}
+	p.FilePaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, err := iprot.ReadString(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		p.FilePaths = append(p.FilePaths, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
 	}
 	return nil
 }
@@ -1715,10 +1795,18 @@ WriteFieldEndError:
 }
 
 func (p *PageResponse) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("cover_ids", thrift.STRING, 5); err != nil {
+	if err = oprot.WriteFieldBegin("cover_paths", thrift.LIST, 5); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.CoverIds); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRING, len(p.CoverPaths)); err != nil {
+		return err
+	}
+	for _, v := range p.CoverPaths {
+		if err := oprot.WriteString(v); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1766,10 +1854,18 @@ WriteFieldEndError:
 }
 
 func (p *PageResponse) writeField8(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("file_ids", thrift.STRING, 8); err != nil {
+	if err = oprot.WriteFieldBegin("file_paths", thrift.LIST, 8); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.FileIds); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRING, len(p.FilePaths)); err != nil {
+		return err
+	}
+	for _, v := range p.FilePaths {
+		if err := oprot.WriteString(v); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1841,7 +1937,7 @@ func (p *PageResponse) DeepEqual(ano *PageResponse) bool {
 	if !p.Field4DeepEqual(ano.Description) {
 		return false
 	}
-	if !p.Field5DeepEqual(ano.CoverIds) {
+	if !p.Field5DeepEqual(ano.CoverPaths) {
 		return false
 	}
 	if !p.Field6DeepEqual(ano.Content) {
@@ -1850,7 +1946,7 @@ func (p *PageResponse) DeepEqual(ano *PageResponse) bool {
 	if !p.Field7DeepEqual(ano.View) {
 		return false
 	}
-	if !p.Field8DeepEqual(ano.FileIds) {
+	if !p.Field8DeepEqual(ano.FilePaths) {
 		return false
 	}
 	if !p.Field9DeepEqual(ano.CreatedAt) {
@@ -1890,10 +1986,16 @@ func (p *PageResponse) Field4DeepEqual(src string) bool {
 	}
 	return true
 }
-func (p *PageResponse) Field5DeepEqual(src string) bool {
+func (p *PageResponse) Field5DeepEqual(src []string) bool {
 
-	if strings.Compare(p.CoverIds, src) != 0 {
+	if len(p.CoverPaths) != len(src) {
 		return false
+	}
+	for i, v := range p.CoverPaths {
+		_src := src[i]
+		if strings.Compare(v, _src) != 0 {
+			return false
+		}
 	}
 	return true
 }
@@ -1911,10 +2013,16 @@ func (p *PageResponse) Field7DeepEqual(src int64) bool {
 	}
 	return true
 }
-func (p *PageResponse) Field8DeepEqual(src string) bool {
+func (p *PageResponse) Field8DeepEqual(src []string) bool {
 
-	if strings.Compare(p.FileIds, src) != 0 {
+	if len(p.FilePaths) != len(src) {
 		return false
+	}
+	for i, v := range p.FilePaths {
+		_src := src[i]
+		if strings.Compare(v, _src) != 0 {
+			return false
+		}
 	}
 	return true
 }
@@ -2173,21 +2281,21 @@ func (p *ArticleDetailRequest) Field2DeepEqual(src *string) bool {
 }
 
 type ArticleDetailResponse struct {
-	Id            int64  `thrift:"id,1" frugal:"1,default,i64" json:"id"`
-	CategoryId    int64  `thrift:"category_id,2" frugal:"2,default,i64" json:"category_id"`
-	CategoryName  string `thrift:"category_name,3" frugal:"3,default,string" json:"category_name"`
-	CategoryTitle string `thrift:"category_title,4" frugal:"4,default,string" json:"category_title"`
-	Title         string `thrift:"title,5" frugal:"5,default,string" json:"title"`
-	Name          string `thrift:"name,6" frugal:"6,default,string" json:"name"`
-	Author        string `thrift:"author,7" frugal:"7,default,string" json:"author"`
-	Source        string `thrift:"source,8" frugal:"8,default,string" json:"source"`
-	Description   string `thrift:"description,9" frugal:"9,default,string" json:"description"`
-	CoverIds      string `thrift:"cover_ids,10" frugal:"10,default,string" json:"cover_ids"`
-	Content       string `thrift:"content,11" frugal:"11,default,string" json:"content"`
-	View          int64  `thrift:"view,12" frugal:"12,default,i64" json:"view"`
-	FileIds       string `thrift:"file_ids,13" frugal:"13,default,string" json:"file_ids"`
-	CreatedAt     string `thrift:"created_at,14" frugal:"14,default,string" json:"created_at"`
-	UpdatedAt     string `thrift:"updated_at,15" frugal:"15,default,string" json:"updated_at"`
+	Id            int64    `thrift:"id,1" frugal:"1,default,i64" json:"id"`
+	CategoryId    int64    `thrift:"category_id,2" frugal:"2,default,i64" json:"category_id"`
+	CategoryName  string   `thrift:"category_name,3" frugal:"3,default,string" json:"category_name"`
+	CategoryTitle string   `thrift:"category_title,4" frugal:"4,default,string" json:"category_title"`
+	Title         string   `thrift:"title,5" frugal:"5,default,string" json:"title"`
+	Name          string   `thrift:"name,6" frugal:"6,default,string" json:"name"`
+	Author        string   `thrift:"author,7" frugal:"7,default,string" json:"author"`
+	Source        string   `thrift:"source,8" frugal:"8,default,string" json:"source"`
+	Description   string   `thrift:"description,9" frugal:"9,default,string" json:"description"`
+	CoverPaths    []string `thrift:"cover_paths,10" frugal:"10,default,list<string>" json:"cover_paths"`
+	Content       string   `thrift:"content,11" frugal:"11,default,string" json:"content"`
+	View          int64    `thrift:"view,12" frugal:"12,default,i64" json:"view"`
+	FilePaths     []string `thrift:"file_paths,13" frugal:"13,default,list<string>" json:"file_paths"`
+	CreatedAt     string   `thrift:"created_at,14" frugal:"14,default,string" json:"created_at"`
+	UpdatedAt     string   `thrift:"updated_at,15" frugal:"15,default,string" json:"updated_at"`
 }
 
 func NewArticleDetailResponse() *ArticleDetailResponse {
@@ -2234,8 +2342,8 @@ func (p *ArticleDetailResponse) GetDescription() (v string) {
 	return p.Description
 }
 
-func (p *ArticleDetailResponse) GetCoverIds() (v string) {
-	return p.CoverIds
+func (p *ArticleDetailResponse) GetCoverPaths() (v []string) {
+	return p.CoverPaths
 }
 
 func (p *ArticleDetailResponse) GetContent() (v string) {
@@ -2246,8 +2354,8 @@ func (p *ArticleDetailResponse) GetView() (v int64) {
 	return p.View
 }
 
-func (p *ArticleDetailResponse) GetFileIds() (v string) {
-	return p.FileIds
+func (p *ArticleDetailResponse) GetFilePaths() (v []string) {
+	return p.FilePaths
 }
 
 func (p *ArticleDetailResponse) GetCreatedAt() (v string) {
@@ -2284,8 +2392,8 @@ func (p *ArticleDetailResponse) SetSource(val string) {
 func (p *ArticleDetailResponse) SetDescription(val string) {
 	p.Description = val
 }
-func (p *ArticleDetailResponse) SetCoverIds(val string) {
-	p.CoverIds = val
+func (p *ArticleDetailResponse) SetCoverPaths(val []string) {
+	p.CoverPaths = val
 }
 func (p *ArticleDetailResponse) SetContent(val string) {
 	p.Content = val
@@ -2293,8 +2401,8 @@ func (p *ArticleDetailResponse) SetContent(val string) {
 func (p *ArticleDetailResponse) SetView(val int64) {
 	p.View = val
 }
-func (p *ArticleDetailResponse) SetFileIds(val string) {
-	p.FileIds = val
+func (p *ArticleDetailResponse) SetFilePaths(val []string) {
+	p.FilePaths = val
 }
 func (p *ArticleDetailResponse) SetCreatedAt(val string) {
 	p.CreatedAt = val
@@ -2313,10 +2421,10 @@ var fieldIDToName_ArticleDetailResponse = map[int16]string{
 	7:  "author",
 	8:  "source",
 	9:  "description",
-	10: "cover_ids",
+	10: "cover_paths",
 	11: "content",
 	12: "view",
-	13: "file_ids",
+	13: "file_paths",
 	14: "created_at",
 	15: "updated_at",
 }
@@ -2431,7 +2539,7 @@ func (p *ArticleDetailResponse) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 10:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField10(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2461,7 +2569,7 @@ func (p *ArticleDetailResponse) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 13:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField13(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2602,10 +2710,23 @@ func (p *ArticleDetailResponse) ReadField9(iprot thrift.TProtocol) error {
 }
 
 func (p *ArticleDetailResponse) ReadField10(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
 		return err
-	} else {
-		p.CoverIds = v
+	}
+	p.CoverPaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, err := iprot.ReadString(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		p.CoverPaths = append(p.CoverPaths, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
 	}
 	return nil
 }
@@ -2629,10 +2750,23 @@ func (p *ArticleDetailResponse) ReadField12(iprot thrift.TProtocol) error {
 }
 
 func (p *ArticleDetailResponse) ReadField13(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
 		return err
-	} else {
-		p.FileIds = v
+	}
+	p.FilePaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, err := iprot.ReadString(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		p.FilePaths = append(p.FilePaths, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
 	}
 	return nil
 }
@@ -2894,10 +3028,18 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField10(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("cover_ids", thrift.STRING, 10); err != nil {
+	if err = oprot.WriteFieldBegin("cover_paths", thrift.LIST, 10); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.CoverIds); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRING, len(p.CoverPaths)); err != nil {
+		return err
+	}
+	for _, v := range p.CoverPaths {
+		if err := oprot.WriteString(v); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2945,10 +3087,18 @@ WriteFieldEndError:
 }
 
 func (p *ArticleDetailResponse) writeField13(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("file_ids", thrift.STRING, 13); err != nil {
+	if err = oprot.WriteFieldBegin("file_paths", thrift.LIST, 13); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.FileIds); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRING, len(p.FilePaths)); err != nil {
+		return err
+	}
+	for _, v := range p.FilePaths {
+		if err := oprot.WriteString(v); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -3035,7 +3185,7 @@ func (p *ArticleDetailResponse) DeepEqual(ano *ArticleDetailResponse) bool {
 	if !p.Field9DeepEqual(ano.Description) {
 		return false
 	}
-	if !p.Field10DeepEqual(ano.CoverIds) {
+	if !p.Field10DeepEqual(ano.CoverPaths) {
 		return false
 	}
 	if !p.Field11DeepEqual(ano.Content) {
@@ -3044,7 +3194,7 @@ func (p *ArticleDetailResponse) DeepEqual(ano *ArticleDetailResponse) bool {
 	if !p.Field12DeepEqual(ano.View) {
 		return false
 	}
-	if !p.Field13DeepEqual(ano.FileIds) {
+	if !p.Field13DeepEqual(ano.FilePaths) {
 		return false
 	}
 	if !p.Field14DeepEqual(ano.CreatedAt) {
@@ -3119,10 +3269,16 @@ func (p *ArticleDetailResponse) Field9DeepEqual(src string) bool {
 	}
 	return true
 }
-func (p *ArticleDetailResponse) Field10DeepEqual(src string) bool {
+func (p *ArticleDetailResponse) Field10DeepEqual(src []string) bool {
 
-	if strings.Compare(p.CoverIds, src) != 0 {
+	if len(p.CoverPaths) != len(src) {
 		return false
+	}
+	for i, v := range p.CoverPaths {
+		_src := src[i]
+		if strings.Compare(v, _src) != 0 {
+			return false
+		}
 	}
 	return true
 }
@@ -3140,10 +3296,16 @@ func (p *ArticleDetailResponse) Field12DeepEqual(src int64) bool {
 	}
 	return true
 }
-func (p *ArticleDetailResponse) Field13DeepEqual(src string) bool {
+func (p *ArticleDetailResponse) Field13DeepEqual(src []string) bool {
 
-	if strings.Compare(p.FileIds, src) != 0 {
+	if len(p.FilePaths) != len(src) {
 		return false
+	}
+	for i, v := range p.FilePaths {
+		_src := src[i]
+		if strings.Compare(v, _src) != 0 {
+			return false
+		}
 	}
 	return true
 }

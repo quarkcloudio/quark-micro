@@ -10,10 +10,10 @@ struct Post {
     7: string author
     8: string source
     9: string description
-    10: string cover_ids
+    10: list<string> cover_paths
     11: string content
     12: i64 view
-    13: string file_ids
+    13: list<string> file_paths
     14: string created_at
     15: string updated_at
 }
@@ -28,10 +28,10 @@ struct PageResponse {
     2: string title
     3: string name
     4: string description
-    5: string cover_ids
+    5: list<string> cover_paths
     6: string content
     7: i64 view
-    8: string file_ids
+    8: list<string> file_paths
     9: string created_at
     10: string updated_at
 }
@@ -51,10 +51,10 @@ struct ArticleDetailResponse {
     7: string author
     8: string source
     9: string description
-    10: string cover_ids
+    10: list<string> cover_paths
     11: string content
     12: i64 view
-    13: string file_ids
+    13: list<string> file_paths
     14: string created_at
     15: string updated_at
 }

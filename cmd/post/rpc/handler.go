@@ -5,6 +5,7 @@ import (
 
 	post "github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
 	"github.com/quarkcms/quark-micro/cmd/post/rpc/model"
+	"github.com/quarkcms/quark-micro/pkg/utils"
 )
 
 // PostServiceImpl implements the last service interface defined in the IDL.
@@ -19,6 +20,7 @@ func (s *PostServiceImpl) GetPage(ctx context.Context, req *post.PageRequest) (r
 		Title:       item.Title,
 		Name:        item.Name,
 		Description: item.Description,
+		CoverPaths:  utils.GetPicturePaths(item.CoverIds),
 		Content:     item.Content,
 		View:        int64(item.View),
 		CreatedAt:   item.CreatedAt.Format("2006-01-02 15:04:05"),
@@ -42,6 +44,7 @@ func (s *PostServiceImpl) GetArticleDetail(ctx context.Context, req *post.Articl
 		Author:        item.Author,
 		Source:        item.Source,
 		Description:   item.Description,
+		CoverPaths:    utils.GetPicturePaths(item.CoverIds),
 		Content:       item.Content,
 		View:          int64(item.View),
 		CreatedAt:     item.CreatedAt.Format("2006-01-02 15:04:05"),
@@ -67,6 +70,7 @@ func (s *PostServiceImpl) GetArticleList(ctx context.Context, req *post.ArticleL
 			Author:        item.Author,
 			Source:        item.Source,
 			Description:   item.Description,
+			CoverPaths:    utils.GetPicturePaths(item.CoverIds),
 			Content:       item.Content,
 			View:          int64(item.View),
 			CreatedAt:     item.CreatedAt.Format("2006-01-02 15:04:05"),

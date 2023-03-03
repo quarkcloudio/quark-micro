@@ -172,7 +172,7 @@ func (p *Post) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 10:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				l, err = p.FastReadField10(buf[offset:])
 				offset += l
 				if err != nil {
@@ -214,7 +214,7 @@ func (p *Post) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 13:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				l, err = p.FastReadField13(buf[offset:])
 				offset += l
 				if err != nil {
@@ -419,13 +419,29 @@ func (p *Post) FastReadField9(buf []byte) (int, error) {
 func (p *Post) FastReadField10(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	p.CoverPaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+
+			_elem = v
+
+		}
+
+		p.CoverPaths = append(p.CoverPaths, _elem)
+	}
+	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
-
-		p.CoverIds = v
-
 	}
 	return offset, nil
 }
@@ -461,13 +477,29 @@ func (p *Post) FastReadField12(buf []byte) (int, error) {
 func (p *Post) FastReadField13(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	p.FilePaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+
+			_elem = v
+
+		}
+
+		p.FilePaths = append(p.FilePaths, _elem)
+	}
+	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
-
-		p.FileIds = v
-
 	}
 	return offset, nil
 }
@@ -638,9 +670,17 @@ func (p *Post) fastWriteField9(buf []byte, binaryWriter bthrift.BinaryWriter) in
 
 func (p *Post) fastWriteField10(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_ids", thrift.STRING, 10)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CoverIds)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_paths", thrift.LIST, 10)
+	listBeginOffset := offset
+	offset += bthrift.Binary.ListBeginLength(thrift.STRING, 0)
+	var length int
+	for _, v := range p.CoverPaths {
+		length++
+		offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, v)
 
+	}
+	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRING, length)
+	offset += bthrift.Binary.WriteListEnd(buf[offset:])
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
 }
@@ -665,9 +705,17 @@ func (p *Post) fastWriteField12(buf []byte, binaryWriter bthrift.BinaryWriter) i
 
 func (p *Post) fastWriteField13(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_ids", thrift.STRING, 13)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileIds)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_paths", thrift.LIST, 13)
+	listBeginOffset := offset
+	offset += bthrift.Binary.ListBeginLength(thrift.STRING, 0)
+	var length int
+	for _, v := range p.FilePaths {
+		length++
+		offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, v)
 
+	}
+	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRING, length)
+	offset += bthrift.Binary.WriteListEnd(buf[offset:])
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
 }
@@ -773,9 +821,13 @@ func (p *Post) field9Length() int {
 
 func (p *Post) field10Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("cover_ids", thrift.STRING, 10)
-	l += bthrift.Binary.StringLengthNocopy(p.CoverIds)
+	l += bthrift.Binary.FieldBeginLength("cover_paths", thrift.LIST, 10)
+	l += bthrift.Binary.ListBeginLength(thrift.STRING, len(p.CoverPaths))
+	for _, v := range p.CoverPaths {
+		l += bthrift.Binary.StringLengthNocopy(v)
 
+	}
+	l += bthrift.Binary.ListEndLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l
 }
@@ -800,9 +852,13 @@ func (p *Post) field12Length() int {
 
 func (p *Post) field13Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("file_ids", thrift.STRING, 13)
-	l += bthrift.Binary.StringLengthNocopy(p.FileIds)
+	l += bthrift.Binary.FieldBeginLength("file_paths", thrift.LIST, 13)
+	l += bthrift.Binary.ListBeginLength(thrift.STRING, len(p.FilePaths))
+	for _, v := range p.FilePaths {
+		l += bthrift.Binary.StringLengthNocopy(v)
 
+	}
+	l += bthrift.Binary.ListEndLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l
 }
@@ -1085,7 +1141,7 @@ func (p *PageResponse) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 5:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				l, err = p.FastReadField5(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1127,7 +1183,7 @@ func (p *PageResponse) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 8:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				l, err = p.FastReadField8(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1262,13 +1318,29 @@ func (p *PageResponse) FastReadField4(buf []byte) (int, error) {
 func (p *PageResponse) FastReadField5(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	p.CoverPaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+
+			_elem = v
+
+		}
+
+		p.CoverPaths = append(p.CoverPaths, _elem)
+	}
+	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
-
-		p.CoverIds = v
-
 	}
 	return offset, nil
 }
@@ -1304,13 +1376,29 @@ func (p *PageResponse) FastReadField7(buf []byte) (int, error) {
 func (p *PageResponse) FastReadField8(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	p.FilePaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+
+			_elem = v
+
+		}
+
+		p.FilePaths = append(p.FilePaths, _elem)
+	}
+	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
-
-		p.FileIds = v
-
 	}
 	return offset, nil
 }
@@ -1426,9 +1514,17 @@ func (p *PageResponse) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWr
 
 func (p *PageResponse) fastWriteField5(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_ids", thrift.STRING, 5)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CoverIds)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_paths", thrift.LIST, 5)
+	listBeginOffset := offset
+	offset += bthrift.Binary.ListBeginLength(thrift.STRING, 0)
+	var length int
+	for _, v := range p.CoverPaths {
+		length++
+		offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, v)
 
+	}
+	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRING, length)
+	offset += bthrift.Binary.WriteListEnd(buf[offset:])
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
 }
@@ -1453,9 +1549,17 @@ func (p *PageResponse) fastWriteField7(buf []byte, binaryWriter bthrift.BinaryWr
 
 func (p *PageResponse) fastWriteField8(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_ids", thrift.STRING, 8)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileIds)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_paths", thrift.LIST, 8)
+	listBeginOffset := offset
+	offset += bthrift.Binary.ListBeginLength(thrift.STRING, 0)
+	var length int
+	for _, v := range p.FilePaths {
+		length++
+		offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, v)
 
+	}
+	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRING, length)
+	offset += bthrift.Binary.WriteListEnd(buf[offset:])
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
 }
@@ -1516,9 +1620,13 @@ func (p *PageResponse) field4Length() int {
 
 func (p *PageResponse) field5Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("cover_ids", thrift.STRING, 5)
-	l += bthrift.Binary.StringLengthNocopy(p.CoverIds)
+	l += bthrift.Binary.FieldBeginLength("cover_paths", thrift.LIST, 5)
+	l += bthrift.Binary.ListBeginLength(thrift.STRING, len(p.CoverPaths))
+	for _, v := range p.CoverPaths {
+		l += bthrift.Binary.StringLengthNocopy(v)
 
+	}
+	l += bthrift.Binary.ListEndLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l
 }
@@ -1543,9 +1651,13 @@ func (p *PageResponse) field7Length() int {
 
 func (p *PageResponse) field8Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("file_ids", thrift.STRING, 8)
-	l += bthrift.Binary.StringLengthNocopy(p.FileIds)
+	l += bthrift.Binary.FieldBeginLength("file_paths", thrift.LIST, 8)
+	l += bthrift.Binary.ListBeginLength(thrift.STRING, len(p.FilePaths))
+	for _, v := range p.FilePaths {
+		l += bthrift.Binary.StringLengthNocopy(v)
 
+	}
+	l += bthrift.Binary.ListEndLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l
 }
@@ -1898,7 +2010,7 @@ func (p *ArticleDetailResponse) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 10:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				l, err = p.FastReadField10(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1940,7 +2052,7 @@ func (p *ArticleDetailResponse) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 13:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				l, err = p.FastReadField13(buf[offset:])
 				offset += l
 				if err != nil {
@@ -2145,13 +2257,29 @@ func (p *ArticleDetailResponse) FastReadField9(buf []byte) (int, error) {
 func (p *ArticleDetailResponse) FastReadField10(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	p.CoverPaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+
+			_elem = v
+
+		}
+
+		p.CoverPaths = append(p.CoverPaths, _elem)
+	}
+	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
-
-		p.CoverIds = v
-
 	}
 	return offset, nil
 }
@@ -2187,13 +2315,29 @@ func (p *ArticleDetailResponse) FastReadField12(buf []byte) (int, error) {
 func (p *ArticleDetailResponse) FastReadField13(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	p.FilePaths = make([]string, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem string
+		if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+
+			_elem = v
+
+		}
+
+		p.FilePaths = append(p.FilePaths, _elem)
+	}
+	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
-
-		p.FileIds = v
-
 	}
 	return offset, nil
 }
@@ -2364,9 +2508,17 @@ func (p *ArticleDetailResponse) fastWriteField9(buf []byte, binaryWriter bthrift
 
 func (p *ArticleDetailResponse) fastWriteField10(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_ids", thrift.STRING, 10)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CoverIds)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_paths", thrift.LIST, 10)
+	listBeginOffset := offset
+	offset += bthrift.Binary.ListBeginLength(thrift.STRING, 0)
+	var length int
+	for _, v := range p.CoverPaths {
+		length++
+		offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, v)
 
+	}
+	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRING, length)
+	offset += bthrift.Binary.WriteListEnd(buf[offset:])
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
 }
@@ -2391,9 +2543,17 @@ func (p *ArticleDetailResponse) fastWriteField12(buf []byte, binaryWriter bthrif
 
 func (p *ArticleDetailResponse) fastWriteField13(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_ids", thrift.STRING, 13)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.FileIds)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "file_paths", thrift.LIST, 13)
+	listBeginOffset := offset
+	offset += bthrift.Binary.ListBeginLength(thrift.STRING, 0)
+	var length int
+	for _, v := range p.FilePaths {
+		length++
+		offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, v)
 
+	}
+	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRING, length)
+	offset += bthrift.Binary.WriteListEnd(buf[offset:])
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
 }
@@ -2499,9 +2659,13 @@ func (p *ArticleDetailResponse) field9Length() int {
 
 func (p *ArticleDetailResponse) field10Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("cover_ids", thrift.STRING, 10)
-	l += bthrift.Binary.StringLengthNocopy(p.CoverIds)
+	l += bthrift.Binary.FieldBeginLength("cover_paths", thrift.LIST, 10)
+	l += bthrift.Binary.ListBeginLength(thrift.STRING, len(p.CoverPaths))
+	for _, v := range p.CoverPaths {
+		l += bthrift.Binary.StringLengthNocopy(v)
 
+	}
+	l += bthrift.Binary.ListEndLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l
 }
@@ -2526,9 +2690,13 @@ func (p *ArticleDetailResponse) field12Length() int {
 
 func (p *ArticleDetailResponse) field13Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("file_ids", thrift.STRING, 13)
-	l += bthrift.Binary.StringLengthNocopy(p.FileIds)
+	l += bthrift.Binary.FieldBeginLength("file_paths", thrift.LIST, 13)
+	l += bthrift.Binary.ListBeginLength(thrift.STRING, len(p.FilePaths))
+	for _, v := range p.FilePaths {
+		l += bthrift.Binary.StringLengthNocopy(v)
 
+	}
+	l += bthrift.Binary.ListEndLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l
 }

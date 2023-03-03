@@ -105,13 +105,12 @@ require (
 	github.com/cloudwego/hertz v0.5.2
 	github.com/dchest/captcha v1.0.0
 	github.com/gobeam/stringy v0.0.5 // indirect
-	github.com/hertz-contrib/registry/etcd v0.0.0-20230224142943-fb9fa27f6dbb
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kitex-contrib/registry-etcd v0.1.0
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/quarkcms/quark-go v1.1.23
+	github.com/quarkcms/quark-go v1.1.24
 	github.com/spf13/viper v1.15.0
 	github.com/tjfoc/gmsm v1.3.2 // indirect
 	golang.org/x/net v0.5.0 // indirect
