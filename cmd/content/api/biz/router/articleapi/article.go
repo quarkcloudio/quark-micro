@@ -4,7 +4,7 @@ package Articleapi
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	articleapi "github.com/quarkcms/quark-micro/cmd/post/api/biz/handler/articleapi"
+	articleapi "github.com/quarkcms/quark-micro/cmd/content/api/biz/handler/articleapi"
 )
 
 /*

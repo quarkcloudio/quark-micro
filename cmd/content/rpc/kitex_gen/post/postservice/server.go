@@ -3,7 +3,7 @@ package postservice
 
 import (
 	server "github.com/cloudwego/kitex/server"
-	post "github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
+	post "github.com/quarkcms/quark-micro/cmd/content/rpc/kitex_gen/post"
 )
 
 // NewServer creates a server.Server with the given handler and options.

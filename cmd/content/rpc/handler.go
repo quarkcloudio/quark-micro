@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 
-	post "github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
-	"github.com/quarkcms/quark-micro/cmd/post/rpc/model"
+	post "github.com/quarkcms/quark-micro/cmd/content/rpc/kitex_gen/post"
+	"github.com/quarkcms/quark-micro/cmd/content/rpc/model"
 	"github.com/quarkcms/quark-micro/pkg/utils"
 )
 

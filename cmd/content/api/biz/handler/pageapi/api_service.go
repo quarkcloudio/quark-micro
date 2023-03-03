@@ -12,10 +12,10 @@ import (
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	pageapi "github.com/quarkcms/quark-micro/cmd/post/api/biz/model/pageapi"
-	"github.com/quarkcms/quark-micro/cmd/post/api/config"
-	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
-	"github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post/postservice"
+	pageapi "github.com/quarkcms/quark-micro/cmd/content/api/biz/model/pageapi"
+	"github.com/quarkcms/quark-micro/cmd/content/api/config"
+	"github.com/quarkcms/quark-micro/cmd/content/rpc/kitex_gen/post"
+	"github.com/quarkcms/quark-micro/cmd/content/rpc/kitex_gen/post/postservice"
 	"github.com/quarkcms/quark-micro/pkg/msg"
 )
 

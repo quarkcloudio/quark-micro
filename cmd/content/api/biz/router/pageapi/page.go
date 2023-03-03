@@ -4,7 +4,7 @@ package Pageapi
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	pageapi "github.com/quarkcms/quark-micro/cmd/post/api/biz/handler/pageapi"
+	pageapi "github.com/quarkcms/quark-micro/cmd/content/api/biz/handler/pageapi"
 )
 
 /*

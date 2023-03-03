@@ -4,7 +4,7 @@ package postservice
 
 import (
 	server "github.com/cloudwego/kitex/server"
-	post "github.com/quarkcms/quark-micro/cmd/post/rpc/kitex_gen/post"
+	post "github.com/quarkcms/quark-micro/cmd/content/rpc/kitex_gen/post"
 )
 
 // NewInvoker creates a server.Invoker with the given handler and options.
