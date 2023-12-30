@@ -54,7 +54,8 @@ func main() {
 			Dialector: mysql.Open(dsn),
 			Opts:      &gorm.Config{},
 		},
-		Providers: append(adminservice.Providers, service.Provider...),
+		Providers:  append(adminservice.Providers, service.Provider...),
+		StaticPath: "../../web",
 	}
 
 	// 实例化对象
