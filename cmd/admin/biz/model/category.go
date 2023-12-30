@@ -3,9 +3,9 @@ package model
 import (
 	"time"
 
-	appmodel "github.com/quarkcms/quark-go/pkg/app/model"
-	"github.com/quarkcms/quark-go/pkg/dal/db"
-	"github.com/quarkcms/quark-go/pkg/lister"
+	"github.com/quarkcloudio/quark-go/v2/pkg/app/admin/component/form/fields/treeselect"
+	appmodel "github.com/quarkcloudio/quark-go/v2/pkg/app/admin/model"
+	"github.com/quarkcloudio/quark-go/v2/pkg/dal/db"
 	"gorm.io/gorm"
 )
 
@@ -34,13 +34,13 @@ type Category struct {
 func (m *Category) Seeder() {
 
 	// 如果菜单已存在，不执行Seeder操作
-	if (&appmodel.Menu{}).IsExist(19) {
+	if (&appmodel.Menu{}).IsExist(102) {
 		return
 	}
 
 	// 创建菜单
 	menuSeeders := []*appmodel.Menu{
-		{Id: 19, Name: "分类列表", GuardName: "admin", Icon: "", Type: "engine", Pid: 18, Sort: 0, Path: "/api/admin/category/index", Show: 1, Status: 1},
+		{Id: 102, Name: "分类列表", GuardName: "admin", Icon: "", Type: 2, Pid: 101, Sort: 0, Path: "/api/admin/category/index", Show: 1, IsEngine: 1, IsLink: 0, Status: 1},
 	}
 	db.Client.Create(&menuSeeders)
 
@@ -51,57 +51,48 @@ func (m *Category) Seeder() {
 	db.Client.Create(&seeders)
 }
 
-// 获取菜单的有序列表
-func (model *Category) OrderedList(root bool) (list []map[string]interface{}, Error error) {
-	var data []map[string]interface{}
-	err := db.Client.
-		Model(&model).
-		Order("sort asc,id asc").
-		Find(&data).Error
-	if err != nil {
-		return list, err
-	}
+// 获取TreeSelect组件数据
+func (model *Category) TreeSelect(root bool) (list []*treeselect.TreeData, Error error) {
 
-	trees, err := lister.ListToTree(data, "id", "pid", "children", 0)
-	if err != nil {
-		return list, err
-	}
-
-	treeList, err := lister.TreeToOrderedList(trees, 0, "title", "children")
-	if err != nil {
-		return list, err
-	}
-
-	// 是否有跟节点
+	// 是否有根节点
 	if root {
-		list = append(list, map[string]interface{}{
-			"label": "根节点",
-			"value": 0,
+		list = append(list, &treeselect.TreeData{
+			Title: "根节点",
+			Value: 0,
 		})
 	}
 
-	for _, v := range treeList {
-		option := map[string]interface{}{
-			"label": v.((map[string]interface{}))["title"],
-			"value": v.(map[string]interface{})["id"],
-		}
-		list = append(list, option)
-	}
+	list = append(list, model.FindTreeSelectNode(0)...)
 
 	return list, nil
 }
 
-// 获取搜索框Select的属性
-func (model *Category) Options() (list map[interface{}]interface{}, Error error) {
-	options := map[interface{}]interface{}{}
-	getList := []Category{}
-	err := db.Client.Find(&getList).Error
-	if err != nil {
-		return options, err
-	}
-	for _, v := range getList {
-		options[v.Id] = v.Title
+// 递归获取SelectTree组件数据
+func (model *Category) FindTreeSelectNode(pid int) (list []*treeselect.TreeData) {
+	categories := []Category{}
+	db.Client.
+		Where("pid = ?", pid).
+		Order("sort asc,id asc").
+		Select("title", "id", "pid").
+		Find(&categories)
+
+	if len(categories) == 0 {
+		return list
 	}
 
-	return options, nil
+	for _, v := range categories {
+		item := &treeselect.TreeData{
+			Value: v.Id,
+			Title: v.Title,
+		}
+
+		children := model.FindTreeSelectNode(v.Id)
+		if len(children) > 0 {
+			item.Children = children
+		}
+
+		list = append(list, item)
+	}
+
+	return list
 }

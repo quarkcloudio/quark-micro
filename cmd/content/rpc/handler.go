@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 
-	post "github.com/quarkcms/quark-micro/cmd/content/rpc/kitex_gen/post"
-	"github.com/quarkcms/quark-micro/cmd/content/rpc/model"
-	"github.com/quarkcms/quark-micro/pkg/utils"
+	post "github.com/quarkcloudio/quark-micro/cmd/content/rpc/kitex_gen/post"
+	"github.com/quarkcloudio/quark-micro/cmd/content/rpc/model"
+	"github.com/quarkcloudio/quark-micro/pkg/utils"
 )
 
 // PostServiceImpl implements the last service interface defined in the IDL.

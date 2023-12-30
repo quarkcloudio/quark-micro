@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/quarkcms/quark-micro/pkg/env"
+	"github.com/quarkcloudio/quark-micro/pkg/env"
 )
 
 type RedisConfig struct {
@@ -15,13 +15,13 @@ type RedisConfig struct {
 var Redis = &RedisConfig{
 
 	// 地址
-	Host: env.Get("REDIS_HOST", "127.0.0.1"),
+	Host: env.Get("REDIS_HOST", "127.0.0.1").(string),
 
 	// 密码
-	Password: env.Get("REDIS_PASSWORD"),
+	Password: env.Get("REDIS_PASSWORD").(string),
 
 	// 端口
-	Port: env.Get("REDIS_PORT", "6379"),
+	Port: env.Get("REDIS_PORT", "6379").(string),
 
 	// 数据库
 	Database: 0,

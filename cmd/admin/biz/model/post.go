@@ -3,9 +3,9 @@ package model
 import (
 	"time"
 
-	appmodel "github.com/quarkcms/quark-go/pkg/app/model"
-	"github.com/quarkcms/quark-go/pkg/dal/db"
-	"github.com/quarkcms/quark-go/pkg/lister"
+	"github.com/quarkcloudio/quark-go/v2/pkg/app/admin/component/form/fields/treeselect"
+	appmodel "github.com/quarkcloudio/quark-go/v2/pkg/app/admin/model"
+	"github.com/quarkcloudio/quark-go/v2/pkg/dal/db"
 	"gorm.io/gorm"
 )
 
@@ -45,16 +45,16 @@ type Post struct {
 func (m *Post) Seeder() {
 
 	// 如果菜单已存在，不执行Seeder操作
-	if (&appmodel.Menu{}).IsExist(18) {
+	if (&appmodel.Menu{}).IsExist(101) {
 		return
 	}
 
 	// 创建菜单
 	menuSeeders := []*appmodel.Menu{
-		{Id: 18, Name: "内容管理", GuardName: "admin", Icon: "icon-read", Type: "default", Pid: 0, Sort: 0, Path: "/post", Show: 1, Status: 1},
-		{Id: 20, Name: "文章列表", GuardName: "admin", Icon: "", Type: "engine", Pid: 18, Sort: 0, Path: "/api/admin/article/index", Show: 1, Status: 1},
-		{Id: 21, Name: "单页管理", GuardName: "admin", Icon: "icon-page", Type: "default", Pid: 0, Sort: 0, Path: "/page", Show: 1, Status: 1},
-		{Id: 22, Name: "单页列表", GuardName: "admin", Icon: "", Type: "engine", Pid: 21, Sort: 0, Path: "/api/admin/page/index", Show: 1, Status: 1},
+		{Id: 101, Name: "内容管理", GuardName: "admin", Icon: "icon-read", Type: 1, Pid: 0, Sort: 0, Path: "/post", Show: 1, IsEngine: 0, IsLink: 0, Status: 1},
+		{Id: 103, Name: "文章列表", GuardName: "admin", Icon: "", Type: 2, Pid: 101, Sort: 0, Path: "/api/admin/article/index", Show: 1, IsEngine: 1, IsLink: 0, Status: 1},
+		{Id: 104, Name: "单页管理", GuardName: "admin", Icon: "icon-page", Type: 1, Pid: 0, Sort: 0, Path: "/page", Show: 1, IsEngine: 0, IsLink: 0, Status: 1},
+		{Id: 105, Name: "单页列表", GuardName: "admin", Icon: "", Type: 2, Pid: 104, Sort: 0, Path: "/api/admin/page/index", Show: 1, IsEngine: 1, IsLink: 0, Status: 1},
 	}
 	db.Client.Create(&menuSeeders)
 
@@ -65,43 +65,49 @@ func (m *Post) Seeder() {
 	db.Client.Create(&seeders)
 }
 
-// 获取菜单的有序列表
-func (model *Post) OrderedList(root bool) (list []map[string]interface{}, Error error) {
-	var data []map[string]interface{}
-	err := db.Client.
-		Model(&model).
-		Where("type", "PAGE").
-		Order("id asc").
-		Find(&data).Error
-	if err != nil {
-		return list, err
-	}
+// 获取TreeSelect组件数据
+func (model *Post) TreeSelect(root bool) (list []*treeselect.TreeData, Error error) {
 
-	trees, err := lister.ListToTree(data, "id", "pid", "children", 0)
-	if err != nil {
-		return list, err
-	}
-
-	treeList, err := lister.TreeToOrderedList(trees, 0, "title", "children")
-	if err != nil {
-		return list, err
-	}
-
-	// 是否有跟节点
+	// 是否有根节点
 	if root {
-		list = append(list, map[string]interface{}{
-			"label": "根节点",
-			"value": 0,
+		list = append(list, &treeselect.TreeData{
+			Title: "根节点",
+			Value: 0,
 		})
 	}
 
-	for _, v := range treeList {
-		option := map[string]interface{}{
-			"label": v.((map[string]interface{}))["title"],
-			"value": v.(map[string]interface{})["id"],
-		}
-		list = append(list, option)
-	}
+	list = append(list, model.FindTreeSelectNode(0)...)
 
 	return list, nil
+}
+
+// 递归获取TreeSelect组件数据
+func (model *Post) FindTreeSelectNode(pid int) (list []*treeselect.TreeData) {
+	posts := []Post{}
+	db.Client.
+		Where("pid = ?", pid).
+		Where("type", "PAGE").
+		Order("id asc").
+		Select("title", "id", "pid").
+		Find(&posts)
+
+	if len(posts) == 0 {
+		return list
+	}
+
+	for _, v := range posts {
+		item := &treeselect.TreeData{
+			Value: v.Id,
+			Title: v.Title,
+		}
+
+		children := model.FindTreeSelectNode(v.Id)
+		if len(children) > 0 {
+			item.Children = children
+		}
+
+		list = append(list, item)
+	}
+
+	return list
 }

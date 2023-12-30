@@ -11,7 +11,7 @@ func Set(key string, value interface{}) {
 }
 
 // 获取值
-func Get(key ...string) string {
+func Get(key ...string) interface{} {
 	viper.SetConfigFile(".env")
 	err := viper.ReadInConfig()
 
@@ -21,7 +21,7 @@ func Get(key ...string) string {
 				return key[1]
 			}
 		} else {
-			return ""
+			return nil
 		}
 	}
 
@@ -31,9 +31,5 @@ func Get(key ...string) string {
 		}
 	}
 
-	if viper.Get(key[0]) != nil {
-		return viper.Get(key[0]).(string)
-	}
-
-	return ""
+	return viper.Get(key[0])
 }

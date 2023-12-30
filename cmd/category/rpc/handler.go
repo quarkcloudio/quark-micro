@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 
-	category "github.com/quarkcms/quark-micro/cmd/category/rpc/kitex_gen/category"
-	"github.com/quarkcms/quark-micro/cmd/category/rpc/model"
+	category "github.com/quarkcloudio/quark-micro/cmd/category/rpc/kitex_gen/category"
+	"github.com/quarkcloudio/quark-micro/cmd/category/rpc/model"
 )
 
 // CategoryServiceImpl implements the last service interface defined in the IDL.

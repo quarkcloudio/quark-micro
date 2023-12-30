@@ -1,2 +1,2 @@
 init:
-	kitex -module github.com/quarkcms/quark-micro -service category ./idl/category.thrift
+	kitex -module github.com/quarkcloudio/quark-micro -service category ./idl/category.thrift

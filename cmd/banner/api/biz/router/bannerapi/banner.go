@@ -4,7 +4,7 @@ package bannerapi
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	bannerapi "github.com/quarkcms/quark-micro/cmd/banner/api/biz/handler/bannerapi"
+	bannerapi "github.com/quarkcloudio/quark-micro/cmd/banner/api/biz/handler/bannerapi"
 )
 
 /*

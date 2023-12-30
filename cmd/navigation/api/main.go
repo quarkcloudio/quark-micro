@@ -4,8 +4,8 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/quarkcms/quark-go/pkg/dal"
-	"github.com/quarkcms/quark-micro/cmd/navigation/api/config"
+	"github.com/quarkcloudio/quark-go/v2/pkg/dal"
+	"github.com/quarkcloudio/quark-micro/cmd/navigation/api/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

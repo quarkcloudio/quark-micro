@@ -4,7 +4,7 @@ package categoryservice
 
 import (
 	server "github.com/cloudwego/kitex/server"
-	category "github.com/quarkcms/quark-micro/cmd/category/rpc/kitex_gen/category"
+	category "github.com/quarkcloudio/quark-micro/cmd/category/rpc/kitex_gen/category"
 )
 
 // NewInvoker creates a server.Invoker with the given handler and options.

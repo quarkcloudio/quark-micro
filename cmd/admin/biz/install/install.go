@@ -1,8 +1,8 @@
 package install
 
 import (
-	"github.com/quarkcms/quark-go/pkg/dal/db"
-	"github.com/quarkcms/quark-micro/cmd/admin/biz/model"
+	"github.com/quarkcloudio/quark-go/v2/pkg/dal/db"
+	"github.com/quarkcloudio/quark-micro/cmd/admin/biz/model"
 )
 
 // 执行数据库操作

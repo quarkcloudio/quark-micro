@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 
-	navigation "github.com/quarkcms/quark-micro/cmd/navigation/rpc/kitex_gen/navigation"
-	"github.com/quarkcms/quark-micro/cmd/navigation/rpc/model"
-	"github.com/quarkcms/quark-micro/pkg/utils"
+	navigation "github.com/quarkcloudio/quark-micro/cmd/navigation/rpc/kitex_gen/navigation"
+	"github.com/quarkcloudio/quark-micro/cmd/navigation/rpc/model"
+	"github.com/quarkcloudio/quark-micro/pkg/utils"
 )
 
 // NavigationServiceImpl implements the last service interface defined in the IDL.

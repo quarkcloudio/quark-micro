@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/quarkcms/quark-micro/pkg/env"
+	"github.com/quarkcloudio/quark-micro/pkg/env"
 )
 
 type Endpoint struct {
@@ -21,13 +21,13 @@ type RegistryConfig struct {
 var Registry = &RegistryConfig{
 
 	// 服务地址
-	Host: env.Get("REGISTRY_HOST", "127.0.0.1:2379"),
+	Host: env.Get("REGISTRY_HOST", "127.0.0.1:2379").(string),
 
 	// 用户名
-	Username: env.Get("REGISTRY_USERNAME", ""),
+	Username: env.Get("REGISTRY_USERNAME", "").(string),
 
 	// 密码
-	Password: env.Get("REGISTRY_PASSWORD", ""),
+	Password: env.Get("REGISTRY_PASSWORD", "").(string),
 
 	// RPC服务端点
 	Endpoint: &Endpoint{

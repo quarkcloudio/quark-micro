@@ -6,7 +6,7 @@ import (
 	"context"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
-	navigation "github.com/quarkcms/quark-micro/cmd/navigation/rpc/kitex_gen/navigation"
+	navigation "github.com/quarkcloudio/quark-micro/cmd/navigation/rpc/kitex_gen/navigation"
 )
 
 func serviceInfo() *kitex.ServiceInfo {

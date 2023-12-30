@@ -12,11 +12,11 @@ import (
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	bannerapi "github.com/quarkcms/quark-micro/cmd/banner/api/biz/model/bannerapi"
-	"github.com/quarkcms/quark-micro/cmd/banner/api/config"
-	"github.com/quarkcms/quark-micro/cmd/banner/rpc/kitex_gen/banner"
-	"github.com/quarkcms/quark-micro/cmd/banner/rpc/kitex_gen/banner/bannerservice"
-	"github.com/quarkcms/quark-micro/pkg/msg"
+	bannerapi "github.com/quarkcloudio/quark-micro/cmd/banner/api/biz/model/bannerapi"
+	"github.com/quarkcloudio/quark-micro/cmd/banner/api/config"
+	"github.com/quarkcloudio/quark-micro/cmd/banner/rpc/kitex_gen/banner"
+	"github.com/quarkcloudio/quark-micro/cmd/banner/rpc/kitex_gen/banner/bannerservice"
+	"github.com/quarkcloudio/quark-micro/pkg/msg"
 )
 
 // 获取请求客户端

@@ -12,11 +12,11 @@ import (
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	articleapi "github.com/quarkcms/quark-micro/cmd/content/api/biz/model/articleapi"
-	"github.com/quarkcms/quark-micro/cmd/content/api/config"
-	"github.com/quarkcms/quark-micro/cmd/content/rpc/kitex_gen/post"
-	"github.com/quarkcms/quark-micro/cmd/content/rpc/kitex_gen/post/postservice"
-	"github.com/quarkcms/quark-micro/pkg/msg"
+	articleapi "github.com/quarkcloudio/quark-micro/cmd/content/api/biz/model/articleapi"
+	"github.com/quarkcloudio/quark-micro/cmd/content/api/config"
+	"github.com/quarkcloudio/quark-micro/cmd/content/rpc/kitex_gen/post"
+	"github.com/quarkcloudio/quark-micro/cmd/content/rpc/kitex_gen/post/postservice"
+	"github.com/quarkcloudio/quark-micro/pkg/msg"
 )
 
 // 获取请求客户端

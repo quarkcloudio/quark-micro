@@ -3,7 +3,7 @@ package bannerservice
 
 import (
 	server "github.com/cloudwego/kitex/server"
-	banner "github.com/quarkcms/quark-micro/cmd/banner/rpc/kitex_gen/banner"
+	banner "github.com/quarkcloudio/quark-micro/cmd/banner/rpc/kitex_gen/banner"
 )
 
 // NewServer creates a server.Server with the given handler and options.

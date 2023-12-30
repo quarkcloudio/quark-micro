@@ -4,7 +4,7 @@ package navigationapi
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	navigationapi "github.com/quarkcms/quark-micro/cmd/navigation/api/biz/handler/navigationapi"
+	navigationapi "github.com/quarkcloudio/quark-micro/cmd/navigation/api/biz/handler/navigationapi"
 )
 
 /*

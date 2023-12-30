@@ -5,14 +5,14 @@ package main
 import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/quarkcms/quark-go/pkg/adapter/hertzadapter"
-	"github.com/quarkcms/quark-go/pkg/app/handler/admin"
-	"github.com/quarkcms/quark-go/pkg/app/install"
-	"github.com/quarkcms/quark-go/pkg/app/middleware"
-	"github.com/quarkcms/quark-go/pkg/builder"
-	"github.com/quarkcms/quark-micro/cmd/admin/biz/handler"
-	appinstall "github.com/quarkcms/quark-micro/cmd/admin/biz/install"
-	"github.com/quarkcms/quark-micro/cmd/admin/config"
+	"github.com/quarkcloudio/quark-go/v2/pkg/adapter/hertzadapter"
+	admininstall "github.com/quarkcloudio/quark-go/v2/pkg/app/admin/install"
+	adminmiddleware "github.com/quarkcloudio/quark-go/v2/pkg/app/admin/middleware"
+	adminservice "github.com/quarkcloudio/quark-go/v2/pkg/app/admin/service"
+	"github.com/quarkcloudio/quark-go/v2/pkg/builder"
+	appinstall "github.com/quarkcloudio/quark-micro/cmd/admin/biz/install"
+	"github.com/quarkcloudio/quark-micro/cmd/admin/biz/service"
+	"github.com/quarkcloudio/quark-micro/cmd/admin/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -27,10 +27,10 @@ func main() {
 	h.LoadHTMLGlob("../../web/template/*")
 
 	// 静态文件
-	h.StaticFile("/admin/", "../../website/admin/index.html")
+	h.StaticFile("/admin/", "../../web/app/admin/index.html")
 
 	// 静态文件目录
-	fs := &app.FS{Root: "../../website", IndexNames: []string{"index.html"}}
+	fs := &app.FS{Root: "../../web/app", IndexNames: []string{"index.html"}}
 	h.StaticFS("/", fs)
 
 	// 配置信息
@@ -54,36 +54,20 @@ func main() {
 			Dialector: mysql.Open(dsn),
 			Opts:      &gorm.Config{},
 		},
-		Providers: append(admin.Providers, handler.Provider...),
-		AdminLayout: &builder.AdminLayout{
-			Title:        config.Admin.Title,
-			Logo:         config.Admin.Logo,
-			Layout:       config.Admin.Layout,
-			SplitMenus:   config.Admin.SplitMenus,
-			ContentWidth: config.Admin.ContentWidth,
-			PrimaryColor: config.Admin.PrimaryColor,
-			FixedHeader:  config.Admin.FixedHeader,
-			FixSiderbar:  config.Admin.FixSiderbar,
-			IconfontUrl:  config.Admin.IconfontUrl,
-			Locale:       config.Admin.Locale,
-			SiderWidth:   config.Admin.SiderWidth,
-			Copyright:    config.Admin.Copyright,
-			Links:        config.Admin.Links,
-		},
-		StaticPath: "../../website",
+		Providers: append(adminservice.Providers, service.Provider...),
 	}
 
 	// 实例化对象
 	b := builder.New(getConfig)
 
 	// 初始化安装
-	install.Handle()
+	admininstall.Handle()
 
 	// 初始化本项目数据库
 	appinstall.Handle()
 
 	// 中间件
-	b.Use(middleware.Handle)
+	b.Use(adminmiddleware.Handle)
 
 	// 适配hertz
 	hertzadapter.Adapter(b, h)

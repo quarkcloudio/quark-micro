@@ -4,7 +4,7 @@ package categoryapi
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	categoryapi "github.com/quarkcms/quark-micro/cmd/category/api/biz/handler/categoryapi"
+	categoryapi "github.com/quarkcloudio/quark-micro/cmd/category/api/biz/handler/categoryapi"
 )
 
 /*

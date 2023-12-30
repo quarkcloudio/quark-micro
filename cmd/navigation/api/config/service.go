@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/quarkcms/quark-micro/pkg/env"
+	"github.com/quarkcloudio/quark-micro/pkg/env"
 )
 
 type ServiceConfig struct {
@@ -14,11 +14,11 @@ type ServiceConfig struct {
 var Service = &ServiceConfig{
 
 	// 服务名称
-	Name: env.Get("APP_NAME", "NavigationApi"),
+	Name: env.Get("APP_NAME", "NavigationApi").(string),
 
 	// 服务地址
-	Host: env.Get("APP_HOST", "127.0.0.1:8007"),
+	Host: env.Get("APP_HOST", "127.0.0.1:8007").(string),
 
 	// 令牌加密key，如果设置绝对不可泄漏
-	Key: env.Get("APP_KEY", "Your App Key"),
+	Key: env.Get("APP_KEY", "Your App Key").(string),
 }

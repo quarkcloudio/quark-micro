@@ -8,9 +8,9 @@ import (
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	"github.com/quarkcms/quark-go/pkg/dal"
-	"github.com/quarkcms/quark-micro/cmd/content/rpc/config"
-	"github.com/quarkcms/quark-micro/cmd/content/rpc/kitex_gen/post/postservice"
+	"github.com/quarkcloudio/quark-go/v2/pkg/dal"
+	"github.com/quarkcloudio/quark-micro/cmd/content/rpc/config"
+	"github.com/quarkcloudio/quark-micro/cmd/content/rpc/kitex_gen/post/postservice"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

@@ -6,7 +6,7 @@ import (
 	"context"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
-	navigation "github.com/quarkcms/quark-micro/cmd/navigation/rpc/kitex_gen/navigation"
+	navigation "github.com/quarkcloudio/quark-micro/cmd/navigation/rpc/kitex_gen/navigation"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.

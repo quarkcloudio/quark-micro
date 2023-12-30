@@ -4,7 +4,7 @@ package bannerservice
 
 import (
 	server "github.com/cloudwego/kitex/server"
-	banner "github.com/quarkcms/quark-micro/cmd/banner/rpc/kitex_gen/banner"
+	banner "github.com/quarkcloudio/quark-micro/cmd/banner/rpc/kitex_gen/banner"
 )
 
 // NewInvoker creates a server.Invoker with the given handler and options.

@@ -12,11 +12,11 @@ import (
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	navigationapi "github.com/quarkcms/quark-micro/cmd/navigation/api/biz/model/navigationapi"
-	"github.com/quarkcms/quark-micro/cmd/navigation/api/config"
-	"github.com/quarkcms/quark-micro/cmd/navigation/rpc/kitex_gen/navigation"
-	"github.com/quarkcms/quark-micro/cmd/navigation/rpc/kitex_gen/navigation/navigationservice"
-	"github.com/quarkcms/quark-micro/pkg/msg"
+	navigationapi "github.com/quarkcloudio/quark-micro/cmd/navigation/api/biz/model/navigationapi"
+	"github.com/quarkcloudio/quark-micro/cmd/navigation/api/config"
+	"github.com/quarkcloudio/quark-micro/cmd/navigation/rpc/kitex_gen/navigation"
+	"github.com/quarkcloudio/quark-micro/cmd/navigation/rpc/kitex_gen/navigation/navigationservice"
+	"github.com/quarkcloudio/quark-micro/pkg/msg"
 )
 
 // 获取请求客户端

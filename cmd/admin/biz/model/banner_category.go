@@ -3,8 +3,9 @@ package model
 import (
 	"time"
 
-	appmodel "github.com/quarkcms/quark-go/pkg/app/model"
-	"github.com/quarkcms/quark-go/pkg/dal/db"
+	"github.com/quarkcloudio/quark-go/v2/pkg/app/admin/component/form/fields/selectfield"
+	appmodel "github.com/quarkcloudio/quark-go/v2/pkg/app/admin/model"
+	"github.com/quarkcloudio/quark-go/v2/pkg/dal/db"
 	"gorm.io/gorm"
 )
 
@@ -25,14 +26,14 @@ type BannerCategory struct {
 func (m *BannerCategory) Seeder() {
 
 	// 如果菜单已存在，不执行Seeder操作
-	if (&appmodel.Menu{}).IsExist(23) {
+	if (&appmodel.Menu{}).IsExist(106) {
 		return
 	}
 
 	// 创建菜单
 	menuSeeders := []*appmodel.Menu{
-		{Id: 23, Name: "广告管理", GuardName: "admin", Icon: "icon-banner", Type: "default", Pid: 0, Sort: 0, Path: "/banner", Show: 1, Status: 1},
-		{Id: 24, Name: "广告位列表", GuardName: "admin", Icon: "", Type: "engine", Pid: 23, Sort: 0, Path: "/api/admin/bannerCategory/index", Show: 1, Status: 1},
+		{Id: 106, Name: "广告管理", GuardName: "admin", Icon: "icon-banner", Type: 1, Pid: 0, Sort: 0, Path: "/banner", Show: 1, IsEngine: 0, IsLink: 0, Status: 1},
+		{Id: 107, Name: "广告位列表", GuardName: "admin", Icon: "", Type: 2, Pid: 106, Sort: 0, Path: "/api/admin/bannerCategory/index", Show: 1, IsEngine: 1, IsLink: 0, Status: 1},
 	}
 	db.Client.Create(&menuSeeders)
 
@@ -44,34 +45,19 @@ func (m *BannerCategory) Seeder() {
 }
 
 // 获取列表
-func (model *BannerCategory) List() (list []map[string]interface{}, Error error) {
-	getList := []BannerCategory{}
-	err := db.Client.Find(&getList).Error
-	if err != nil {
-		return list, err
-	}
-
-	for _, v := range getList {
-		option := map[string]interface{}{
-			"label": v.Title,
-			"value": v.Id,
-		}
-		list = append(list, option)
-	}
-
-	return list, nil
-}
-
-// 获取搜索框Select的属性
-func (model *BannerCategory) Options() (list map[interface{}]interface{}, Error error) {
-	options := map[interface{}]interface{}{}
+func (model *BannerCategory) Options() (options []*selectfield.Option, Error error) {
 	getList := []BannerCategory{}
 	err := db.Client.Find(&getList).Error
 	if err != nil {
 		return options, err
 	}
+
 	for _, v := range getList {
-		options[v.Id] = v.Title
+		option := &selectfield.Option{
+			Label: v.Title,
+			Value: v.Id,
+		}
+		options = append(options, option)
 	}
 
 	return options, nil

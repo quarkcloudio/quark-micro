@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 
-	banner "github.com/quarkcms/quark-micro/cmd/banner/rpc/kitex_gen/banner"
-	"github.com/quarkcms/quark-micro/cmd/banner/rpc/model"
-	"github.com/quarkcms/quark-micro/pkg/utils"
+	banner "github.com/quarkcloudio/quark-micro/cmd/banner/rpc/kitex_gen/banner"
+	"github.com/quarkcloudio/quark-micro/cmd/banner/rpc/model"
+	"github.com/quarkcloudio/quark-micro/pkg/utils"
 )
 
 // BannerServiceImpl implements the last service interface defined in the IDL.

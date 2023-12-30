@@ -4,7 +4,7 @@ package navigationservice
 
 import (
 	server "github.com/cloudwego/kitex/server"
-	navigation "github.com/quarkcms/quark-micro/cmd/navigation/rpc/kitex_gen/navigation"
+	navigation "github.com/quarkcloudio/quark-micro/cmd/navigation/rpc/kitex_gen/navigation"
 )
 
 // NewInvoker creates a server.Invoker with the given handler and options.
