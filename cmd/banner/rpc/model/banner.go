@@ -33,7 +33,7 @@ func (model *Banner) List(position string, order string) (items []*Banner, total
 	// 查询对象
 	query := db.Client.
 		Model(&model).
-		Select("banners.*").
+		Select("banners.*, banner_categories.title as category_title").
 		Joins("left join banner_categories on banner_categories.id = banners.category_id").
 		Where("banners.status", 1)
 

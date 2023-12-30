@@ -33,7 +33,7 @@ var Registry = &RegistryConfig{
 	Endpoint: &Endpoint{
 
 		// 服务名称
-		ServiceName: "Category",
+		ServiceName: "Banner",
 
 		// 方法
 		Method: "",
